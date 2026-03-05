@@ -48,10 +48,14 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 Output the following progress line before starting the analysis:
 `[1/4] Elliott Wave Analysis -- [TICKER] from [START DATE]`
 
-> **Elliott Wave methodology (Steps 1-8) is defined in:**
-> [`1 - Elliot Wave - Wave Methodology.prompt.md`](Dependencies/1 - Elliot Wave - Wave Methodology.prompt.md)
+> **SUBAGENT DELEGATION — WAVE METHODOLOGY:**
+> Delegate the entire Elliott Wave analysis (Steps 1-8 from `Dependencies/1 - Elliot Wave - Wave Methodology.prompt.md`) to a subagent.
+> The subagent must:
+> 1. Read `Dependencies/1 - Elliot Wave - Wave Methodology.prompt.md` in full
+> 2. Execute all 8 steps including data fetching, pivot identification, Fibonacci validation, and the PIVOT ACCEPTANCE GATE
+> 3. Return ONLY the compact pivot summary table (primary count, alternate count, invalidation levels, targets) — no reasoning, no narration, no step-by-step output
 >
-> Apply every step in that file in full before proceeding.
+> The main agent receives only the compact pivot table from the subagent. Do not re-run or re-derive any part of the analysis in the main context.
 
 After completing the analysis, output:
 `[1/4] Elliott Wave Analysis -- complete`
@@ -63,15 +67,15 @@ Output the following progress line before generating the Pine Script:
 
 **OUTPUT RULE: Write the Pine Script ONLY via the Write tool. Do not output, echo, or preview any line of the script as conversation text. Output nothing between the [2/4] progress lines except the Write tool call itself.**
 
-> **Generation constraints and display input rules are defined in:**
-> [`2 - Elliot Wave - PineScript Generation Rules.prompt.md`](Dependencies/2 - Elliot Wave - PineScript Generation Rules.prompt.md)
+> **SUBAGENT DELEGATION — PINE SCRIPT GENERATION:**
+> Delegate Pine Script generation to a subagent.
+> The subagent must:
+> 1. Read `Dependencies/2 - Elliot Wave - PineScript Generation Rules.prompt.md` and `Dependencies/3 - Elliot Wave - Visual Style.prompt.md` in full
+> 2. Apply every generation constraint, display input rule, color scheme rule, and label style rule
+> 3. Generate the complete Pine Script v6 code using the pivot table received from the Wave Methodology subagent
+> 4. Return ONLY the final Pine Script source code — no explanation, no commentary
 >
-> Apply every rule in that file in full.
-
-> **Color scheme and label style rules are defined in:**
-> [`3 - Elliot Wave - Visual Style.prompt.md`](Dependencies/3 - Elliot Wave - Visual Style.prompt.md)
->
-> Apply every rule in that file in full.
+> The main agent receives only the script source from the subagent and writes it to disk via the Write tool. Do not re-derive or re-apply any rules in the main context.
 
 ### PROJECTED FUTURE LINES
 - Historical pivots are drawn as solid lines (primary) or dashed lines (alternate in Both mode)
@@ -92,10 +96,16 @@ After completing Pine Script generation, output:
 
 ---
 
-> **Integrated Validation Scan rules are defined in:**
-> [`4 - Elliot Wave - PineScript Validation Passes.prompt.md`](Dependencies/4 - Elliot Wave - PineScript Validation Passes.prompt.md)
+> **SUBAGENT DELEGATION — INTEGRATED VALIDATION SCAN:**
+> Delegate the validation scan to a subagent.
+> The subagent must:
+> 1. Read `Dependencies/4 - Elliot Wave - PineScript Validation Passes.prompt.md` in full
+> 2. Read the generated `.pine` file
+> 3. Perform the single integrated scan across all categories (A — Syntax, B — Type Safety, C — Logic, D — Coordinate Scale, E — Array Bounds)
+> 4. Fix all issues silently inside the script
+> 5. Return ONLY the corrected Pine Script source code — no fix list, no commentary, no before/after comparisons
 >
-> Perform the single integrated scan in that file in full before proceeding to the Final Step.
+> The main agent receives only the corrected script from the subagent and writes it to disk. Do not re-run or re-check any validation rules in the main context.
 
 ---
 
