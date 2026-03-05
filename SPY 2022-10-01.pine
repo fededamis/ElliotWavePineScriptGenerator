@@ -1,0 +1,426 @@
+// @version=6
+// Elliott Wave Analysis: SPY from 2022-10-01 (Weekly)
+indicator("SPY Elliott Wave 2022-10-01", overlay=true, max_lines_count=60, max_labels_count=70)
+
+// --- Inputs
+string showCount    = input.string("Primary Only", "Show Count", options=["Primary Only", "Both", "Alternate Only"])
+bool showInval      = input.bool(true,  "Show Invalidation Levels")
+bool showTargets    = input.bool(true,  "Show Targets")
+bool showLegend     = input.bool(true,  "Show Legend")
+bool showProj       = input.bool(true,  "Show Projections")
+bool showLabels     = input.bool(true,  "Show Labels")
+string legendPos    = input.string("Bottom Right", "Legend Position", options=["Top Right", "Bottom Right", "Top Left", "Bottom Left"])
+
+// --- Colors
+color C_AQUA     = color.aqua
+color C_FUCHSIA  = color.fuchsia
+color C_ORANGE   = color.orange
+color C_RED      = color.red
+color C_LIME     = color.lime
+color C_ALT_MOT_UP  = color.new(#5599AA, 0)
+color C_ALT_MOT_DN  = color.new(#AA55AA, 0)
+color C_ALT_CORR    = color.new(#AA7733, 0)
+color C_ALT_INVAL   = color.new(#CC4444, 0)
+color C_ALT_TARGET  = color.new(#448844, 0)
+
+// --- Primary pivot timestamps (milliseconds)
+int pr_t0 = timestamp(2022, 10, 10)
+int pr_t1 = timestamp(2022, 12, 12)
+int pr_t2 = timestamp(2022, 12, 19)
+int pr_t3 = timestamp(2025,  2, 17)
+int pr_t4 = timestamp(2025,  4, 14)
+int pr_t5 = timestamp(2026,  1, 26)
+int pr_tA = timestamp(2026,  3, 30)
+int pr_tB = timestamp(2026,  5, 11)
+int pr_tC = timestamp(2026,  7, 13)
+
+// --- Primary pivot prices
+float pr_p0 = 348.11
+float pr_p1 = 410.49
+float pr_p2 = 374.77
+float pr_p3 = 613.23
+float pr_p4 = 481.80
+float pr_p5 = 697.84
+float pr_pA = 615.31
+float pr_pB = 650.00
+float pr_pC = 567.47
+
+// --- Primary pivot Y offsets (positive = up, negative = down)
+float pr_yoff0 = 0.0
+float pr_yoff1 = 0.0
+float pr_yoff2 = 0.0
+float pr_yoff3 = 0.0
+float pr_yoff4 = 0.0
+float pr_yoff5 = 20.0
+float pr_yoffA = -20.0
+float pr_yoffB = 0.0
+float pr_yoffC = 0.0
+
+// --- Primary pivot labels
+string pr_l0 = "W0"
+string pr_l1 = "W1"
+string pr_l2 = "W2"
+string pr_l3 = "W3"
+string pr_l4 = "W4"
+string pr_l5 = "W5"
+string pr_lA = "(proj) WA"
+string pr_lB = "(proj) WB"
+string pr_lC = "(proj) WC"
+
+// --- Primary Fib labels
+string pr_f0 = "Fib:--"
+string pr_f1 = "Fib:--"
+string pr_f2 = "Fib:57.2%"
+string pr_f3 = "Fib:382.3%"
+string pr_f4 = "Fib:55.1%"
+string pr_f5 = "Fib:346.4%"
+string pr_fA = "Fib:23.6%"
+string pr_fB = "Fib:38.2%"
+string pr_fC = "Fib:100% WA"
+
+// --- Primary is-high flags (true = swing high, false = swing low)
+bool pr_h0 = false
+bool pr_h1 = true
+bool pr_h2 = false
+bool pr_h3 = true
+bool pr_h4 = false
+bool pr_h5 = true
+bool pr_hA = false
+bool pr_hB = true
+bool pr_hC = false
+
+// --- Primary is-projected flags
+bool pr_proj0 = false
+bool pr_proj1 = false
+bool pr_proj2 = false
+bool pr_proj3 = false
+bool pr_proj4 = false
+bool pr_proj5 = false
+bool pr_projA = true
+bool pr_projB = true
+bool pr_projC = true
+
+// --- Alternate pivot timestamps
+int al_t0  = timestamp(2022, 10, 10)
+int al_tA  = timestamp(2025,  2, 17)
+int al_tB  = timestamp(2025,  4, 14)
+int al_tC  = timestamp(2026,  1, 26)
+int al_t1d = timestamp(2026,  4, 13)
+int al_t2d = timestamp(2026,  5, 25)
+
+// --- Alternate pivot prices
+float al_p0  = 348.11
+float al_pA  = 613.23
+float al_pB  = 481.80
+float al_pC  = 697.84
+float al_p1d = 564.24
+float al_p2d = 615.31
+
+// --- Alternate pivot Y offsets (positive = up, negative = down)
+float al_yoff0  = 0.0
+float al_yoffA  = 0.0
+float al_yoffB  = 0.0
+float al_yoffC  = 0.0
+float al_yoff1d = 0.0
+float al_yoff2d = 0.0
+
+// --- Alternate pivot labels
+string al_l0  = "(A) W0"
+string al_lA  = "(A) WA"
+string al_lB  = "(A) WB"
+string al_lC  = "(A) WC"
+string al_l1d = "(A) W1dn"
+string al_l2d = "(A) W2dn"
+
+// --- Alternate Fib labels
+string al_f0  = "Fib:--"
+string al_fA  = "Fib:--"
+string al_fB  = "Fib:49.6%"
+string al_fC  = "Fib:81.5%"
+string al_f1d = "Fib:38.2%"
+string al_f2d = "Fib:61.8%"
+
+// --- Alternate is-high flags
+bool al_h0  = false
+bool al_hA  = true
+bool al_hB  = false
+bool al_hC  = true
+bool al_h1d = false
+bool al_h2d = true
+
+// --- Alternate is-projected flags
+bool al_proj0  = false
+bool al_projA  = false
+bool al_projB  = false
+bool al_projC  = false
+bool al_proj1d = true
+bool al_proj2d = true
+
+// --- Wave segment color helper (primary)
+getColorPrimary(isHigh1, isHigh2) =>
+    if isHigh2
+        C_AQUA
+    else
+        C_ORANGE
+
+// --- Wave segment color helper (alternate)
+getColorAlternate(isHigh1, isHigh2) =>
+    if isHigh2
+        C_ALT_MOT_UP
+    else
+        C_ALT_CORR
+
+// --- Drawing arrays
+var array<line>  pr_lines         = array.new<line>()
+var array<label> pr_labels        = array.new<label>()
+var array<line>  al_lines         = array.new<line>()
+var array<label> al_labels        = array.new<label>()
+var array<line>  pr_inval_lines   = array.new<line>()
+var array<label> pr_inval_labels  = array.new<label>()
+var array<line>  al_inval_lines   = array.new<line>()
+var array<label> al_inval_labels  = array.new<label>()
+var array<line>  pr_target_lines  = array.new<line>()
+var array<label> pr_target_labels = array.new<label>()
+var array<line>  al_target_lines  = array.new<line>()
+var array<label> al_target_labels = array.new<label>()
+var array<label> legend_labels    = array.new<label>()
+
+// --- today anchor
+int today = time
+
+// All drawing objects use xloc.bar_time + fixed float prices for scale/zoom stability
+if barstate.islast
+
+    // -- Delete stale objects
+    while array.size(pr_lines) > 0
+        line.delete(array.pop(pr_lines))
+    while array.size(pr_labels) > 0
+        label.delete(array.pop(pr_labels))
+    while array.size(al_lines) > 0
+        line.delete(array.pop(al_lines))
+    while array.size(al_labels) > 0
+        label.delete(array.pop(al_labels))
+    while array.size(pr_inval_lines) > 0
+        line.delete(array.pop(pr_inval_lines))
+    while array.size(pr_inval_labels) > 0
+        label.delete(array.pop(pr_inval_labels))
+    while array.size(al_inval_lines) > 0
+        line.delete(array.pop(al_inval_lines))
+    while array.size(al_inval_labels) > 0
+        label.delete(array.pop(al_inval_labels))
+    while array.size(pr_target_lines) > 0
+        line.delete(array.pop(pr_target_lines))
+    while array.size(pr_target_labels) > 0
+        label.delete(array.pop(pr_target_labels))
+    while array.size(al_target_lines) > 0
+        line.delete(array.pop(al_target_lines))
+    while array.size(al_target_labels) > 0
+        label.delete(array.pop(al_target_labels))
+    while array.size(legend_labels) > 0
+        label.delete(array.pop(legend_labels))
+
+    bool showPrimary   = showCount == "Primary Only" or showCount == "Both"
+    bool showAlternate = showCount == "Alternate Only" or showCount == "Both"
+    bool altSolid      = showCount == "Alternate Only"
+
+    // ==================== PRIMARY COUNT ====================
+    if showPrimary
+
+        // arrays of pivot data
+        // array size checked before access
+        array<int>   pr_times  = array.from(pr_t0, pr_t1, pr_t2, pr_t3, pr_t4, pr_t5, pr_tA, pr_tB, pr_tC)
+        array<float> pr_prices = array.from(pr_p0, pr_p1, pr_p2, pr_p3, pr_p4, pr_p5, pr_pA, pr_pB, pr_pC)
+        array<bool>  pr_highs  = array.from(pr_h0, pr_h1, pr_h2, pr_h3, pr_h4, pr_h5, pr_hA, pr_hB, pr_hC)
+        array<bool>  pr_projs  = array.from(pr_proj0, pr_proj1, pr_proj2, pr_proj3, pr_proj4, pr_proj5, pr_projA, pr_projB, pr_projC)
+        array<string> pr_lbls  = array.from(pr_l0, pr_l1, pr_l2, pr_l3, pr_l4, pr_l5, pr_lA, pr_lB, pr_lC)
+        array<string> pr_fibs  = array.from(pr_f0, pr_f1, pr_f2, pr_f3, pr_f4, pr_f5, pr_fA, pr_fB, pr_fC)
+        array<float> pr_yoffs  = array.from(pr_yoff0, pr_yoff1, pr_yoff2, pr_yoff3, pr_yoff4, pr_yoff5, pr_yoffA, pr_yoffB, pr_yoffC)
+
+        int pr_n = array.size(pr_times)
+        if pr_n > 1
+            for i = 0 to pr_n - 2
+                int   x1    = array.get(pr_times,  i)
+                int   x2    = array.get(pr_times,  i + 1)
+                float y1    = array.get(pr_prices, i)
+                float y2    = array.get(pr_prices, i + 1)
+                bool  h2    = array.get(pr_highs,  i + 1)
+                bool  isP   = array.get(pr_projs,  i) or array.get(pr_projs, i + 1)
+                color lc    = getColorPrimary(array.get(pr_highs, i), h2)
+                string lsty = isP ? line.style_dotted : line.style_solid
+                int    lwid = 2
+                if not isP or showProj
+                    array.push(pr_lines, line.new(x1=x1, y1=y1, x2=x2, y2=y2,
+                         xloc=xloc.bar_time, color=lc, style=lsty, width=lwid))
+
+        // Pivot labels
+        if showLabels and pr_n > 0
+            for i = 0 to pr_n - 1
+                bool isP = array.get(pr_projs, i)
+                if not isP or showProj
+                    int   xt = array.get(pr_times,  i)
+                    float yp = array.get(pr_prices, i)
+                    float yo = array.get(pr_yoffs,  i)
+                    bool  ih = array.get(pr_highs,  i)
+                    string lbl = array.get(pr_lbls,  i)
+                    string fib = array.get(pr_fibs,  i)
+                    string priceStr = str.tostring(yp, "#.##")
+                    string line3 = isP ? "PROJECTED" : fib
+                    string txt = lbl + "\n" + priceStr + "\n" + line3
+                    color bclr = ih ? C_AQUA : C_ORANGE
+                    if ih
+                        array.push(pr_labels, label.new(x=xt, y=yp + yo, text=txt,
+                             xloc=xloc.bar_time, yloc=yloc.price,
+                             color=bclr, textcolor=color.black,
+                             style=label.style_label_down,
+                             size=size.small, textalign=text.align_center))
+                    else
+                        array.push(pr_labels, label.new(x=xt, y=yp + yo, text=txt,
+                             xloc=xloc.bar_time, yloc=yloc.price,
+                             color=bclr, textcolor=color.black,
+                             style=label.style_label_up,
+                             size=size.small, textalign=text.align_center))
+
+    // ==================== ALTERNATE COUNT ====================
+    if showAlternate
+
+        // array size checked before access
+        array<int>   al_times  = array.from(al_t0, al_tA, al_tB, al_tC, al_t1d, al_t2d)
+        array<float> al_prices = array.from(al_p0, al_pA, al_pB, al_pC, al_p1d, al_p2d)
+        array<bool>  al_highs  = array.from(al_h0, al_hA, al_hB, al_hC, al_h1d, al_h2d)
+        array<bool>  al_projs  = array.from(al_proj0, al_projA, al_projB, al_projC, al_proj1d, al_proj2d)
+        array<string> al_lbls  = array.from(al_l0, al_lA, al_lB, al_lC, al_l1d, al_l2d)
+        array<string> al_fibs  = array.from(al_f0, al_fA, al_fB, al_fC, al_f1d, al_f2d)
+        array<float> al_yoffs  = array.from(al_yoff0, al_yoffA, al_yoffB, al_yoffC, al_yoff1d, al_yoff2d)
+
+        int al_n = array.size(al_times)
+        if al_n > 1
+            for i = 0 to al_n - 2
+                int   x1   = array.get(al_times,  i)
+                int   x2   = array.get(al_times,  i + 1)
+                float y1   = array.get(al_prices, i)
+                float y2   = array.get(al_prices, i + 1)
+                bool  h2   = array.get(al_highs,  i + 1)
+                bool  isP  = array.get(al_projs,  i) or array.get(al_projs, i + 1)
+                color lc   = getColorAlternate(array.get(al_highs, i), h2)
+                string lsty = isP ? line.style_dotted : (altSolid ? line.style_solid : line.style_dashed)
+                int    lwid = 2
+                if not isP or showProj
+                    array.push(al_lines, line.new(x1=x1, y1=y1, x2=x2, y2=y2,
+                         xloc=xloc.bar_time, color=lc, style=lsty, width=lwid))
+
+        // Pivot labels (alternate)
+        if showLabels and al_n > 0
+            for i = 0 to al_n - 1
+                bool isP = array.get(al_projs, i)
+                if not isP or showProj
+                    int   xt = array.get(al_times,  i)
+                    float yp = array.get(al_prices, i)
+                    float yo = array.get(al_yoffs,  i)
+                    bool  ih = array.get(al_highs,  i)
+                    string lbl = array.get(al_lbls,  i)
+                    string fib = array.get(al_fibs,  i)
+                    string priceStr = str.tostring(yp, "#.##")
+                    string line3 = isP ? "PROJECTED" : fib
+                    string txt = lbl + "\n" + priceStr + "\n" + line3
+                    if ih
+                        array.push(al_labels, label.new(x=xt, y=yp + yo, text=txt,
+                             xloc=xloc.bar_time, yloc=yloc.price,
+                             color=color.new(C_ALT_MOT_UP, 50), textcolor=color.white,
+                             style=label.style_label_down,
+                             size=size.small, textalign=text.align_center))
+                    else
+                        array.push(al_labels, label.new(x=xt, y=yp + yo, text=txt,
+                             xloc=xloc.bar_time, yloc=yloc.price,
+                             color=color.new(C_ALT_CORR, 50), textcolor=color.white,
+                             style=label.style_label_up,
+                             size=size.small, textalign=text.align_center))
+
+    // ==================== INVALIDATION LEVELS ====================
+    if showInval
+        int lineLeft = pr_t0
+        int lineRight = today + 86400000 * 90
+
+        if showPrimary
+            float pr_inv = 481.80
+            // array size checked before access
+            array.push(pr_inval_lines, line.new(x1=lineLeft, y1=pr_inv, x2=lineRight, y2=pr_inv,
+                 xloc=xloc.bar_time, color=C_RED, style=line.style_dashed, width=1))
+            array.push(pr_inval_labels, label.new(x=lineRight, y=pr_inv, text="Primary Inval",
+                 xloc=xloc.bar_time, yloc=yloc.price,
+                 color=C_RED, textcolor=color.white,
+                 style=label.style_label_down, size=size.small, textalign=text.align_left))
+
+        if showAlternate
+            float al_inv = 697.85
+            array.push(al_inval_lines, line.new(x1=lineLeft, y1=al_inv, x2=lineRight, y2=al_inv,
+                 xloc=xloc.bar_time, color=C_ALT_INVAL, style=line.style_dashed, width=1))
+            array.push(al_inval_labels, label.new(x=lineRight, y=al_inv, text="Alt Inval",
+                 xloc=xloc.bar_time, yloc=yloc.price,
+                 color=C_ALT_INVAL, textcolor=color.white,
+                 style=label.style_label_up, size=size.small, textalign=text.align_left))
+
+    // ==================== TARGET LEVELS ====================
+    if showTargets
+        int lineLeft = pr_t0
+        int lineRight = today + 86400000 * 90
+
+        if showPrimary
+            float pr_tgt = 615.31
+            array.push(pr_target_lines, line.new(x1=lineLeft, y1=pr_tgt, x2=lineRight, y2=pr_tgt,
+                 xloc=xloc.bar_time, color=C_LIME, style=line.style_dashed, width=1))
+            array.push(pr_target_labels, label.new(x=lineRight, y=pr_tgt, text="Primary Target",
+                 xloc=xloc.bar_time, yloc=yloc.price,
+                 color=C_LIME, textcolor=color.black,
+                 style=label.style_label_up, size=size.small, textalign=text.align_left))
+
+        if showAlternate
+            float al_tgt = 522.97
+            array.push(al_target_lines, line.new(x1=lineLeft, y1=al_tgt, x2=lineRight, y2=al_tgt,
+                 xloc=xloc.bar_time, color=C_ALT_TARGET, style=line.style_dashed, width=1))
+            array.push(al_target_labels, label.new(x=lineRight, y=al_tgt, text="Alt Target",
+                 xloc=xloc.bar_time, yloc=yloc.price,
+                 color=C_ALT_TARGET, textcolor=color.white,
+                 style=label.style_label_up, size=size.small, textalign=text.align_left))
+
+    // ==================== LEGEND ====================
+    if showLegend
+        int lx = legendPos == "Top Right" or legendPos == "Bottom Right" ? today + 86400000 * 7 : pr_t0 - 86400000 * 30
+        float hiPrice = math.max(pr_p5, al_pC)
+        float loPrice = math.min(pr_p0, al_p0)
+        float base = legendPos == "Top Right" or legendPos == "Top Left" ? hiPrice : loPrice
+        float step = (hiPrice - loPrice) * 0.04
+        float ly1 = base
+        float ly2 = base - step
+        float ly3 = base - step * 2
+        float ly4 = base - step * 3
+        float ly5 = base - step * 4
+        float ly6 = base - step * 5
+        float ly7 = base - step * 6
+        array.push(legend_labels, label.new(x=lx, y=ly1, text="Primary Count (65%)",
+             xloc=xloc.bar_time, yloc=yloc.price,
+             color=C_AQUA, textcolor=color.black,
+             style=label.style_label_left, size=size.small, textalign=text.align_left))
+        array.push(legend_labels, label.new(x=lx, y=ly2, text="Alternate Count (30%)",
+             xloc=xloc.bar_time, yloc=yloc.price,
+             color=C_ALT_MOT_UP, textcolor=color.white,
+             style=label.style_label_left, size=size.small, textalign=text.align_left))
+        array.push(legend_labels, label.new(x=lx, y=ly3, text="Motive Up (Aqua)",
+             xloc=xloc.bar_time, yloc=yloc.price,
+             color=C_AQUA, textcolor=color.black,
+             style=label.style_label_left, size=size.small, textalign=text.align_left))
+        array.push(legend_labels, label.new(x=lx, y=ly4, text="Corrective (Orange)",
+             xloc=xloc.bar_time, yloc=yloc.price,
+             color=C_ORANGE, textcolor=color.black,
+             style=label.style_label_left, size=size.small, textalign=text.align_left))
+        array.push(legend_labels, label.new(x=lx, y=ly5, text="Alt Motive (Steel Blue)",
+             xloc=xloc.bar_time, yloc=yloc.price,
+             color=C_ALT_MOT_UP, textcolor=color.white,
+             style=label.style_label_left, size=size.small, textalign=text.align_left))
+        array.push(legend_labels, label.new(x=lx, y=ly6, text="Alt Corrective (Amber)",
+             xloc=xloc.bar_time, yloc=yloc.price,
+             color=C_ALT_CORR, textcolor=color.white,
+             style=label.style_label_left, size=size.small, textalign=text.align_left))
+        array.push(legend_labels, label.new(x=lx, y=ly7, text="SPY EW | Weekly | Oct 2022",
+             xloc=xloc.bar_time, yloc=yloc.price,
+             color=color.gray, textcolor=color.white,
+             style=label.style_label_left, size=size.small, textalign=text.align_left))
