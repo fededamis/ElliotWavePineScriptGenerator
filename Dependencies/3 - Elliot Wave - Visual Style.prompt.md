@@ -24,8 +24,7 @@
 - Alternate count label text prefix: prepend "(A)" to the wave identifier on Line 1 (e.g. "(A) WB2", "(A) W3") so the count is identifiable even without color context
 
 ### LABEL STYLE & CONTENT
-- **For pivot labels at specific points: use size=size.small to ensure labels are clearly readable**
-- **For other labels (invalidation, target, legend): use size=size.small as well for consistency**
+- **CRITICAL: For ALL label.new() calls: use size=size.small — NEVER size=size.auto, which collapses labels to invisible markers on some TradingView versions**
 - Every pivot label must display the following information on separate lines within the label text:
   - Line 1: Wave identifier — primary count uses bare label (e.g. "W1", "WA"); alternate count prepends "(A)" (e.g. "(A) W1", "(A) WA")
   - Line 2: Price value formatted with str.tostring(price, "#.##")
@@ -36,6 +35,6 @@
   - Single line: "Primary Inval" or "Alt Inval" (abbreviated for space)
 - Target level labels must display:
   - Single line: "Primary Target" or "Alt Target" (abbreviated for space)
-- **All pivot label.new() calls must set textalign to text.align_center to center-align text at the pivot point**
+- **CRITICAL: All label.new() calls must set textalign=text.align_center — NEVER text.align_left**
 - **All pivot label.new() calls must set style to label.style_label_down (for highs) or label.style_label_up (for lows) so the label floats above/below the pin without obscuring price action**
 - **For labels at level lines (invalidation, targets): use style=label.style_label_down or label.style_label_up depending on chart position**
