@@ -65,17 +65,6 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 >
 > The main agent receives only the script source from the subagent and writes it to disk via the Write tool. Do not re-derive or re-apply any rules in the main context.
 
-### PROJECTED FUTURE LINES
-- Historical pivots are drawn as solid lines (primary) or dashed lines (alternate in Both mode)
-- Projected future pivots are drawn as dotted lines for both counts, in the same color scheme (aqua/fuchsia/orange)
-- Projected labels are marked with "(proj)" prefix on Line 1 and "PROJECTED" on Line 3
-- The transition point between historical and projected is the most recent confirmed pivot, anchored to today's date and price
-- All projected pivot dates MUST be strictly after today's date -- no projected pivot may fall on or before today
-- Projected lines are only shown when "Show Projections" is enabled
-- The projected pivot sequence must be **complete**: for A-B-C corrections project all three legs (WA, WB, WC); for impulse sequences project through the full next wave. Never terminate a projection mid-structure (e.g. stopping at WB without WC)
-- The last projected pivot must be dated at least 60 calendar days after today. If the final projected pivot falls within 60 days of today, extend the projection sequence by adding the next wave in the structure until the last projected pivot is beyond today + 60 days
-- Do NOT add horizontal flat extension lines as a substitute for a missing projected pivot — flat lines do not represent any Elliott Wave structure
-
 **CRITICAL: Pivot Price Validation**
 All pivot prices used in the Pine Script must have already passed the PIVOT ACCEPTANCE GATE defined in the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`). Do not re-derive or re-verify prices here — if the methodology steps were followed correctly, every historical pivot is already a confirmed bar High or Low on the selected timeframe. If any price in the pivot table looks rounded, theoretical, or mismatched to a real swing, stop, return to the methodology file, and correct the pivot there before proceeding.
 

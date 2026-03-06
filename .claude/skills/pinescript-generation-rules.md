@@ -51,4 +51,9 @@ do not generate code that violates any of these, so they require no fix cycle du
   - `leg_base` for Top options = highest pivot price in the script; for Bottom options = lowest pivot price in the script
   - Stack legend rows by subtracting `step` increments from `leg_base` (same step formula as before)
 - A toggle (bool input) called "Show Projections" to show/hide the projected future wave lines
+  - The transition point between historical and projected is the most recent confirmed pivot, anchored to today's date and price
+  - All projected pivot dates MUST be strictly after today's date — no projected pivot may fall on or before today
+  - Projected sequences must be structurally complete: for A-B-C corrections project all three legs (WA, WB, WC); for impulse sequences project through the full next wave. Never terminate a projection mid-structure (e.g. stopping at WB without WC)
+  - The last projected pivot must be dated at least 60 calendar days after today. If the final projected pivot falls within 60 days, extend the projection sequence by adding the next wave in the structure
+  - Do NOT add horizontal flat extension lines as a substitute for a missing projected pivot — flat lines do not represent any Elliott Wave structure
 - A toggle (bool input) called "Show Labels" to show/hide all pivot labels (does not affect invalidation, target, or legend labels)

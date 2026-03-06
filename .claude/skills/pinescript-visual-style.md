@@ -31,7 +31,7 @@ description: Color scheme, label style, and visual design rules for Elliott Wave
 ### LABEL STYLE & CONTENT
 - **CRITICAL: For ALL label.new() calls: use size=size.small — NEVER size=size.auto, which collapses labels to invisible markers on some TradingView versions**
 - Every pivot label must display the following information on separate lines within the label text:
-  - Line 1: Wave identifier — primary count uses bare label (e.g. "W1", "WA"); alternate count prepends "(A)" (e.g. "(A) W1", "(A) WA")
+  - Line 1: Wave identifier — primary count uses bare label (e.g. "W1", "WA"); alternate count prepends "(A)" (e.g. "(A) W1", "(A) WA"). Projected pivots additionally prepend "(proj)" (e.g. "(proj) W5", "(proj) (A) WC")
   - Line 2: Price value formatted with str.tostring(price, "#.##")
   - Line 3: Fibonacci level (e.g. "Fib:61.8%") — use abbreviated format to save space
 - Primary count pivot labels: use full-opacity label background color matching the wave color
