@@ -1,3 +1,8 @@
+---
+name: pinescript-validation-passes
+description: Pine Script v6 integrated validation scan for Elliott Wave scripts. Run this after generating a Pine Script to check and silently fix all syntax, type safety, logic, coordinate, and array bounds issues.
+---
+
 ## PINE SCRIPT V6 — INTEGRATED VALIDATION SCAN
 
 Read the generated script once from top to bottom and check all categories below in a single pass.

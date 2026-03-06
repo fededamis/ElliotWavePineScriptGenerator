@@ -98,7 +98,7 @@ After completing Pine Script generation, output:
 > **SUBAGENT DELEGATION — INTEGRATED VALIDATION SCAN:**
 > Delegate the validation scan to a subagent.
 > The subagent must:
-> 1. Read `Dependencies/4 - Elliot Wave - PineScript Validation Passes.prompt.md` in full
+> 1. Execute the `/pinescript-validation-passes` skill (`.claude/skills/pinescript-validation-passes.md`) in full
 > 2. Read the generated `.pine` file
 > 3. Perform the single integrated scan across all categories (A — Syntax, B — Type Safety, C — Logic, D — Coordinate Scale, E — Array Bounds)
 > 4. Fix all issues silently inside the script
