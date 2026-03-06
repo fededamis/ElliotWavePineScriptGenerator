@@ -15,15 +15,14 @@ Before performing any analysis, attempt to read the file `[TICKER] [START DATE].
 - If the file EXISTS (Read succeeds):
   - Extract all pivot data, counts, Fibonacci levels, targets, invalidation levels, and projections from the file
   - Do NOT re-fetch or re-derive any financial data
-  - Do NOT run Steps 1-8 of the methodology -- skip the [1/4] progress lines entirely
-  - Output: `[1/4] Elliott Wave Analysis -- loaded from cache ([TICKER] [START DATE].wave)`
-  - Proceed directly to Pine Script generation at [2/4]
+  - Do NOT run Steps 1-8 of the methodology -- skip directly to Pine Script generation
+  - Proceed directly to Pine Script generation
   - Add at the top of the generated script as a comment: `// Wave data loaded from cache file`
   - If the user explicitly requests a fresh analysis using words like "redo", "recount", or "start over", bypass the file cache, perform a full re-analysis, and overwrite the `.wave` file with the new results
 
 - If the file does NOT exist (Read returns an error):
   - Proceed normally through all methodology steps below
-  - After Step 8, write the compact pivot table to `[TICKER] [START DATE].wave` using the Write tool before outputting `[1/4] Elliott Wave Analysis -- complete`
+  - After Step 8, write the compact pivot table to `[TICKER] [START DATE].wave` using the Write tool
 
 ---
 
@@ -45,9 +44,6 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 ---
 
-Output the following progress line before starting the analysis:
-`[1/4] Elliott Wave Analysis -- [TICKER] from [START DATE]`
-
 > **SUBAGENT DELEGATION — WAVE METHODOLOGY:**
 > **IMPORTANT: Always use Opus models for this subagent section.**
 > Delegate the entire Elliott Wave analysis to a subagent using the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`).
@@ -57,15 +53,7 @@ Output the following progress line before starting the analysis:
 >
 > The main agent receives only the compact pivot table from the subagent. Do not re-run or re-derive any part of the analysis in the main context.
 
-After completing the analysis, output:
-`[1/4] Elliott Wave Analysis -- complete`
-
----
-
-Output the following progress line before generating the Pine Script:
-`[2/4] Pine Script Generation`
-
-**OUTPUT RULE: Write the Pine Script ONLY via the Write tool. Do not output, echo, or preview any line of the script as conversation text. Output nothing between the [2/4] progress lines except the Write tool call itself.**
+**OUTPUT RULE: Write the Pine Script ONLY via the Write tool. Do not output, echo, or preview any line of the script as conversation text.**
 
 > **SUBAGENT DELEGATION — PINE SCRIPT GENERATION:**
 > Delegate Pine Script generation to a subagent.
@@ -90,9 +78,6 @@ Output the following progress line before generating the Pine Script:
 
 **CRITICAL: Pivot Price Validation**
 All pivot prices used in the Pine Script must have already passed the PIVOT ACCEPTANCE GATE defined in the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`). Do not re-derive or re-verify prices here — if the methodology steps were followed correctly, every historical pivot is already a confirmed bar High or Low on the selected timeframe. If any price in the pivot table looks rounded, theoretical, or mismatched to a real swing, stop, return to the methodology file, and correct the pivot there before proceeding.
-
-After completing Pine Script generation, output:
-`[2/4] Pine Script Generation -- complete`
 
 ---
 
@@ -130,4 +115,4 @@ File naming rules:
 - Use the exact TICKER and START DATE values provided by the user at the beginning of the session
 - Example: if TICKER is `BTCUSD` and START DATE is `2023-01-01`, the file name is `BTCUSD 2023-01-01.pine`
 - Do not include any subdirectory path -- write the file to the current working directory
-- Once the file is written, output only: `[4/4] Done -- [TICKER] [START DATE].pine`
+- Once the file is written, output only: `Done -- [TICKER] [START DATE].pine`

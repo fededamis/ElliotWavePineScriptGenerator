@@ -8,9 +8,7 @@ description: Pine Script v6 integrated validation scan for Elliott Wave scripts.
 Read the generated script once from top to bottom and check all categories below in a single pass.
 For any issue found, fix it silently in the script and continue immediately.
 Do not output the fix, the reason for the fix, or any before/after comparison.
-Do not output anything during this scan except the progress lines specified below.
-
-Output before starting: `⟳ [3/4] Integrated Validation Scan`
+Do not output anything during this scan.
 
 ---
 
@@ -138,4 +136,3 @@ Output before starting: `⟳ [3/4] Integrated Validation Scan`
 
 ---
 
-Output after completing: `✓ [3/4] Integrated Validation Scan — complete`
