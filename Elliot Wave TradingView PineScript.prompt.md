@@ -49,11 +49,10 @@ Output the following progress line before starting the analysis:
 `[1/4] Elliott Wave Analysis -- [TICKER] from [START DATE]`
 
 > **SUBAGENT DELEGATION — WAVE METHODOLOGY:**
-> Delegate the entire Elliott Wave analysis (Steps 1-8 from `Dependencies/1 - Elliot Wave - Wave Methodology.prompt.md`) to a subagent.
+> Delegate the entire Elliott Wave analysis to a subagent using the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`).
 > The subagent must:
-> 1. Read `Dependencies/1 - Elliot Wave - Wave Methodology.prompt.md` in full
-> 2. Execute all 8 steps including data fetching, pivot identification, Fibonacci validation, and the PIVOT ACCEPTANCE GATE
-> 3. Return ONLY the compact pivot summary table (primary count, alternate count, invalidation levels, targets) — no reasoning, no narration, no step-by-step output
+> 1. Execute the `/elliott-wave-analysis` skill in full, including all 8 steps: data fetching, pivot identification, Fibonacci validation, and the PIVOT ACCEPTANCE GATE
+> 2. Return ONLY the compact pivot summary table (primary count, alternate count, invalidation levels, targets) — no reasoning, no narration, no step-by-step output
 >
 > The main agent receives only the compact pivot table from the subagent. Do not re-run or re-derive any part of the analysis in the main context.
 
@@ -89,7 +88,7 @@ Output the following progress line before generating the Pine Script:
 - Do NOT add horizontal flat extension lines as a substitute for a missing projected pivot — flat lines do not represent any Elliott Wave structure
 
 **CRITICAL: Pivot Price Validation**
-All pivot prices used in the Pine Script must have already passed the PIVOT ACCEPTANCE GATE defined in [`1 - Elliot Wave - Wave Methodology.prompt.md`](Dependencies/1 - Elliot Wave - Wave Methodology.prompt.md). Do not re-derive or re-verify prices here — if the methodology steps were followed correctly, every historical pivot is already a confirmed bar High or Low on the selected timeframe. If any price in the pivot table looks rounded, theoretical, or mismatched to a real swing, stop, return to the methodology file, and correct the pivot there before proceeding.
+All pivot prices used in the Pine Script must have already passed the PIVOT ACCEPTANCE GATE defined in the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`). Do not re-derive or re-verify prices here — if the methodology steps were followed correctly, every historical pivot is already a confirmed bar High or Low on the selected timeframe. If any price in the pivot table looks rounded, theoretical, or mismatched to a real swing, stop, return to the methodology file, and correct the pivot there before proceeding.
 
 After completing Pine Script generation, output:
 `[2/4] Pine Script Generation -- complete`
