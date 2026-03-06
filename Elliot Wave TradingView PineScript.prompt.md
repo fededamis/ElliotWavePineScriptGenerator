@@ -84,7 +84,7 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 ---
 
-### FINAL STEP
+### OUTPUT: Write Pine Script to File
 After the Integrated Validation Scan is complete and all errors are resolved, write the final Pine Script v6 code to a new file. Do not output the script in the chat window. Do not attach it as a fenced code block or artifact.
 
 File naming rules:
