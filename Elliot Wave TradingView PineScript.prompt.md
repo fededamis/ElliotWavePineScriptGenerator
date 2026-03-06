@@ -94,14 +94,7 @@ All pivot prices used in the Pine Script must have already passed the PIVOT ACCE
 
 ---
 
-### BUG FIX / ADJUSTMENT PROTOCOL
-
-Whenever a bug fix or adjustment is requested for the `.pine` or `.wave` output file, apply the fix in **both** places:
-
-1. **Output file** — update the `.pine` or `.wave` file directly with the corrected logic.
-2. **This prompt** — locate the section in this prompt (or in the referenced validation/wave files) that produced the incorrect behavior and update it so that re-executing the prompt will not reproduce the same error.
-
-Do not treat a fix as complete until both the output and the prompt source have been updated.
+<!-- Bug fix protocol moved to skill: bug-fix-protocol -->
 
 ---
 
