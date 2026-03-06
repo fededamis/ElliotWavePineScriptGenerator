@@ -41,7 +41,7 @@ Use the selected timeframe consistently throughout the entire analysis. All pivo
 
 ---
 
-Once both are provided, analyze [TICKER] starting from [START DATE] up to and including today's date on the selected timeframe chart using Elliott Wave Theory, following the methodology below. Do not stop the analysis at an arbitrary past date -- the historical count must be carried forward pivot-by-pivot all the way to the most recent confirmed swing on the chart before any projection begins. The last hist pivot must be within 8 bars of today on the selected timeframe. Any gap larger than that means the count is incomplete and must be continued.
+Once both are provided, analyze [TICKER] starting from [START DATE] up to and including today's date on the selected timeframe chart using Elliott Wave Theory, following the methodology below.
 
 ---
 
@@ -49,6 +49,7 @@ Output the following progress line before starting the analysis:
 `[1/4] Elliott Wave Analysis -- [TICKER] from [START DATE]`
 
 > **SUBAGENT DELEGATION — WAVE METHODOLOGY:**
+> **IMPORTANT: Always use Opus models for this subagent section.**
 > Delegate the entire Elliott Wave analysis to a subagent using the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`).
 > The subagent must:
 > 1. Execute the `/elliott-wave-analysis` skill in full, including all 8 steps: data fetching, pivot identification, Fibonacci validation, and the PIVOT ACCEPTANCE GATE
