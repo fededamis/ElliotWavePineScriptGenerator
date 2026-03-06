@@ -1,3 +1,8 @@
+---
+name: pinescript-visual-style
+description: Color scheme, label style, and visual design rules for Elliott Wave Pine Script v6 scripts. Apply every rule in this file when generating or validating visual elements.
+---
+
 ### COLOR SCHEME
 
 #### PRIMARY COUNT (solid lines, high-contrast colors)

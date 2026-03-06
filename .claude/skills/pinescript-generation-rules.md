@@ -1,3 +1,8 @@
+---
+name: pinescript-generation-rules
+description: Pine Script v6 generation constraints, display input rules, and coding standards for Elliott Wave scripts. Apply every rule in this file when generating Pine Script code.
+---
+
 ### GENERATION CONSTRAINTS
 While writing the Pine Script, enforce the following rules in real-time as the code is written --
 do not generate code that violates any of these, so they require no fix cycle during validation:

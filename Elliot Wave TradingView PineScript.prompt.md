@@ -69,7 +69,7 @@ Output the following progress line before generating the Pine Script:
 > **SUBAGENT DELEGATION — PINE SCRIPT GENERATION:**
 > Delegate Pine Script generation to a subagent.
 > The subagent must:
-> 1. Read `Dependencies/2 - Elliot Wave - PineScript Generation Rules.prompt.md` and `Dependencies/3 - Elliot Wave - Visual Style.prompt.md` in full
+> 1. Execute the `/pinescript-generation-rules` skill (`.claude/skills/pinescript-generation-rules.md`) and the `/pinescript-visual-style` skill (`.claude/skills/pinescript-visual-style.md`) in full
 > 2. Apply every generation constraint, display input rule, color scheme rule, and label style rule
 > 3. Generate the complete Pine Script v6 code using the pivot table received from the Wave Methodology subagent
 > 4. Return ONLY the final Pine Script source code — no explanation, no commentary
