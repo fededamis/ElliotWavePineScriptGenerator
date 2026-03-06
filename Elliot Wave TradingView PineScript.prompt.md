@@ -65,9 +65,6 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 >
 > The main agent receives only the script source from the subagent and writes it to disk via the Write tool. Do not re-derive or re-apply any rules in the main context.
 
-**CRITICAL: Pivot Price Validation**
-All pivot prices used in the Pine Script must have already passed the PIVOT ACCEPTANCE GATE defined in the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`). Do not re-derive or re-verify prices here — if the methodology steps were followed correctly, every historical pivot is already a confirmed bar High or Low on the selected timeframe. If any price in the pivot table looks rounded, theoretical, or mismatched to a real swing, stop, return to the methodology file, and correct the pivot there before proceeding.
-
 ---
 
 > **SUBAGENT DELEGATION — INTEGRATED VALIDATION SCAN:**
@@ -88,9 +85,7 @@ All pivot prices used in the Pine Script must have already passed the PIVOT ACCE
 ---
 
 ### FINAL STEP
-After the Integrated Validation Scan is complete and all errors are resolved, write the final Pine Script v6 code
-to a new file. Do not output the script in the chat window. Do not attach it as a fenced code block
-or artifact.
+After the Integrated Validation Scan is complete and all errors are resolved, write the final Pine Script v6 code to a new file. Do not output the script in the chat window. Do not attach it as a fenced code block or artifact.
 
 File naming rules:
 - File name format: `[TICKER] [START DATE].pine`
