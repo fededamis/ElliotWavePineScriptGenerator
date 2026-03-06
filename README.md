@@ -4,3 +4,4 @@ Generates a .pine script to be imported into TradingView with Elliot Wave Analys
 Pending Tasks:
 - ADD INTERNAL COUNTS ON LARGE TRENDS
 - ADD CONFIDENCE ON COUNTS
+- RUN OPTIMIZATION SKILL ON PROMPT
