@@ -63,6 +63,7 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 - For the ALTERNATE count: project at least 2 future pivots showing the expected next wave sequence under that scenario
 - Estimate future pivot dates based on typical wave durations observed earlier in the same wave sequence
 - Future pivots must be dated beyond today and clearly distinguished from historical pivots
+- **PRICE BOUNDS CHECK FOR PROJECTIONS: Every projected pivot price must be beyond the price range that has already traded since the last historical pivot. Specifically — if projecting a swing low, its price must be below the lowest Low printed since the last hist pivot; if projecting a swing high, its price must be above the highest High printed since the last hist pivot. A projected price that falls inside the already-traded range since the last hist pivot is invalid — it means price has already passed through that level and the projection is stale. In that case, either (a) identify the pivot that price already completed as a new hist pivot and re-anchor projections from there, or (b) revise the Fibonacci target to a level price has not yet reached.**
 - **COMPLETE STRUCTURE RULE: Projected sequences must be structurally complete. For A-B-C corrections, all three legs (WA, WB, WC) must be projected. For impulse sequences, project through the full next wave. Never stop mid-structure (e.g. at WB without WC) — an incomplete projection does not represent a valid Elliott Wave scenario.**
 - **MINIMUM PROJECTION SPAN: The last projected pivot in each count must be dated at least 60 calendar days after today's date. If Fibonacci-based timing yields a last projected pivot sooner than 60 days from today, extend the projection sequence by adding the next wave in the structure until coverage reaches at least today + 60 days. Do NOT use a horizontal flat line as a substitute — only real projected pivots count.**
 
@@ -148,7 +149,7 @@ If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real s
   - [ ] The bar is a confirmed local swing extreme under the ±2-bar neighboring check
   - [ ] Date is a confirmed trading day
 - **ALTERNATE COUNT CROSS-CHECK: For every historical pivot in the alternate count, confirm it independently passes all 5 gate checks. If an alternate pivot price does not match the actual bar extreme of a real swing, it must be replaced with the correct real extreme or the alternate count must be restructured.**
-- For projected pivots: Estimate based on Fibonacci extensions; projected prices do not need to be historical actuals, but must be realistic levels price could reach
+- For projected pivots: Estimate based on Fibonacci extensions; projected prices do not need to be historical actuals, but must be realistic levels price could reach AND must be outside the already-traded price range since the last hist pivot (see PRICE BOUNDS CHECK FOR PROJECTIONS above — apply it here as a final gate before writing any projected row)
 - If ANY historical pivot fails the final gate, it MUST be corrected before output — do not reduce confidence and proceed; fix the pivot first
 
 **PENALTY FOR ACCURACY VIOLATIONS:**
