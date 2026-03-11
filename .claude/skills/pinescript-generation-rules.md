@@ -10,7 +10,7 @@ do not generate code that violates any of these, so they require no fix cycle du
 - Never use style constants (line.style_*, label.style_*, size.*, xloc.*, yloc.*, extend.*, text.align_*)
   as type keywords in variable declarations -- declare such variables as type `string`
 - Explicitly declare a type for every variable (int, float, string, color, bool, line, label)
-- Never define functions inside if/for blocks
+- **CRITICAL: All user-defined functions (any block ending with `=>`) MUST be declared at the top level of the script — before any `if`, `for`, or `while` block, including `if barstate.islast`. Pine Script v6 does not allow function definitions inside any conditional or loop block; doing so causes a compile-time "Syntax error at input" on the parameter type keyword. Define all helper functions immediately after the `var` declarations and before the first `if barstate.islast` block.**
 - Place all line.new() and label.new() calls inside barstate.islast only
 - Set max_lines_count and max_labels_count in indicator() high enough for all drawn objects
 - **Use xloc.bar_time for all line.new() calls to preserve scale/zoom stability**

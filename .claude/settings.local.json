@@ -4,8 +4,13 @@
       "WebFetch(domain:stockanalysis.com)",
       "WebFetch(domain:query1.finance.yahoo.com)",
       "WebFetch(domain:finance.yahoo.com)",
-      "WebSearch",
-      "Bash(powershell -Command \":*)"
+      "WebSearch",      
+      "Bash(ls /usr/bin/python*)",
+      "Bash(ls /usr/local/bin/python*)",
+      "Bash(ls /opt/*/bin/python*)",
+      "Bash(find /usr -name python* -type f)",
+      "Bash(perl -e 'print \"\"perl works\\\\n\"\"')",
+      "Bash(awk 'BEGIN{print \"\"awk works\"\"}')"
     ]
   }
 }

@@ -79,6 +79,7 @@ For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that span
 
 **Step 8 — Project Future Wave Movement**
 - **ANCHOR RULE: Before projecting, walk the historical count all the way forward to today. Identify every confirmed swing high and swing low between the last labeled pivot and today's date on the selected timeframe. Each one that fits the wave structure must be added as a historical pivot (type: hist). Do NOT leave a gap of more than one timeframe period between the last historical pivot and today.**
+- **LAST-PIVOT EXTENSION CHECK: After labeling the last hist pivot, check whether price has since traded beyond that pivot's price in the same direction. For example — if W5 is labeled at $613 as a swing high, but price subsequently traded above $613, then W5 is NOT the terminal pivot: price extended the wave further. In that case you MUST re-identify the actual terminal pivot at the true swing extreme reached after $613, relabel it as W5 (or the appropriate wave), and only then begin projections from that new anchor. A hist pivot that has been exceeded in its own direction is a mislabeled pivot — correct it before projecting.**
 - **PROXIMITY CHECK: The last historical pivot must be within 8 weekly bars (or 8 daily bars on a daily chart) of today's date. If the most recently labeled hist pivot is older than that, the count is incomplete — continue identifying pivots until the last hist pivot is within that window.**
 - From that final confirmed pivot (now close to today), project the most probable future path for each count
 - For the PRIMARY count: project at least 2 future pivots showing the expected next wave sequence
@@ -95,8 +96,9 @@ For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that span
 2. **Proximity satisfied**: The last `hist` pivot date is within 8 weekly bars (56 calendar days) of today. If not — STOP. Fetch the latest data, walk forward, and add the missing pivots before continuing.
 3. **No stale projections**: For every `proj` pivot, confirm its price is outside the already-traded range since the last `hist` pivot. If any `proj` price has already been traded through — STOP. That pivot must be reclassified as `hist` and projections re-anchored from the new last `hist` pivot.
 4. **Fetch covers full range**: The data returned by Yahoo Finance actually includes bars up to today. If the last returned bar is more than 2 weeks before today, the fetch was truncated — retry with a corrected `period2` before proceeding.
+5. **Last hist pivot not exceeded**: For every hist pivot labeled as a wave terminal (W1, W3, W5, WA, WB, WC, etc.), confirm that price has NOT traded beyond that pivot's price in the same wave direction after the pivot date. If it has — STOP. The pivot is mislabeled. Re-identify the true terminal extreme and relabel before projecting.
 
-These four checks are not optional. An output written before all four pass is invalid.
+These five checks are not optional. An output written before all five pass is invalid.
 
 ---
 
