@@ -108,7 +108,7 @@ Do not output anything during this scan.
 - All line.new() and label.new() calls use xloc.bar_time — never xloc.bar_index
 - All timestamp x values are in milliseconds via timestamp(year, month, day) integer arguments — `timestamp()` already returns ms, so it must NEVER be multiplied by 1000; scan every timestamp declaration and remove any `* 1000` suffix
 - All label.new() calls use yloc.price — never yloc.abovebar or yloc.belowbar
-- All label.new() calls set size=size.auto
+- All label.new() calls set size=size.small — NEVER size=size.auto (collapses to invisible markers on some TradingView versions)
 - All label.new() calls set textalign=text.align_left
 - No line.new() uses extend.right or extend.left unless it is an invalidation or target level
 - Horizontal lines (y1 == y2) use line.style_dashed or line.style_dotted — not line.style_solid
