@@ -34,6 +34,28 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 - Prefer pivots that align with key Fibonacci levels (23.6%, 38.2%, 50%, 61.8%, 78.6%, 100%, 127.2%, 161.8%)
 - Pivots that cluster near multiple Fibonacci levels are stronger candidates
 
+**Step 4.5 — Identify Subwaves (one level of depth)**
+
+Apply the PIVOT ACCEPTANCE GATE to all subwave pivots — same rules as primary pivots.
+
+For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the selected timeframe:
+- Identify the 5 internal subwave pivots (sw1 through sw5) on the same timeframe
+- Label them as `W1.sw1`, `W1.sw2` … `W1.sw5` (or `W3.sw1` … `W3.sw5`, etc.)
+- Verify internally: Wave 3 subwave is not the shortest; Wave 4 subwave does not overlap Wave 1 subwave territory
+
+For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that spans at least 3 bars:
+- Identify the 3 internal subwave pivots (swa, swb, swc) on the same timeframe
+- Label them as `W2.swa`, `W2.swb`, `W2.swc` (etc.)
+- Verify zigzag, flat, or triangle structure is internally consistent
+
+**Subwave Confidence Contribution:**
+- Each motive wave whose 5 subwaves all pass the acceptance gate and satisfy EW rules: +3% to primary count confidence
+- Each corrective wave whose a-b-c subwaves all pass the acceptance gate and satisfy EW rules: +2% to primary count confidence
+- Any subwave that violates an EW rule within its parent wave: −5% to primary count confidence and must be noted
+- If fewer than 2 waves can be subwave-confirmed (too few bars or data unavailable): note "subwave confirmation: insufficient data" — do not penalize confidence
+
+**Subwave data sourcing:** Use the same Yahoo Finance fetch already performed in Step 4. Subwave pivots must be verified against the OHLC arrays — do not invent prices.
+
 **Step 5 — Select the PRIMARY Count**
 - Choose the wave count that satisfies all three Elliott Wave rules
 - Among valid counts, prefer the one where the most pivots align with Fibonacci levels
@@ -184,6 +206,14 @@ PRIMARY COUNT (X% confidence)
 [... one row per pivot ...]
 | W6   | YYYY-MM-DD | $XXX.XX  | proj | XX.X%  | proj |
 
+SUBWAVES (Primary — confirmed waves only)
+| Wave    | Date       | Price    | OHLC | Fib    | Type |
+|---------|------------|----------|------|--------|------|
+| W1.sw1  | YYYY-MM-DD | $XXX.XX  | L    | --     | hist |
+| W1.sw2  | YYYY-MM-DD | $XXX.XX  | H    | XX.X%  | hist |
+[... one row per confirmed subwave pivot ...]
+[... omit any parent wave whose subwaves could not be confirmed ...]
+
 ALTERNATE COUNT (X% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
 |------|------------|----------|------|--------|------|
@@ -191,6 +221,7 @@ ALTERNATE COUNT (X% confidence)
 
 Primary invalidation: $XXX.XX  |  Primary target: $XXX.XX (Fib XX.X%)
 Alternate invalidation: $XXX.XX  |  Alternate target: $XXX.XX (Fib XX.X%)
+Subwave confirmation: [summary — e.g. "W1✓ W2✓ W3✓ W4✗(insuf) W5✓ → +10% confidence"]
 ```
 
 The OHLC column must contain:
@@ -199,3 +230,9 @@ The OHLC column must contain:
 - `proj` for projected future pivots (no historical bar)
 
 Any pivot row with a missing or incorrect OHLC value is a signal that the PIVOT ACCEPTANCE GATE was not applied correctly.
+
+**Subwave naming conventions for the output:**
+- Motive subwaves: `W1.sw1`, `W1.sw2`, `W1.sw3`, `W1.sw4`, `W1.sw5` (substitute W3, W5 as appropriate)
+- Corrective subwaves: `W2.swa`, `W2.swb`, `W2.swc` (substitute W4, WA, WB, WC as appropriate)
+- Projected subwaves (future parent waves only): use `proj` in the Type column
+- If a parent wave has no confirmed subwaves, omit it from the SUBWAVES table entirely — do not add placeholder rows

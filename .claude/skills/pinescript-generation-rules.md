@@ -57,3 +57,6 @@ do not generate code that violates any of these, so they require no fix cycle du
   - The last projected pivot must be dated at least 60 calendar days after today. If the final projected pivot falls within 60 days, extend the projection sequence by adding the next wave in the structure
   - Do NOT add horizontal flat extension lines as a substitute for a missing projected pivot — flat lines do not represent any Elliott Wave structure
 - A toggle (bool input) called "Show Labels" to show/hide all pivot labels (does not affect invalidation, target, or legend labels)
+- A toggle (bool input) called "Show Subwaves" to show/hide the subwave lines and labels (primary count only); default value is `true`
+  - When hidden, suppress all subwave lines, subwave pivot labels, and the subwave legend row
+  - When visible, render subwave lines as dashed, width=1, at 55% transparency relative to the primary count color; render subwave labels at size=size.tiny
