@@ -67,6 +67,15 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 - **COMPLETE STRUCTURE RULE: Projected sequences must be structurally complete. For A-B-C corrections, all three legs (WA, WB, WC) must be projected. For impulse sequences, project through the full next wave. Never stop mid-structure (e.g. at WB without WC) — an incomplete projection does not represent a valid Elliott Wave scenario.**
 - **MINIMUM PROJECTION SPAN: The last projected pivot in each count must be dated at least 60 calendar days after today's date. If Fibonacci-based timing yields a last projected pivot sooner than 60 days from today, extend the projection sequence by adding the next wave in the structure until coverage reaches at least today + 60 days. Do NOT use a horizontal flat line as a substitute — only real projected pivots count.**
 
+**STEP 8 HARD STOP — Do not write any output until all four of the following are confirmed true:**
+
+1. **Data fetched through today**: The Yahoo Finance API was called with `period2` set to today's Unix timestamp (not the analysis start date, not an arbitrary past date). Confirm the last bar in the returned data is within the current week.
+2. **Proximity satisfied**: The last `hist` pivot date is within 8 weekly bars (56 calendar days) of today. If not — STOP. Fetch the latest data, walk forward, and add the missing pivots before continuing.
+3. **No stale projections**: For every `proj` pivot, confirm its price is outside the already-traded range since the last `hist` pivot. If any `proj` price has already been traded through — STOP. That pivot must be reclassified as `hist` and projections re-anchored from the new last `hist` pivot.
+4. **Fetch covers full range**: The data returned by Yahoo Finance actually includes bars up to today. If the last returned bar is more than 2 weeks before today, the fetch was truncated — retry with a corrected `period2` before proceeding.
+
+These four checks are not optional. An output written before all four pass is invalid.
+
 ---
 
 ### PRICE ACCURACY REQUIREMENT
