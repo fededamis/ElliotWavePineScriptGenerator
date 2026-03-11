@@ -4,7 +4,8 @@
       "WebFetch(domain:stockanalysis.com)",
       "WebFetch(domain:query1.finance.yahoo.com)",
       "WebFetch(domain:finance.yahoo.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(powershell -Command \":*)"
     ]
   }
 }
