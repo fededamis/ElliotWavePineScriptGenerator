@@ -43,7 +43,11 @@ Apply the PIVOT ACCEPTANCE GATE to all subwave pivots — same rules as primary 
 For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the selected timeframe:
 - Identify the 5 internal subwave pivots (sw1 through sw5) on the same timeframe
 - Label them as `W1.sw1`, `W1.sw2` … `W1.sw5` (or `W3.sw1` … `W3.sw5`, etc.)
-- Verify internally: Wave 3 subwave is not the shortest; Wave 4 subwave does not overlap Wave 1 subwave territory
+- **Apply the three absolute EW rules at the subwave level — these are not optional:**
+  1. sw2 never retraces more than 100% of sw1 (sw2's extreme cannot go beyond the start of sw1, i.e. the parent wave's origin)
+  2. sw3 is never the shortest among sw1, sw3, and sw5
+  3. sw4 never overlaps sw1's price territory
+- **If any of these three rules is violated, the PRIMARY COUNT IS INVALIDATED. The three absolute EW rules apply at every wave degree — a violation at the subwave level means the primary pivot labeling is wrong (the parent wave's start or end was mislabeled). STOP. Do not output the current primary count. Return to Step 5, select a different pivot set, and re-run subwave verification. Repeat until a primary count is found whose subwaves all satisfy the three rules.**
 
 For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that spans at least 3 bars:
 - Identify the 3 internal subwave pivots (swa, swb, swc) on the same timeframe
@@ -55,7 +59,7 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 **Subwave Confidence Contribution:**
 - Each motive wave whose 5 subwaves all pass the acceptance gate and satisfy EW rules: +3% to primary count confidence
 - Each corrective wave whose a-b-c subwaves all pass the acceptance gate and satisfy EW rules: +2% to primary count confidence
-- Any subwave that violates an EW rule within its parent wave: −5% to primary count confidence and must be noted
+- Any subwave EW rule violation: primary count is INVALIDATED (see rule above) — confidence adjustments do not apply; a valid count must be found instead
 - If fewer than 2 waves can be subwave-confirmed (too few bars or data unavailable): note "subwave confirmation: insufficient data" — do not penalize confidence
 
 **Subwave data sourcing:** Use the same Yahoo Finance fetch already performed in Step 4. Subwave pivots must be verified against the OHLC arrays — do not invent prices.
