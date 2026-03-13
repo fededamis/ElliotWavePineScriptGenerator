@@ -6,3 +6,4 @@ Pending Tasks:
 - ADD CONFIDENCE ON COUNTS
 - RUN OPTIMIZATION SKILL ON PROMPT
 - FIX BUG ON SCREENSHOT
+- Check for Node or Python installations (numpy)
