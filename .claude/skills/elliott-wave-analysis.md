@@ -38,6 +38,8 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 Apply the PIVOT ACCEPTANCE GATE to all subwave pivots — same rules as primary pivots.
 
+**MANDATORY COVERAGE RULE: You MUST attempt subwave identification for EVERY primary wave (W1, W2, W3, W4, W5). Skipping a wave silently is not allowed. For each wave, either (a) produce its confirmed subwave rows, or (b) explicitly state why it was skipped (e.g. "W1: only 3 bars — insufficient for subwave identification"). The Subwave note at the bottom of the output must list every primary wave and its result (✓, ⚠, or ✗(reason)).**
+
 For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the selected timeframe:
 - Identify the 5 internal subwave pivots (sw1 through sw5) on the same timeframe
 - Label them as `W1.sw1`, `W1.sw2` … `W1.sw5` (or `W3.sw1` … `W3.sw5`, etc.)
@@ -47,6 +49,8 @@ For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that span
 - Identify the 3 internal subwave pivots (swa, swb, swc) on the same timeframe
 - Label them as `W2.swa`, `W2.swb`, `W2.swc` (etc.)
 - Verify zigzag, flat, or triangle structure is internally consistent
+
+If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars), mark it as `✗(insuf)` in the Subwave note — do not silently omit it.
 
 **Subwave Confidence Contribution:**
 - Each motive wave whose 5 subwaves all pass the acceptance gate and satisfy EW rules: +3% to primary count confidence
@@ -223,7 +227,7 @@ ALTERNATE COUNT (X% confidence)
 
 Primary invalidation: $XXX.XX  |  Primary target: $XXX.XX (Fib XX.X%)
 Alternate invalidation: $XXX.XX  |  Alternate target: $XXX.XX (Fib XX.X%)
-Subwave confirmation: [summary — e.g. "W1✓ W2✓ W3✓ W4✗(insuf) W5✓ → +10% confidence"]
+Subwave confirmation: [REQUIRED — list every primary wave: "W1✓ W2✓ W3✓ W4✗(insuf) W5⚠ → +10% confidence". Every wave (W1–W5) must appear here with a result. Missing waves are not allowed.]
 ```
 
 The OHLC column must contain:
