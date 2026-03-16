@@ -88,7 +88,7 @@ All three LLM subagent calls are strictly sequential — no parallelization poss
 
 ### TIER 1 — HIGH IMPACT
 
-**T1-A: Resolve the `textalign` three-way contradiction** *(Issues #2, #3, #12)*
+**T1-A: Resolve the `textalign` three-way contradiction** *(Issues #2, #3, #12)* ✅ SOLVED
 
 This is the most impactful fix because it's an active bug, not just inefficiency.
 
@@ -98,14 +98,14 @@ This is the most impactful fix because it's an active bug, not just inefficiency
 - **Update** `pinescript-validation-passes.md` D L112 to match the canonical value
 - Estimated fix: eliminates silent per-run style override; ensures deterministic output
 
-**T1-B: Eliminate cross-file `size=size.small` and label style duplication** *(Issues #1, #4, #5)*
+**T1-B: Eliminate cross-file `size=size.small` and label style duplication** *(Issues #1, #4, #5)* ✅ SOLVED
 
 - Keep authoritative label style rules in `pinescript-visual-style.md` only
 - In `pinescript-generation-rules.md`: replace the three duplicated label rules (size, textalign, style) with a single line: *"For all label style, size, and textalign constraints — see `pinescript-visual-style.md` (authoritative source)"*
 - In `pinescript-validation-passes.md` D: remove the `size=size.small` and `textalign` checks (they're enforced at generation time by the authoritative source); keep only the coordinate-related checks unique to validation
 - Estimated savings: ~60–80 tokens removed from cross-file duplication
 
-**T1-C: Consolidate PIVOT ACCEPTANCE GATE triple-application** *(Issue #10)*
+**T1-C: Consolidate PIVOT ACCEPTANCE GATE triple-application** *(Issue #10)* ✅ SOLVED
 
 - In `elliott-wave-analysis.md`: define the gate ONCE (it already is, at L150–161)
 - Replace the Stage 1 / Stage 2 / Stage 3 restatements with single-line back-references: *"Re-apply the PIVOT ACCEPTANCE GATE (defined above) to all pivots at this stage"*
