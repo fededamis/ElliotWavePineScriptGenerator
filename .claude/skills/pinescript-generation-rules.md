@@ -18,9 +18,7 @@ do not generate code that violates any of these, so they require no fix cycle du
 - Convert all hardcoded dates with timestamp(year, month, day) integer arguments -- never string literals
 - **CRITICAL: `timestamp()` already returns milliseconds in Pine Script v6 -- NEVER multiply its result by 1000. Doing so produces year ~54000 timestamps that push all drawings off-screen. Correct: `int t = timestamp(2024, 1, 15)`. Forbidden: `int t = timestamp(2024, 1, 15) * 1000`**
 - Use yloc.price explicitly on all analytical label.new() calls -- never yloc.abovebar or yloc.belowbar
-- **CRITICAL: For ALL label.new() calls: use size=size.small — NEVER size=size.auto, which collapses labels to invisible markers on some TradingView versions**
-- **CRITICAL: For ALL label.new() calls: use textalign=text.align_center — NEVER text.align_left**
-- **For pivot labels at highs: use style=label.style_label_down (label displays above the pin); for lows: use style=label.style_label_up (label displays below the pin)**
+- **For all label size, textalign, and style direction constraints — see `pinescript-visual-style.md` (authoritative source)**
 - **Label Y-offset arrays: declare a parallel float array `pr_yoffs` (primary) and `al_yoffs` (alternate) alongside the pivot price arrays. Each entry defaults to 0.0. For any two pivots whose prices are within ~5% of the price range apart AND whose timestamps are within 8 weekly bars (or 40 daily bars) of each other, set non-zero offsets to separate their labels: push the high pivot's label up (positive offset) and the low pivot's label down (negative offset) by approximately 3% of the total price range. Apply the offset as `y = price + yoff` in every label.new() call. The offset does NOT move the wave line endpoint -- only the label box.**
 - Use line.style_dashed or line.style_dotted for all horizontal lines (y1 == y2)
 - Guard every array access with array.size(arr) > 0 before access

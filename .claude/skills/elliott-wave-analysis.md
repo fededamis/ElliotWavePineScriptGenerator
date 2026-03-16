@@ -170,28 +170,11 @@ If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real s
 
 **VALIDATION AT THREE STAGES:**
 
-**Stage 1 — Historical Pivot Identification:**
-- Apply the PIVOT ACCEPTANCE GATE above to every pivot before accepting it
-- Use only the bar's actual High (swing high) or actual Low (swing low) on the selected timeframe
-- Do NOT use interpolated, theoretical, averaged, or rounded prices
-- If a pivot date falls on a non-trading day (weekend, holiday), use the nearest valid trading day and re-apply the gate
-- For each accepted pivot, record: date, bar's High or Low used, and which OHLC field (H or L)
-- **ALTERNATE COUNT PIVOTS: Apply the same PIVOT ACCEPTANCE GATE — every alternate-count historical pivot must independently pass all 5 checks. A pivot that exists only to satisfy a Fibonacci ratio or wave-label requirement is invalid. If no real swing passes the gate at the required location, the alternate structure must be revised.**
+**Stage 1 — Historical Pivot Identification:** Re-apply the PIVOT ACCEPTANCE GATE (defined above) to every pivot before accepting it. For alternate-count pivots, each must independently pass all 6 checks — if no real swing passes at the required location, revise the alternate structure.
 
-**Stage 2 — Fibonacci Alignment Verification:**
-- After all pivots pass the gate, verify each Fibonacci level calculation uses the exact gated prices
-- Recalculate retracement/extension percentages using exact prices, not rounded values
-- Flag any Fibonacci level that required using a non-gated price — that pivot must be replaced
+**Stage 2 — Fibonacci Alignment Verification:** After all pivots pass the gate, verify each Fibonacci level calculation uses the exact gated prices. Recalculate retracement/extension percentages using exact prices. Flag any Fibonacci level that required a non-gated price — replace that pivot.
 
-**Stage 3 — Final Accuracy Cross-Check (Before Output):**
-- Re-run the PIVOT ACCEPTANCE GATE on every historical pivot one final time before writing the output table
-- For each pivot confirm:
-  - [ ] Price is the actual bar High (swing high) or bar Low (swing low) — not Open, Close, or a rounded value
-  - [ ] The bar is a confirmed local swing extreme under the ±2-bar neighboring check
-  - [ ] Date is a confirmed trading day
-- **ALTERNATE COUNT CROSS-CHECK: For every historical pivot in the alternate count, confirm it independently passes all 5 gate checks. If an alternate pivot price does not match the actual bar extreme of a real swing, it must be replaced with the correct real extreme or the alternate count must be restructured.**
-- For projected pivots: Estimate based on Fibonacci extensions; projected prices do not need to be historical actuals, but must be realistic levels price could reach AND must be outside the already-traded price range since the last hist pivot (see PRICE BOUNDS CHECK FOR PROJECTIONS above — apply it here as a final gate before writing any projected row)
-- If ANY historical pivot fails the final gate, it MUST be corrected before output — do not reduce confidence and proceed; fix the pivot first
+**Stage 3 — Final Accuracy Cross-Check (Before Output):** Re-apply the PIVOT ACCEPTANCE GATE to every historical pivot one final time. For projected pivots, also apply the PRICE BOUNDS CHECK FOR PROJECTIONS (defined in Step 8) as a final gate before writing any projected row. If ANY historical pivot fails, correct it before output — do not reduce confidence and proceed.
 
 **PENALTY FOR ACCURACY VIOLATIONS:**
 - Pivot using Close, Open, or any non-extreme OHLC field: REJECTED — must be replaced before output
