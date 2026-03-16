@@ -14,4 +14,8 @@ Generates a .pine script to be imported into TradingView with Elliot Wave Analys
 
 When editing a rule, update it **only in the authoritative file** listed above. Do not restate it elsewhere.
 
+## URLs
+Slideshow: https://fededamis.github.io/ElliotWavePineScriptGenerator
+Repo: https://github.com/fededamis/ElliotWavePineScriptGenerator
+
 ## Pending Tasks

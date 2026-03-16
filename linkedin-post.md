@@ -1,5 +1,8 @@
 # LinkedIn Post — Elliott Wave PineScript Generator
 
+URL: https://fededamis.github.io/ElliotWavePineScriptGenerator
+Repo: https://github.com/fededamis/ElliotWavePineScriptGenerator
+
 ---
 
 ## English
