@@ -114,11 +114,7 @@ These five checks are not optional. An output written before all five pass is in
 
 **Critical:** All pivot prices (both historical and projected) must correspond to actual price levels:
 
-**PRE-ANALYSIS CHECKLIST (Complete before starting):**
-- [ ] Yahoo Finance API has been called and OHLC data confirmed returned for the ticker and full date range
-- [ ] All dates in the analysis period are confirmed trading days (verified against the timestamp array returned by the API — no weekends/holidays)
-- [ ] Chart data covers the full analysis window with precise OHLC prices for the selected timeframe
-- [ ] API response parsed: `chart.result[0].indicators.quote[0]` arrays are non-null and cover the full date range
+**PRE-ANALYSIS CHECKLIST:** Confirm the Yahoo Finance API response covers the full date range and that `chart.result[0].indicators.quote[0]` arrays are non-null before recording any pivot.
 
 **DATA SOURCING REQUIREMENT — HARD STOP BEFORE ANY PIVOT IS RECORDED:**
 

@@ -137,24 +137,21 @@ This is the most impactful fix because it's an active bug, not just inefficiency
 
 ### TIER 3 — LOW IMPACT / MAINTAINABILITY
 
-**T3-A: Remove dead HTML comment** *(Issue #11)*
+**T3-A: Remove dead HTML comment** *(Issue #11)* ✅ SOLVED
 
-- Delete `<!-- Bug fix protocol moved to skill: bug-fix-protocol -->` from main prompt L87
-- Zero runtime value; ~8 tokens saved
+- Deleted `<!-- Bug fix protocol moved to skill: bug-fix-protocol -->` from main prompt; ~8 tokens saved
 
-**T3-B: Remove duplicate OUTPUT RULE** *(Issue #6)*
+**T3-B: Remove duplicate OUTPUT RULE** *(Issue #6)* ✅ SOLVED
 
-- Keep L92 (in the OUTPUT section); remove L60 ("Output rule" inline before generation delegation)
-- Estimated savings: ~15 tokens
+- Removed inline OUTPUT RULE before generation delegation; authoritative copy kept in OUTPUT section; ~15 tokens saved
 
-**T3-C: Remove PRE-ANALYSIS CHECKLIST checkboxes** *(Issue #13)*
+**T3-C: Remove PRE-ANALYSIS CHECKLIST checkboxes** *(Issue #13)* ✅ SOLVED
 
-- Replace the checkbox list in `elliott-wave-analysis.md` L109–113 with a single sentence: *"Confirm API response covers the full date range before recording any pivot."*
-- Estimated savings: ~30 tokens
+- Replaced 4-checkbox list in `elliott-wave-analysis.md` with a single sentence; ~30 tokens saved
 
-**T3-D: Add rule ownership table to README** *(General maintainability)*
+**T3-D: Add rule ownership table to README** *(General maintainability)* ✅ SOLVED
 
-- Document which file owns which rule domain so future edits go to the right file
+- Added rule ownership table to `README.md` documenting which file owns each rule domain
 
 ---
 

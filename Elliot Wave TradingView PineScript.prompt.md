@@ -57,8 +57,6 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 >
 > The main agent receives only the compact pivot table from the subagent. Do not re-run or re-derive any part of the analysis in the main context.
 
-**OUTPUT RULE: Write the Pine Script ONLY via the Write tool. Do not output, echo, or preview any line of the script as conversation text.**
-
 > **SUBAGENT DELEGATION — PINE SCRIPT GENERATION:**
 > Delegate Pine Script generation to a subagent.
 > The subagent must:
@@ -81,10 +79,6 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 > 5. Return ONLY the corrected Pine Script source code — no fix list, no commentary, no before/after comparisons
 >
 > The main agent receives only the corrected script from the subagent and writes it to disk. Do not re-run or re-check any validation rules in the main context.
-
----
-
-<!-- Bug fix protocol moved to skill: bug-fix-protocol -->
 
 ---
 
