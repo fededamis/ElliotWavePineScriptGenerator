@@ -34,7 +34,9 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 - Prefer pivots that align with key Fibonacci levels (23.6%, 38.2%, 50%, 61.8%, 78.6%, 100%, 127.2%, 161.8%)
 - Pivots that cluster near multiple Fibonacci levels are stronger candidates
 
-**Step 4.5 — Identify Subwaves (one level of depth)**
+**Step 4.5 — Identify Subwaves (one level of depth only)**
+
+**DEPTH LIMIT: Subwave identification is strictly one level deep. You may only subdivide primary waves (W1, W2, W3, W4, W5) into their subwaves. You must NOT subdivide a subwave into its own sub-subwaves (e.g. W1.sw5 must not have its own sw1–sw5; W1.sw2 must not have its own swa–swc). Any second-level nesting is invalid and must not appear in the output.**
 
 Apply the PIVOT ACCEPTANCE GATE to all subwave pivots — same rules as primary pivots.
 
@@ -61,6 +63,8 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 - Each corrective wave whose a-b-c subwaves all pass the acceptance gate and satisfy EW rules: +2% to primary count confidence
 - Any subwave EW rule violation: primary count is INVALIDATED (see rule above) — confidence adjustments do not apply; a valid count must be found instead
 - If fewer than 2 waves can be subwave-confirmed (too few bars or data unavailable): note "subwave confirmation: insufficient data" — do not penalize confidence
+
+**Alternate count subwaves:** Apply the same subwave identification process to the alternate count's confirmed historical waves. For each alternate count wave that spans sufficient bars (motive ≥ 5 bars, corrective ≥ 3 bars), produce a `SUBWAVES (Alternate — confirmed waves only)` section in the output using the same naming conventions (e.g. `WI.sw1`…`WI.sw5`, `WA.swa`…`WA.swc`). If no alternate count waves qualify, omit the section. The same one-level depth limit applies.
 
 **Subwave data sourcing:** Use the same Yahoo Finance fetch already performed in Step 4. Subwave pivots must be verified against the OHLC arrays — do not invent prices.
 
@@ -205,6 +209,13 @@ SUBWAVES (Primary — confirmed waves only)
 [... one row per confirmed subwave pivot ...]
 [... omit any parent wave whose subwaves could not be confirmed ...]
 
+SUBWAVES (Alternate — confirmed waves only)
+| Wave    | Date       | Price    | OHLC | Fib    | Type |
+|---------|------------|----------|------|--------|------|
+[... one row per confirmed subwave pivot for alternate count historical waves ...]
+[... omit any parent wave whose subwaves could not be confirmed ...]
+[... omit entirely if no alternate count waves have confirmable subwaves ...]
+
 ALTERNATE COUNT (X% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
 |------|------------|----------|------|--------|------|
@@ -227,3 +238,4 @@ Any pivot row with a missing or incorrect OHLC value is a signal that the PIVOT 
 - Corrective subwaves: `W2.swa`, `W2.swb`, `W2.swc` (substitute W4, WA, WB, WC as appropriate)
 - Projected subwaves (future parent waves only): use `proj` in the Type column
 - If a parent wave has no confirmed subwaves, omit it from the SUBWAVES table entirely — do not add placeholder rows
+- **NEVER add a second subwave table for a subwave itself (e.g. "W1.sw5 subwaves" or "W1.sw2 subwaves"). Only primary waves may have subwave tables. Maximum nesting depth is one level.**
