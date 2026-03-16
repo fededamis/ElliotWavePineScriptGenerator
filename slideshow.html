@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Elliott Wave PineScript Generator — AI Portfolio</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --accent: #00d4ff;
+    --accent2: #ff00ff;
+    --accent3: #ff9900;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --green: #3fb950;
+    --red: #f85149;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ── SLIDES ── */
+  .slide {
+    display: none;
+    position: absolute;
+    inset: 0;
+    padding: 60px 80px;
+    flex-direction: column;
+    justify-content: center;
+    animation: fadeIn 0.4s ease;
+  }
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NAVIGATION ── */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+    background: rgba(22,27,34,0.85);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 10px 20px;
+    backdrop-filter: blur(8px);
+  }
+  .nav button {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .nav button:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+  .nav .counter { font-size: 13px; color: var(--muted); min-width: 60px; text-align: center; }
+
+  /* ── PROGRESS BAR ── */
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.3s ease;
+    z-index: 200;
+  }
+
+  /* ── SLIDE 1: TITLE ── */
+  .title-slide {
+    background: radial-gradient(ellipse at 30% 50%, rgba(0,212,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(255,0,255,0.06) 0%, transparent 60%),
+                var(--bg);
+    text-align: center;
+    align-items: center;
+  }
+  .title-slide .eyebrow {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  .title-slide h1 {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+  .title-slide .subtitle {
+    font-size: 20px;
+    color: var(--muted);
+    max-width: 620px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  .tag-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .tag {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .tag.pink { background: rgba(255,0,255,0.1); border-color: rgba(255,0,255,0.3); color: var(--accent2); }
+  .tag.orange { background: rgba(255,153,0,0.1); border-color: rgba(255,153,0,0.3); color: var(--accent3); }
+
+  /* ── SECTION HEADER ── */
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  h2 {
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .lead {
+    font-size: 18px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 720px;
+    margin-bottom: 40px;
+  }
+
+  /* ── TWO-COLUMN ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .card .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── LIST ── */
+  ul.checklist { list-style: none; }
+  ul.checklist li {
+    padding: 8px 0;
+    font-size: 15px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+  ul.checklist li:last-child { border-bottom: none; }
+  ul.checklist li::before {
+    content: "→";
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  ul.checklist li strong { color: var(--text); }
+
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .pipe-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 110px;
+  }
+  .pipe-step .num {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .pipe-step .label { font-size: 13px; font-weight: 600; }
+  .pipe-step .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .pipe-arrow {
+    color: var(--muted);
+    font-size: 20px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .pipe-step.highlight { border-color: var(--accent); background: rgba(0,212,255,0.06); }
+  .pipe-step.highlight2 { border-color: var(--accent2); background: rgba(255,0,255,0.06); }
+  .pipe-step.highlight3 { border-color: var(--accent3); background: rgba(255,153,0,0.06); }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    position: relative;
+  }
+  .code-block .lang-badge {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .num { color: #79c0ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .var { color: #ffa657; }
+
+  /* ── METRIC BOXES ── */
+  .metric-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 4px; }
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 28px;
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+  }
+  .metric .val {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .metric .lbl { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  /* ── COLOR SWATCH ── */
+  .swatch-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  .dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── SLIDE 7: RESULT ── */
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* ── QUOTE ── */
+  .quote-block {
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    background: rgba(0,212,255,0.05);
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* ── CLOSING ── */
+  .closing-slide {
+    background: radial-gradient(ellipse at 60% 40%, rgba(255,0,255,0.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 70%, rgba(0,212,255,0.07) 0%, transparent 55%),
+                var(--bg);
+    text-align: center;
+    align-items: center;
+  }
+
+  /* ── KEYBOARD HINT ── */
+  .kbd-hint {
+    position: fixed;
+    top: 20px; right: 24px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .kbd-hint kbd {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="kbd-hint"><kbd>←</kbd> <kbd>→</kbd> to navigate</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 1 — TITLE
+══════════════════════════════════════════ -->
+<div class="slide title-slide active" id="slide-1">
+  <div class="eyebrow">AI Portfolio Project</div>
+  <h1>Elliott Wave<br/>PineScript Generator</h1>
+  <p class="subtitle">
+    An AI-orchestrated pipeline that turns a stock ticker and a date into a
+    fully working TradingView indicator — no coding required.
+  </p>
+  <div class="tag-row">
+    <span class="tag">Claude AI</span>
+    <span class="tag">Prompt Engineering</span>
+    <span class="tag pink">Elliott Wave Theory</span>
+    <span class="tag pink">Multi-Agent Pipeline</span>
+    <span class="tag orange">TradingView PineScript</span>
+    <span class="tag orange">Technical Analysis</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 2 — THE PROBLEM
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-2">
+  <div class="section-label">The Problem</div>
+  <h2>Elliott Wave is powerful<br/>but brutally complex</h2>
+  <div class="two-col">
+    <div>
+      <p class="lead">
+        Elliott Wave analysis requires simultaneous mastery of wave rules,
+        Fibonacci math, and charting code — a rare combination that keeps
+        it out of reach for most traders.
+      </p>
+      <ul class="checklist">
+        <li><strong>3 absolute rules</strong> that can never be violated, plus 8 additional guidelines to balance</li>
+        <li><strong>Fibonacci levels</strong> at 8+ ratios must be computed and validated against real price data</li>
+        <li><strong>PineScript v6</strong> has strict type constraints that cause silent runtime failures</li>
+        <li><strong>Manual chart work</strong> for a single ticker can take hours of analysis</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color: rgba(248,81,73,0.4); background: rgba(248,81,73,0.05);">
+      <div class="card-icon">📉</div>
+      <h3 style="color: var(--red);">Without AI</h3>
+      <ul class="checklist" style="margin-top: 8px;">
+        <li>Manually fetch historical OHLC data</li>
+        <li>Identify and validate pivot points by hand</li>
+        <li>Apply Fibonacci measurements to each wave</li>
+        <li>Hand-code the PineScript indicator</li>
+        <li>Debug type errors and coordinate issues</li>
+        <li>Hours of work per ticker</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 3 — THE SOLUTION
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-3">
+  <div class="section-label">The Solution</div>
+  <h2>Type a ticker.<br/>Get a working indicator.</h2>
+  <p class="lead">A Claude AI prompt system orchestrates specialized subagents — each an expert in one domain — to handle the full pipeline automatically.</p>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="num">INPUT</div>
+      <div class="label">Ticker + Date</div>
+      <div class="sub">e.g. SPY 2022-10-01</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step highlight">
+      <div class="num">PHASE 1</div>
+      <div class="label">Cache Check</div>
+      <div class="sub">.wave file lookup</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step highlight">
+      <div class="num">PHASE 2</div>
+      <div class="label">Wave Analysis</div>
+      <div class="sub">Yahoo Finance data</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step highlight2">
+      <div class="num">PHASE 3</div>
+      <div class="label">PineScript Gen</div>
+      <div class="sub">v6 compliant code</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step highlight3">
+      <div class="num">PHASE 4</div>
+      <div class="label">Validation</div>
+      <div class="sub">5 automated passes</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step" style="border-color: var(--green); background: rgba(63,185,80,0.06);">
+      <div class="num" style="color: var(--green);">OUTPUT</div>
+      <div class="label">.pine File</div>
+      <div class="sub">Ready for TradingView</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px;" class="metric-row">
+    <div class="metric"><div class="val">0</div><div class="lbl">Lines of code written manually</div></div>
+    <div class="metric"><div class="val">4</div><div class="lbl">Specialized AI subagents</div></div>
+    <div class="metric"><div class="val">5</div><div class="lbl">Validation passes</div></div>
+    <div class="metric"><div class="val">~45K</div><div class="lbl">Lines of generated PineScript</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 4 — PROMPT ENGINEERING ARCHITECTURE
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-4">
+  <div class="section-label">Prompt Engineering</div>
+  <h2>Modular skill architecture<br/>with strict rule ownership</h2>
+  <div class="two-col">
+    <div>
+      <p class="lead" style="font-size: 16px;">Each domain has exactly one authoritative source file. No rule duplication. Clear ownership prevents contradictions.</p>
+      <ul class="checklist">
+        <li><strong>Main Orchestrator</strong> — controls flow, cache, subagent delegation</li>
+        <li><strong>elliott-wave-analysis.md</strong> — 8-step methodology, Fibonacci validation, PIVOT ACCEPTANCE GATE</li>
+        <li><strong>pinescript-generation-rules.md</strong> — v6 type constraints, array safety, coordinate system</li>
+        <li><strong>pinescript-visual-style.md</strong> — color scheme, label sizes, opacity rules</li>
+        <li><strong>pinescript-validation-passes.md</strong> — 5 integrated QA passes (syntax → type → logic → coords → bounds)</li>
+        <li><strong>bug-fix-protocol.md</strong> — fixes applied to source to prevent bug reproduction</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-icon">🔒</div>
+        <h3>PIVOT ACCEPTANCE GATE</h3>
+        <p>Six mandatory validation checks on every data point — ensures only real, confirmed market pivots enter the analysis. No interpolation. No model memory. Yahoo Finance data only.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">♻️</div>
+        <h3>Cache Layer</h3>
+        <p>Wave analysis results are persisted to <code style="color: var(--accent); font-size: 12px;">[TICKER] [DATE].wave</code>. Re-runs skip the expensive data fetch and jump straight to PineScript generation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 5 — WAVE ANALYSIS DEPTH
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-5">
+  <div class="section-label">Elliott Wave Analysis Engine</div>
+  <h2>Real market data.<br/>Rigorous wave counting.</h2>
+  <div class="two-col" style="align-items: start;">
+    <div>
+      <p class="lead" style="font-size: 16px; margin-bottom: 24px;">The AI fetches live OHLC data from Yahoo Finance and applies the full Elliott Wave ruleset — including subwave decomposition at one level deep.</p>
+      <ul class="checklist">
+        <li><strong>Primary + Alternate counts</strong> with calibrated confidence scores (e.g., 55% / 45%)</li>
+        <li><strong>Fibonacci validation</strong> at 23.6%, 38.2%, 50%, 61.8%, 78.6%, 100%, 127.2%, 161.8%</li>
+        <li><strong>Subwaves mandatory</strong> for every impulse — 5-wave for motive, 3-wave for corrective</li>
+        <li><strong>Price targets &amp; invalidation levels</strong> per count</li>
+        <li><strong>Timeframe selection</strong> — daily (≤2 yr) or weekly (>2 yr) automatically</li>
+      </ul>
+    </div>
+    <div class="code-block">
+      <span class="lang-badge">SPY 2022-10-01.wave (excerpt)</span>
+<span class="cm">// Primary Count — 55% confidence</span>
+<span class="cm">// Motive 5-wave impulse up from lows</span>
+
+<span class="var">W1</span>: <span class="num">2022-10-12</span> → <span class="num">2022-11-01</span>  Low→High
+<span class="var">W2</span>: <span class="num">2022-11-01</span> → <span class="num">2022-11-03</span>  Flat corrective
+<span class="var">W3</span>: <span class="num">2022-11-03</span> → <span class="num">2022-12-13</span>  Longest wave ✓
+<span class="var">W4</span>: <span class="num">2022-12-13</span> → <span class="num">2022-12-22</span>  Zigzag (a-b-c)
+<span class="var">W5</span>: <span class="num">2022-12-22</span> → <span class="num">2023-02-02</span>  Extension
+
+<span class="cm">// Subwaves — W3 decomposition</span>
+<span class="var">W3.1</span>: <span class="num">392.17</span> → <span class="num">398.05</span>
+<span class="var">W3.2</span>: <span class="num">398.05</span> → <span class="num">393.58</span>
+<span class="var">W3.3</span>: <span class="num">393.58</span> → <span class="num">405.15</span>  <span class="cm">// longest ✓</span>
+<span class="var">W3.4</span>: <span class="num">405.15</span> → <span class="num">401.20</span>
+<span class="var">W3.5</span>: <span class="num">401.20</span> → <span class="num">409.50</span>
+
+<span class="cm">// Target: 430–445 | Invalidation: below 348.11</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 6 — GENERATED PINESCRIPT
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-6">
+  <div class="section-label">PineScript Generation</div>
+  <h2>Production-grade code.<br/>Zero manual editing.</h2>
+  <div class="two-col">
+    <div>
+      <p class="lead" style="font-size: 16px; margin-bottom: 20px;">The generated indicator includes 8 interactive controls and handles all TradingView v6 quirks automatically.</p>
+      <div class="swatch-row" style="margin-bottom: 20px;">
+        <div class="swatch"><div class="dot" style="background:#00d4ff;"></div>Upward motive (aqua)</div>
+        <div class="swatch"><div class="dot" style="background:#ff00ff;"></div>Downward motive (fuchsia)</div>
+        <div class="swatch"><div class="dot" style="background:#ff9900;"></div>Corrective waves (orange)</div>
+      </div>
+      <ul class="checklist">
+        <li><strong>Show Count:</strong> Primary / Both / Alternate</li>
+        <li><strong>Alternate at 55% opacity</strong> when "Both" selected</li>
+        <li><strong>Toggle:</strong> Invalidation levels, Targets, Projections, Labels, Subwaves, Legend</li>
+        <li><strong>Legend position:</strong> 4 corners</li>
+        <li><strong>Collision detection</strong> for overlapping labels</li>
+      </ul>
+    </div>
+    <div class="code-block" style="font-size: 12px;">
+      <span class="lang-badge">PineScript v6</span>
+<span class="kw">//@version=</span><span class="num">6</span>
+<span class="fn">indicator</span>(<span class="str">"SPY Elliott Wave — 2022-10-01"</span>,
+         overlay=<span class="kw">true</span>, max_lines_count=<span class="num">500</span>)
+
+<span class="cm">// ── Inputs ──────────────────────────────</span>
+<span class="var">showCount</span> = <span class="fn">input.string</span>(<span class="str">"Primary Only"</span>,
+  options=[<span class="str">"Primary Only"</span>,<span class="str">"Both"</span>,<span class="str">"Alternate Only"</span>])
+<span class="var">showSubs</span>  = <span class="fn">input.bool</span>(<span class="kw">true</span>, <span class="str">"Show Subwaves"</span>)
+<span class="var">showTgt</span>   = <span class="fn">input.bool</span>(<span class="kw">true</span>, <span class="str">"Show Targets"</span>)
+
+<span class="cm">// ── Drawing (only on last bar) ──────────</span>
+<span class="kw">if</span> <span class="var">barstate.islast</span>
+    <span class="var">altAlpha</span> = <span class="var">showCount</span> == <span class="str">"Both"</span> ? <span class="num">55</span> : <span class="num">100</span>
+    <span class="cm">// Primary W1 — aqua upward</span>
+    <span class="fn">line.new</span>(x1=<span class="fn">timestamp</span>(<span class="num">2022</span>,<span class="num">10</span>,<span class="num">12</span>),
+             y1=<span class="num">348.11</span>,
+             x2=<span class="fn">timestamp</span>(<span class="num">2022</span>,<span class="num">11</span>,<span class="num">01</span>),
+             y2=<span class="num">393.84</span>,
+             xloc=<span class="var">xloc.bar_time</span>,
+             color=<span class="fn">color.new</span>(<span class="var">color.aqua</span>,<span class="num">0</span>),
+             width=<span class="num">2</span>)
+    <span class="cm">// ... (hundreds more lines auto-generated)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 7 — QUALITY ASSURANCE
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-7">
+  <div class="section-label">Quality Assurance</div>
+  <h2>5-pass automated validation<br/>before any output is written</h2>
+  <div class="three-col" style="margin-bottom: 24px;">
+    <div class="card">
+      <div class="card-icon">🔤</div>
+      <h3>Pass A — Syntax</h3>
+      <p>Verifies PineScript v6 syntax. Checks <code style="color:var(--accent);font-size:11px;">//@version=6</code> header, balanced brackets, no v4/v5 deprecated constructs.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏷️</div>
+      <h3>Pass B — Type Safety</h3>
+      <p>Validates that label style constants are declared as <code style="color:var(--accent);font-size:11px;">string</code>, not as type keywords. Prevents silent runtime failures.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧠</div>
+      <h3>Pass C — Logic</h3>
+      <p>Confirms wave ordering is chronologically correct, primary vs alternate drawing separation, and that alternate opacity applies in "Both" mode.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📐</div>
+      <h3>Pass D — Coordinates</h3>
+      <p>Ensures <code style="color:var(--accent);font-size:11px;">xloc.bar_time</code> is used (never bar index), timestamps are in milliseconds, and zoom stability is preserved.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <h3>Pass E — Array Bounds</h3>
+      <p>Every array access guarded by <code style="color:var(--accent);font-size:11px;">array.size()</code> check. Y-offset collision detection verified for dense pivot regions.</p>
+    </div>
+    <div class="card" style="border-color: var(--green); background: rgba(63,185,80,0.05);">
+      <div class="card-icon">✅</div>
+      <h3 style="color:var(--green);">Result</h3>
+      <p>Scripts compile and execute on first paste into TradingView — no manual debugging needed after generation.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 8 — PROMPT OPTIMIZATION
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-8">
+  <div class="section-label">Continuous Improvement</div>
+  <h2>Prompt optimization<br/>as an engineering discipline</h2>
+  <div class="two-col">
+    <div>
+      <p class="lead" style="font-size: 16px; margin-bottom: 24px;">
+        A structured optimization report identified 14 weak spots across the prompt system, categorized by severity and impact.
+      </p>
+      <ul class="checklist">
+        <li><strong>Tier 1 — Critical:</strong> Ambiguous Fibonacci validation criteria causing pivot misidentification</li>
+        <li><strong>Tier 1 — Critical:</strong> Three-way textalign contradiction between skill files (discovered &amp; documented)</li>
+        <li><strong>Tier 2 — Medium:</strong> Subwave coverage rule lacked explicit "skip is forbidden" enforcement</li>
+        <li><strong>Tier 2 — Medium:</strong> Timeframe boundary at 730 days not propagated to all downstream modules</li>
+        <li><strong>Tier 3 — Low:</strong> Cache invalidation keywords list incomplete (missing "redo", "recount")</li>
+      </ul>
+    </div>
+    <div>
+      <div class="quote-block">
+        "Treating prompts like source code — with version control, ownership tables, and structured QA — is what separates a one-off experiment from a reliable AI system."
+      </div>
+      <div class="metric-row" style="margin-top: 20px;">
+        <div class="metric"><div class="val">14</div><div class="lbl">Weak spots identified</div></div>
+        <div class="metric"><div class="val">3</div><div class="lbl">Severity tiers</div></div>
+        <div class="metric"><div class="val">6</div><div class="lbl">Skill files with clear ownership</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 9 — KEY TAKEAWAYS
+══════════════════════════════════════════ -->
+<div class="slide" id="slide-9">
+  <div class="section-label">Key Takeaways</div>
+  <h2>What this project demonstrates</h2>
+  <div class="three-col">
+    <div class="card" style="border-color: rgba(0,212,255,0.4);">
+      <div class="card-icon">🤖</div>
+      <h3>Multi-Agent Orchestration</h3>
+      <p>Decomposing a complex task into specialized subagents — each with focused context — dramatically improves output quality and reliability over a single monolithic prompt.</p>
+    </div>
+    <div class="card" style="border-color: rgba(255,0,255,0.4);">
+      <div class="card-icon">📐</div>
+      <h3>Prompt as Architecture</h3>
+      <p>Modular skill files with explicit rule ownership, a cache layer, and a validation pipeline mirrors software engineering best practices applied to AI system design.</p>
+    </div>
+    <div class="card" style="border-color: rgba(255,153,0,0.4);">
+      <div class="card-icon">📈</div>
+      <h3>Domain Depth Matters</h3>
+      <p>Embedding expert-level financial analysis rules (Elliott Wave theory, Fibonacci ratios, PineScript v6 constraints) is what makes AI output actually useful in a professional context.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <h3>Caching &amp; Efficiency</h3>
+      <p>Smart caching means the expensive data-fetch and wave-counting step runs once. Subsequent visual iterations are near-instant — a real productivity multiplier.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧪</div>
+      <h3>QA Built In</h3>
+      <p>5-pass automated validation isn't an afterthought — it's a core phase of the pipeline. The system self-corrects before handing output to the user.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📝</div>
+      <h3>Continuous Refinement</h3>
+      <p>A structured optimization report treats prompts as living artifacts — bugs fixed in source, contradictions documented, and weak spots prioritized by severity.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 10 — CLOSING
+══════════════════════════════════════════ -->
+<div class="slide closing-slide" id="slide-10">
+  <div class="eyebrow" style="letter-spacing:3px; font-size:12px; color:var(--accent); font-weight:700; margin-bottom:20px;">AI PORTFOLIO</div>
+  <h1 style="font-size: clamp(32px,4vw,54px); font-weight:800; line-height:1.15; background: linear-gradient(135deg, var(--text) 30%, var(--accent2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:20px;">
+    From ticker symbol<br/>to TradingView indicator<br/>with one AI prompt.
+  </h1>
+  <p style="font-size:18px; color:var(--muted); max-width:540px; line-height:1.7; margin-bottom:40px;">
+    This project shows that when AI is architected thoughtfully —
+    with domain expertise, modular design, and built-in QA —
+    it can automate genuinely complex professional workflows.
+  </p>
+  <div class="tag-row">
+    <span class="tag">Claude AI</span>
+    <span class="tag">Prompt Engineering</span>
+    <span class="tag pink">Elliott Wave Theory</span>
+    <span class="tag pink">Financial Analysis</span>
+    <span class="tag orange">PineScript v6</span>
+    <span class="tag orange">TradingView</span>
+  </div>
+  <p style="margin-top: 40px; font-size: 13px; color: var(--muted);">
+    Built with Claude Code · github.com/fede_/ElliotWavePineScriptGenerator
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<div class="nav">
+  <button onclick="go(-1)">← Prev</button>
+  <span class="counter" id="counter">1 / 10</span>
+  <button onclick="go(1)">Next →</button>
+</div>
+
+<script>
+  const total = 10;
+  let current = 1;
+
+  function show(n) {
+    document.querySelector('.slide.active')?.classList.remove('active');
+    document.getElementById('slide-' + n)?.classList.add('active');
+    document.getElementById('counter').textContent = n + ' / ' + total;
+    document.getElementById('progress').style.width = (n / total * 100) + '%';
+    current = n;
+  }
+
+  function go(dir) {
+    const next = current + dir;
+    if (next >= 1 && next <= total) show(next);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+  });
+
+  // Touch swipe support
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+    touchX = null;
+  });
+
+  show(1);
+</script>
+</body>
+</html>
