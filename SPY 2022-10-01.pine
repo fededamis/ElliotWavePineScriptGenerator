@@ -1,0 +1,1038 @@
+//@version=6
+indicator("SPY Elliott Wave Count", overlay=true, max_lines_count=500, max_labels_count=500)
+
+// === INPUTS ===
+string showCount = input.string("Primary Only", "Show Count", options=["Primary Only", "Both", "Alternate Only"])
+bool showInval = input.bool(true, "Show Invalidation Levels")
+bool showTargets = input.bool(true, "Show Targets")
+bool showLegend = input.bool(true, "Show Legend")
+string legendPos = input.string("Bottom Right", "Legend Position", options=["Top Right", "Bottom Right", "Top Left", "Bottom Left"])
+bool showProj = input.bool(true, "Show Projections")
+bool showLabels = input.bool(true, "Show Labels")
+bool showSubwaves = input.bool(true, "Show Subwaves")
+
+// === STYLE CONSTANTS AS STRINGS ===
+string STYLE_SOLID = line.style_solid
+string STYLE_DASHED = line.style_dashed
+string STYLE_DOTTED = line.style_dotted
+
+// === COLOR CONSTANTS ===
+color PR_MOTIVE_UP = color.aqua
+color PR_MOTIVE_DN = color.fuchsia
+color PR_CORRECTIVE = color.orange
+color PR_INVAL_COL = color.red
+color PR_TARGET_COL = color.lime
+
+color AL_MOTIVE_UP = color.rgb(85, 153, 170)
+color AL_MOTIVE_DN = color.rgb(170, 85, 170)
+color AL_CORRECTIVE = color.rgb(170, 119, 51)
+color AL_INVAL_COL = color.rgb(204, 68, 68)
+color AL_TARGET_COL = color.rgb(68, 136, 68)
+
+// === ARRAYS FOR CLEANUP ===
+var array<line> allLines = array.new<line>()
+var array<label> allLabels = array.new<label>()
+
+// === HELPER FUNCTIONS (top-level, no type annotations on params) ===
+
+getSegColor(isUp, isPrimary) =>
+    color result = na
+    if isPrimary
+        result := isUp ? PR_MOTIVE_UP : PR_CORRECTIVE
+    else
+        result := isUp ? AL_MOTIVE_UP : AL_CORRECTIVE
+    result
+
+getPrLineStyle(isHist, isPrimary, isAlternateOnly) =>
+    string result = STYLE_SOLID
+    if not isHist
+        result := STYLE_DOTTED
+    else
+        if isPrimary
+            result := STYLE_SOLID
+        else
+            if isAlternateOnly
+                result := STYLE_SOLID
+            else
+                result := STYLE_DASHED
+    result
+
+makePivotText(waveName, price, fib, isAlt, isProj) =>
+    string line1 = ""
+    if isAlt and isProj
+        line1 := "(A)(proj) " + waveName
+    else if isAlt
+        line1 := "(A) " + waveName
+    else if isProj
+        line1 := "(proj) " + waveName
+    else
+        line1 := waveName
+    string line2 = "$" + str.tostring(price, "#.##")
+    string line3 = fib != "--" ? "Fib:" + fib : ""
+    string result = line3 != "" ? line1 + "\n" + line2 + "\n" + line3 : line1 + "\n" + line2
+    result
+
+checkCollision(yoffs, idx, prices, timestamps, range_size, totalPivots) =>
+    float off = 0.0
+    float thresh_price = range_size * 0.05
+    int thresh_time = 8 * 7 * 86400000
+    int i = 0
+    while i < idx and i < totalPivots
+        // array size checked before access
+        float pi = array.size(prices) > i ? array.get(prices, i) : 0.0
+        int ti = array.size(timestamps) > i ? array.get(timestamps, i) : 0
+        float pj = array.size(prices) > idx ? array.get(prices, idx) : 0.0
+        int tj = array.size(timestamps) > idx ? array.get(timestamps, idx) : 0
+        if math.abs(pi - pj) < thresh_price and math.abs(ti - tj) < thresh_time
+            off := range_size * 0.03
+            break
+        i += 1
+    off
+
+// === PRIMARY COUNT DATA ===
+// Timestamps and prices
+int pr_w0_ts = timestamp(2022, 10, 10)
+float pr_w0_p = 348.11
+int pr_w1_ts = timestamp(2023, 1, 30)
+float pr_w1_p = 418.31
+int pr_w2_ts = timestamp(2023, 3, 13)
+float pr_w2_p = 380.65
+int pr_w3_ts = timestamp(2025, 2, 17)
+float pr_w3_p = 613.23
+int pr_w4_ts = timestamp(2025, 4, 7)
+float pr_w4_p = 481.80
+int pr_w5_ts = timestamp(2026, 1, 26)
+float pr_w5_p = 697.84
+int pr_wa_ts = timestamp(2026, 4, 20)
+float pr_wa_p = 615.31
+int pr_wb_ts = timestamp(2026, 6, 22)
+float pr_wb_p = 656.58
+int pr_wc_ts = timestamp(2026, 9, 14)
+float pr_wc_p = 566.41
+
+float pr_inval = 481.80
+float pr_target = 566.41
+string pr_target_fib = "100.0%"
+
+// === ALTERNATE COUNT DATA ===
+int al_w0_ts = timestamp(2022, 10, 10)
+float al_w0_p = 348.11
+int al_w1_ts = timestamp(2023, 1, 30)
+float al_w1_p = 418.31
+int al_w2_ts = timestamp(2023, 3, 13)
+float al_w2_p = 380.65
+int al_w3_ts = timestamp(2024, 7, 15)
+float al_w3_p = 565.16
+int al_w4_ts = timestamp(2024, 8, 5)
+float al_w4_p = 510.27
+int al_w5_ts = timestamp(2025, 2, 17)
+float al_w5_p = 613.23
+int al_wa_ts = timestamp(2025, 4, 7)
+float al_wa_p = 481.80
+int al_wb_ts = timestamp(2026, 1, 26)
+float al_wb_p = 697.84
+int al_wc_ts = timestamp(2026, 5, 18)
+float al_wc_p = 566.41
+
+float al_inval = 697.85
+float al_target = 566.41
+string al_target_fib = "100.0%"
+
+// === PRIMARY SUBWAVE DATA ===
+// W3 subwaves
+int pr_w3sw1_ts = timestamp(2023, 7, 24)
+float pr_w3sw1_p = 459.44
+int pr_w3sw2_ts = timestamp(2023, 10, 23)
+float pr_w3sw2_p = 409.21
+int pr_w3sw3_ts = timestamp(2024, 7, 15)
+float pr_w3sw3_p = 565.16
+int pr_w3sw4_ts = timestamp(2024, 8, 5)
+float pr_w3sw4_p = 510.27
+int pr_w3sw5_ts = timestamp(2025, 2, 17)
+float pr_w3sw5_p = 613.23
+
+// W4 subwaves
+int pr_w4swa_ts = timestamp(2025, 3, 10)
+float pr_w4swa_p = 549.68
+int pr_w4swb_ts = timestamp(2025, 3, 24)
+float pr_w4swb_p = 576.41
+int pr_w4swc_ts = timestamp(2025, 4, 7)
+float pr_w4swc_p = 481.80
+
+// W5 subwaves (partial: sw3-sw5)
+int pr_w5sw3_ts = timestamp(2025, 10, 27)
+float pr_w5sw3_p = 689.70
+int pr_w5sw4_ts = timestamp(2025, 11, 17)
+float pr_w5sw4_p = 650.85
+int pr_w5sw5_ts = timestamp(2026, 1, 26)
+float pr_w5sw5_p = 697.84
+
+// === ALTERNATE SUBWAVE DATA ===
+// Alt W3 subwaves
+int al_w3sw1_ts = timestamp(2023, 7, 24)
+float al_w3sw1_p = 459.44
+int al_w3sw2_ts = timestamp(2023, 10, 23)
+float al_w3sw2_p = 409.21
+int al_w3sw3_ts = timestamp(2024, 3, 25)
+float al_w3sw3_p = 524.61
+int al_w3sw4_ts = timestamp(2024, 4, 15)
+float al_w3sw4_p = 493.86
+int al_w3sw5_ts = timestamp(2024, 7, 15)
+float al_w3sw5_p = 565.16
+
+// Alt W5 subwaves
+int al_w5sw1_ts = timestamp(2024, 8, 26)
+float al_w5sw1_p = 564.20
+int al_w5sw2_ts = timestamp(2024, 9, 2)
+float al_w5sw2_p = 539.44
+int al_w5sw3_ts = timestamp(2024, 12, 2)
+float al_w5sw3_p = 609.07
+int al_w5sw4_ts = timestamp(2025, 1, 20)
+float al_w5sw4_p = 575.35
+int al_w5sw5_ts = timestamp(2025, 2, 17)
+float al_w5sw5_p = 613.23
+
+// Alt WA subwaves
+int al_waswa_ts = timestamp(2025, 3, 10)
+float al_waswa_p = 549.68
+int al_waswb_ts = timestamp(2025, 3, 24)
+float al_waswb_p = 576.41
+int al_waswc_ts = timestamp(2025, 4, 7)
+float al_waswc_p = 481.80
+
+// Alt WB subwaves (partial: sw3-sw5)
+int al_wbsw3_ts = timestamp(2025, 10, 27)
+float al_wbsw3_p = 689.70
+int al_wbsw4_ts = timestamp(2025, 11, 17)
+float al_wbsw4_p = 650.85
+int al_wbsw5_ts = timestamp(2026, 1, 26)
+float al_wbsw5_p = 697.84
+
+// All drawing objects use xloc.bar_time + fixed float prices for scale/zoom stability
+if barstate.islast
+    // Clean up old drawings
+    while array.size(allLines) > 0
+        line.delete(array.pop(allLines))
+    while array.size(allLabels) > 0
+        label.delete(array.pop(allLabels))
+
+    int todayTime = time
+    float priceHigh = 697.84
+    float priceLow = 348.11
+    float priceRange = priceHigh - priceLow
+
+    // === BUILD PRIMARY ARRAYS ===
+    array<int> pr_ts = array.new<int>()
+    array<float> pr_prices = array.new<float>()
+    array<string> pr_names = array.new<string>()
+    array<string> pr_ohlc = array.new<string>()
+    array<string> pr_fibs = array.new<string>()
+    array<string> pr_types = array.new<string>()
+    array<bool> pr_isUp = array.new<bool>()
+
+    array.push(pr_ts, pr_w0_ts)
+    array.push(pr_prices, pr_w0_p)
+    array.push(pr_names, "W0")
+    array.push(pr_ohlc, "L")
+    array.push(pr_fibs, "--")
+    array.push(pr_types, "hist")
+    array.push(pr_isUp, false)
+
+    array.push(pr_ts, pr_w1_ts)
+    array.push(pr_prices, pr_w1_p)
+    array.push(pr_names, "W1")
+    array.push(pr_ohlc, "H")
+    array.push(pr_fibs, "--")
+    array.push(pr_types, "hist")
+    array.push(pr_isUp, true)
+
+    array.push(pr_ts, pr_w2_ts)
+    array.push(pr_prices, pr_w2_p)
+    array.push(pr_names, "W2")
+    array.push(pr_ohlc, "L")
+    array.push(pr_fibs, "53.6%")
+    array.push(pr_types, "hist")
+    array.push(pr_isUp, false)
+
+    array.push(pr_ts, pr_w3_ts)
+    array.push(pr_prices, pr_w3_p)
+    array.push(pr_names, "W3")
+    array.push(pr_ohlc, "H")
+    array.push(pr_fibs, "331.3%")
+    array.push(pr_types, "hist")
+    array.push(pr_isUp, true)
+
+    array.push(pr_ts, pr_w4_ts)
+    array.push(pr_prices, pr_w4_p)
+    array.push(pr_names, "W4")
+    array.push(pr_ohlc, "L")
+    array.push(pr_fibs, "56.5%")
+    array.push(pr_types, "hist")
+    array.push(pr_isUp, false)
+
+    array.push(pr_ts, pr_w5_ts)
+    array.push(pr_prices, pr_w5_p)
+    array.push(pr_names, "W5")
+    array.push(pr_ohlc, "H")
+    array.push(pr_fibs, "92.9%")
+    array.push(pr_types, "hist")
+    array.push(pr_isUp, true)
+
+    array.push(pr_ts, pr_wa_ts)
+    array.push(pr_prices, pr_wa_p)
+    array.push(pr_names, "WA")
+    array.push(pr_ohlc, "L")
+    array.push(pr_fibs, "38.2%")
+    array.push(pr_types, "proj")
+    array.push(pr_isUp, false)
+
+    array.push(pr_ts, pr_wb_ts)
+    array.push(pr_prices, pr_wb_p)
+    array.push(pr_names, "WB")
+    array.push(pr_ohlc, "H")
+    array.push(pr_fibs, "50.0%")
+    array.push(pr_types, "proj")
+    array.push(pr_isUp, true)
+
+    array.push(pr_ts, pr_wc_ts)
+    array.push(pr_prices, pr_wc_p)
+    array.push(pr_names, "WC")
+    array.push(pr_ohlc, "L")
+    array.push(pr_fibs, "100.0%")
+    array.push(pr_types, "proj")
+    array.push(pr_isUp, false)
+
+    // Primary segment colors
+    array<color> pr_segColors = array.new<color>()
+    array.push(pr_segColors, PR_MOTIVE_UP)   // W0->W1
+    array.push(pr_segColors, PR_CORRECTIVE)   // W1->W2
+    array.push(pr_segColors, PR_MOTIVE_UP)   // W2->W3
+    array.push(pr_segColors, PR_CORRECTIVE)   // W3->W4
+    array.push(pr_segColors, PR_MOTIVE_UP)   // W4->W5
+    array.push(pr_segColors, PR_CORRECTIVE)   // W5->WA
+    array.push(pr_segColors, PR_CORRECTIVE)   // WA->WB
+    array.push(pr_segColors, PR_CORRECTIVE)   // WB->WC
+
+    // === BUILD ALTERNATE ARRAYS ===
+    array<int> al_ts = array.new<int>()
+    array<float> al_prices = array.new<float>()
+    array<string> al_names = array.new<string>()
+    array<string> al_ohlc = array.new<string>()
+    array<string> al_fibs = array.new<string>()
+    array<string> al_types = array.new<string>()
+
+    array.push(al_ts, al_w0_ts)
+    array.push(al_prices, al_w0_p)
+    array.push(al_names, "W0")
+    array.push(al_ohlc, "L")
+    array.push(al_fibs, "--")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_w1_ts)
+    array.push(al_prices, al_w1_p)
+    array.push(al_names, "W1")
+    array.push(al_ohlc, "H")
+    array.push(al_fibs, "--")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_w2_ts)
+    array.push(al_prices, al_w2_p)
+    array.push(al_names, "W2")
+    array.push(al_ohlc, "L")
+    array.push(al_fibs, "53.6%")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_w3_ts)
+    array.push(al_prices, al_w3_p)
+    array.push(al_names, "W3")
+    array.push(al_ohlc, "H")
+    array.push(al_fibs, "262.8%")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_w4_ts)
+    array.push(al_prices, al_w4_p)
+    array.push(al_names, "W4")
+    array.push(al_ohlc, "L")
+    array.push(al_fibs, "29.7%")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_w5_ts)
+    array.push(al_prices, al_w5_p)
+    array.push(al_names, "W5")
+    array.push(al_ohlc, "H")
+    array.push(al_fibs, "146.7%")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_wa_ts)
+    array.push(al_prices, al_wa_p)
+    array.push(al_names, "WA")
+    array.push(al_ohlc, "L")
+    array.push(al_fibs, "49.6%")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_wb_ts)
+    array.push(al_prices, al_wb_p)
+    array.push(al_names, "WB")
+    array.push(al_ohlc, "H")
+    array.push(al_fibs, "164.4%")
+    array.push(al_types, "hist")
+
+    array.push(al_ts, al_wc_ts)
+    array.push(al_prices, al_wc_p)
+    array.push(al_names, "WC")
+    array.push(al_ohlc, "L")
+    array.push(al_fibs, "100.0%")
+    array.push(al_types, "proj")
+
+    // Alternate segment colors
+    array<color> al_segColors = array.new<color>()
+    array.push(al_segColors, AL_MOTIVE_UP)    // W0->W1
+    array.push(al_segColors, AL_CORRECTIVE)    // W1->W2
+    array.push(al_segColors, AL_MOTIVE_UP)    // W2->W3
+    array.push(al_segColors, AL_CORRECTIVE)    // W3->W4
+    array.push(al_segColors, AL_MOTIVE_UP)    // W4->W5
+    array.push(al_segColors, AL_CORRECTIVE)    // W5->WA
+    array.push(al_segColors, AL_CORRECTIVE)    // WA->WB
+    array.push(al_segColors, AL_CORRECTIVE)    // WB->WC
+
+    // === Y-OFFSET COLLISION AVOIDANCE ===
+    array<float> pr_yoffs = array.new<float>(array.size(pr_prices), 0.0)
+    array<float> al_yoffs = array.new<float>(array.size(al_prices), 0.0)
+
+    int pr_sz = array.size(pr_prices)
+    int idx1 = 0
+    while idx1 < pr_sz
+        int idx2 = idx1 + 1
+        while idx2 < pr_sz
+            // array size checked before access
+            float p1 = array.size(pr_prices) > idx1 ? array.get(pr_prices, idx1) : 0.0
+            float p2 = array.size(pr_prices) > idx2 ? array.get(pr_prices, idx2) : 0.0
+            int t1 = array.size(pr_ts) > idx1 ? array.get(pr_ts, idx1) : 0
+            int t2 = array.size(pr_ts) > idx2 ? array.get(pr_ts, idx2) : 0
+            if math.abs(p1 - p2) < priceRange * 0.05 and math.abs(t1 - t2) < 8 * 7 * 86400000
+                // array size checked before access
+                string ohlc2 = array.size(pr_ohlc) > idx2 ? array.get(pr_ohlc, idx2) : "H"
+                float offAmt = priceRange * 0.03
+                if ohlc2 == "H"
+                    array.set(pr_yoffs, idx2, offAmt)
+                else
+                    array.set(pr_yoffs, idx2, -offAmt)
+            idx2 += 1
+        idx1 += 1
+
+    int al_sz = array.size(al_prices)
+    int aidx1 = 0
+    while aidx1 < al_sz
+        int aidx2 = aidx1 + 1
+        while aidx2 < al_sz
+            // array size checked before access
+            float ap1 = array.size(al_prices) > aidx1 ? array.get(al_prices, aidx1) : 0.0
+            float ap2 = array.size(al_prices) > aidx2 ? array.get(al_prices, aidx2) : 0.0
+            int at1 = array.size(al_ts) > aidx1 ? array.get(al_ts, aidx1) : 0
+            int at2 = array.size(al_ts) > aidx2 ? array.get(al_ts, aidx2) : 0
+            if math.abs(ap1 - ap2) < priceRange * 0.05 and math.abs(at1 - at2) < 8 * 7 * 86400000
+                // array size checked before access
+                string aohlc2 = array.size(al_ohlc) > aidx2 ? array.get(al_ohlc, aidx2) : "H"
+                float aoffAmt = priceRange * 0.03
+                if aohlc2 == "H"
+                    array.set(al_yoffs, aidx2, aoffAmt)
+                else
+                    array.set(al_yoffs, aidx2, -aoffAmt)
+            aidx2 += 1
+        aidx1 += 1
+
+    // === DETERMINE RENDERING FLAGS ===
+    bool drawPrimary = showCount == "Primary Only" or showCount == "Both"
+    bool drawAlternate = showCount == "Alternate Only" or showCount == "Both"
+    bool altOnly = showCount == "Alternate Only"
+
+    // === DRAW PRIMARY COUNT ===
+    if drawPrimary
+        int i = 1
+        while i < array.size(pr_ts)
+            // array size checked before access
+            int ts1 = array.size(pr_ts) > (i - 1) ? array.get(pr_ts, i - 1) : 0
+            int ts2 = array.size(pr_ts) > i ? array.get(pr_ts, i) : 0
+            float p1 = array.size(pr_prices) > (i - 1) ? array.get(pr_prices, i - 1) : 0.0
+            float p2 = array.size(pr_prices) > i ? array.get(pr_prices, i) : 0.0
+            string type1 = array.size(pr_types) > (i - 1) ? array.get(pr_types, i - 1) : "hist"
+            string type2 = array.size(pr_types) > i ? array.get(pr_types, i) : "hist"
+            color segCol = array.size(pr_segColors) > (i - 1) ? array.get(pr_segColors, i - 1) : PR_MOTIVE_UP
+
+            bool isHist = type1 == "hist" and type2 == "hist"
+            bool isProj = type1 == "proj" or type2 == "proj"
+
+            bool shouldDraw = true
+            if isProj and not showProj
+                shouldDraw := false
+
+            if shouldDraw
+                string lstyle = isHist ? STYLE_SOLID : STYLE_DOTTED
+                line seg = line.new(ts1, p1, ts2, p2, xloc=xloc.bar_time, color=segCol, style=lstyle, width=2)
+                array.push(allLines, seg)
+            i += 1
+
+        // Primary labels
+        if showLabels
+            int li = 0
+            while li < array.size(pr_ts)
+                // array size checked before access
+                string ltype = array.size(pr_types) > li ? array.get(pr_types, li) : "hist"
+                bool isProj2 = ltype == "proj"
+                if isProj2 and not showProj
+                    li += 1
+                    continue
+
+                int lts = array.size(pr_ts) > li ? array.get(pr_ts, li) : 0
+                float lprice = array.size(pr_prices) > li ? array.get(pr_prices, li) : 0.0
+                string lname = array.size(pr_names) > li ? array.get(pr_names, li) : ""
+                string lohlc = array.size(pr_ohlc) > li ? array.get(pr_ohlc, li) : "H"
+                string lfib = array.size(pr_fibs) > li ? array.get(pr_fibs, li) : "--"
+                float lyoff = array.size(pr_yoffs) > li ? array.get(pr_yoffs, li) : 0.0
+
+                string ltxt = makePivotText(lname, lprice, lfib, false, isProj2)
+                float labelY = lprice + lyoff
+
+                // Determine label color based on segment
+                color lblCol = PR_MOTIVE_UP
+                if li > 0
+                    // array size checked before access
+                    lblCol := array.size(pr_segColors) > (li - 1) ? array.get(pr_segColors, li - 1) : PR_MOTIVE_UP
+
+                if lohlc == "H"
+                    if lprice > (li > 0 and array.size(pr_prices) > (li - 1) ? array.get(pr_prices, li - 1) : 0.0)
+                        label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center)
+                        array.push(allLabels, lbl)
+                    else
+                        label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center)
+                        array.push(allLabels, lbl)
+                else
+                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center)
+                    array.push(allLabels, lbl)
+                li += 1
+
+    // === DRAW ALTERNATE COUNT ===
+    if drawAlternate
+        int i = 1
+        while i < array.size(al_ts)
+            // array size checked before access
+            int ts1 = array.size(al_ts) > (i - 1) ? array.get(al_ts, i - 1) : 0
+            int ts2 = array.size(al_ts) > i ? array.get(al_ts, i) : 0
+            float p1 = array.size(al_prices) > (i - 1) ? array.get(al_prices, i - 1) : 0.0
+            float p2 = array.size(al_prices) > i ? array.get(al_prices, i) : 0.0
+            string type1 = array.size(al_types) > (i - 1) ? array.get(al_types, i - 1) : "hist"
+            string type2 = array.size(al_types) > i ? array.get(al_types, i) : "hist"
+            color segCol = array.size(al_segColors) > (i - 1) ? array.get(al_segColors, i - 1) : AL_MOTIVE_UP
+
+            bool isHist = type1 == "hist" and type2 == "hist"
+            bool isProj = type1 == "proj" or type2 == "proj"
+
+            bool shouldDraw = true
+            if isProj and not showProj
+                shouldDraw := false
+
+            if shouldDraw
+                string lstyle = STYLE_DASHED
+                if isProj
+                    lstyle := STYLE_DOTTED
+                if altOnly and isHist
+                    lstyle := STYLE_SOLID
+                int alTransp = altOnly ? 0 : 50
+                color alSegCol = color.new(segCol, alTransp)
+                line seg = line.new(ts1, p1, ts2, p2, xloc=xloc.bar_time, color=alSegCol, style=lstyle, width=2)
+                array.push(allLines, seg)
+            i += 1
+
+        // Alternate labels
+        if showLabels
+            int li = 0
+            while li < array.size(al_ts)
+                // array size checked before access
+                string ltype = array.size(al_types) > li ? array.get(al_types, li) : "hist"
+                bool isProj2 = ltype == "proj"
+                if isProj2 and not showProj
+                    li += 1
+                    continue
+
+                int lts = array.size(al_ts) > li ? array.get(al_ts, li) : 0
+                float lprice = array.size(al_prices) > li ? array.get(al_prices, li) : 0.0
+                string lname = array.size(al_names) > li ? array.get(al_names, li) : ""
+                string lohlc = array.size(al_ohlc) > li ? array.get(al_ohlc, li) : "H"
+                string lfib = array.size(al_fibs) > li ? array.get(al_fibs, li) : "--"
+                float lyoff = array.size(al_yoffs) > li ? array.get(al_yoffs, li) : 0.0
+
+                string ltxt = makePivotText(lname, lprice, lfib, true, isProj2)
+                float labelY = lprice + lyoff
+
+                color lblCol = AL_MOTIVE_UP
+                if li > 0
+                    // array size checked before access
+                    lblCol := array.size(al_segColors) > (li - 1) ? array.get(al_segColors, li - 1) : AL_MOTIVE_UP
+                color lblColTransp = altOnly ? lblCol : color.new(lblCol, 50)
+
+                if lohlc == "H"
+                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblColTransp, textcolor=color.white, size=size.small, textalign=text.align_center)
+                    array.push(allLabels, lbl)
+                else
+                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblColTransp, textcolor=color.white, size=size.small, textalign=text.align_center)
+                    array.push(allLabels, lbl)
+                li += 1
+
+    // === DRAW PRIMARY SUBWAVES ===
+    if showSubwaves and drawPrimary
+        color sw3col = color.new(PR_MOTIVE_UP, 55)
+        color sw4col = color.new(PR_CORRECTIVE, 55)
+        color sw5col = color.new(PR_MOTIVE_UP, 55)
+
+        // W3 subwaves: W2 end -> sw1 -> sw2 -> sw3 -> sw4 -> sw5(=W3)
+        array<int> sw3_ts = array.new<int>()
+        array<float> sw3_p = array.new<float>()
+        array<string> sw3_names = array.new<string>()
+        array<string> sw3_ohlc = array.new<string>()
+        array<string> sw3_fibs = array.new<string>()
+        array.push(sw3_ts, pr_w3sw1_ts)
+        array.push(sw3_p, pr_w3sw1_p)
+        array.push(sw3_names, "W3.sw1")
+        array.push(sw3_ohlc, "H")
+        array.push(sw3_fibs, "--")
+        array.push(sw3_ts, pr_w3sw2_ts)
+        array.push(sw3_p, pr_w3sw2_p)
+        array.push(sw3_names, "W3.sw2")
+        array.push(sw3_ohlc, "L")
+        array.push(sw3_fibs, "63.8%")
+        array.push(sw3_ts, pr_w3sw3_ts)
+        array.push(sw3_p, pr_w3sw3_p)
+        array.push(sw3_names, "W3.sw3")
+        array.push(sw3_ohlc, "H")
+        array.push(sw3_fibs, "197.9%")
+        array.push(sw3_ts, pr_w3sw4_ts)
+        array.push(sw3_p, pr_w3sw4_p)
+        array.push(sw3_names, "W3.sw4")
+        array.push(sw3_ohlc, "L")
+        array.push(sw3_fibs, "35.2%")
+        array.push(sw3_ts, pr_w3sw5_ts)
+        array.push(sw3_p, pr_w3sw5_p)
+        array.push(sw3_names, "W3.sw5")
+        array.push(sw3_ohlc, "H")
+        array.push(sw3_fibs, "130.7%")
+
+        // Draw W3 subwave segments
+        if array.size(sw3_ts) > 0
+            int si = 1
+            while si < array.size(sw3_ts)
+                // array size checked before access
+                int st1 = array.get(sw3_ts, si - 1)
+                int st2 = array.get(sw3_ts, si)
+                float sp1 = array.get(sw3_p, si - 1)
+                float sp2 = array.get(sw3_p, si)
+                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw3col, style=STYLE_DASHED, width=1)
+                array.push(allLines, swl)
+                si += 1
+
+        // W3 subwave labels
+        if showLabels
+            if array.size(sw3_ts) > 0
+                int sli = 0
+                while sli < array.size(sw3_ts)
+                    // array size checked before access
+                    int slts = array.get(sw3_ts, sli)
+                    float slp = array.get(sw3_p, sli)
+                    string sln = array.get(sw3_names, sli)
+                    string slohlc = array.get(sw3_ohlc, sli)
+                    string slf = array.get(sw3_fibs, sli)
+                    string sltxt = makePivotText(sln, slp, slf, false, false)
+                    if slohlc == "H"
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, slbl)
+                    else
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, slbl)
+                    sli += 1
+
+        // W4 subwaves: swa -> swb -> swc
+        array<int> sw4_ts = array.new<int>()
+        array<float> sw4_p = array.new<float>()
+        array<string> sw4_names = array.new<string>()
+        array<string> sw4_ohlc = array.new<string>()
+        array<string> sw4_fibs = array.new<string>()
+        array.push(sw4_ts, pr_w4swa_ts)
+        array.push(sw4_p, pr_w4swa_p)
+        array.push(sw4_names, "W4.swa")
+        array.push(sw4_ohlc, "L")
+        array.push(sw4_fibs, "48.4%")
+        array.push(sw4_ts, pr_w4swb_ts)
+        array.push(sw4_p, pr_w4swb_p)
+        array.push(sw4_names, "W4.swb")
+        array.push(sw4_ohlc, "H")
+        array.push(sw4_fibs, "42.1%")
+        array.push(sw4_ts, pr_w4swc_ts)
+        array.push(sw4_p, pr_w4swc_p)
+        array.push(sw4_names, "W4.swc")
+        array.push(sw4_ohlc, "L")
+        array.push(sw4_fibs, "100.0%")
+
+        if array.size(sw4_ts) > 0
+            int s4i = 1
+            while s4i < array.size(sw4_ts)
+                // array size checked before access
+                int st1 = array.get(sw4_ts, s4i - 1)
+                int st2 = array.get(sw4_ts, s4i)
+                float sp1 = array.get(sw4_p, s4i - 1)
+                float sp2 = array.get(sw4_p, s4i)
+                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw4col, style=STYLE_DASHED, width=1)
+                array.push(allLines, swl)
+                s4i += 1
+
+        if showLabels
+            if array.size(sw4_ts) > 0
+                int sli = 0
+                while sli < array.size(sw4_ts)
+                    // array size checked before access
+                    int slts = array.get(sw4_ts, sli)
+                    float slp = array.get(sw4_p, sli)
+                    string sln = array.get(sw4_names, sli)
+                    string slohlc = array.get(sw4_ohlc, sli)
+                    string slf = array.get(sw4_fibs, sli)
+                    string sltxt = makePivotText(sln, slp, slf, false, false)
+                    if slohlc == "H"
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, slbl)
+                    else
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, slbl)
+                    sli += 1
+
+        // W5 subwaves (partial: sw3 -> sw4 -> sw5)
+        array<int> sw5_ts = array.new<int>()
+        array<float> sw5_p = array.new<float>()
+        array<string> sw5_names = array.new<string>()
+        array<string> sw5_ohlc = array.new<string>()
+        array<string> sw5_fibs = array.new<string>()
+        array.push(sw5_ts, pr_w5sw3_ts)
+        array.push(sw5_p, pr_w5sw3_p)
+        array.push(sw5_names, "W5.sw3")
+        array.push(sw5_ohlc, "H")
+        array.push(sw5_fibs, "--")
+        array.push(sw5_ts, pr_w5sw4_ts)
+        array.push(sw5_p, pr_w5sw4_p)
+        array.push(sw5_names, "W5.sw4")
+        array.push(sw5_ohlc, "L")
+        array.push(sw5_fibs, "56.3%")
+        array.push(sw5_ts, pr_w5sw5_ts)
+        array.push(sw5_p, pr_w5sw5_p)
+        array.push(sw5_names, "W5.sw5")
+        array.push(sw5_ohlc, "H")
+        array.push(sw5_fibs, "121.6%")
+
+        if array.size(sw5_ts) > 0
+            int s5i = 1
+            while s5i < array.size(sw5_ts)
+                // array size checked before access
+                int st1 = array.get(sw5_ts, s5i - 1)
+                int st2 = array.get(sw5_ts, s5i)
+                float sp1 = array.get(sw5_p, s5i - 1)
+                float sp2 = array.get(sw5_p, s5i)
+                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw5col, style=STYLE_DASHED, width=1)
+                array.push(allLines, swl)
+                s5i += 1
+
+        if showLabels
+            if array.size(sw5_ts) > 0
+                int sli = 0
+                while sli < array.size(sw5_ts)
+                    // array size checked before access
+                    int slts = array.get(sw5_ts, sli)
+                    float slp = array.get(sw5_p, sli)
+                    string sln = array.get(sw5_names, sli)
+                    string slohlc = array.get(sw5_ohlc, sli)
+                    string slf = array.get(sw5_fibs, sli)
+                    string sltxt = makePivotText(sln, slp, slf, false, false)
+                    if slohlc == "H"
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, slbl)
+                    else
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, slbl)
+                    sli += 1
+
+    // === DRAW ALTERNATE SUBWAVES ===
+    if showSubwaves and drawAlternate
+        int alTranspSW = altOnly ? 55 : 70
+        color alsw3col = color.new(AL_MOTIVE_UP, alTranspSW)
+        color alsw5col = color.new(AL_MOTIVE_UP, alTranspSW)
+        color alswAcol = color.new(AL_CORRECTIVE, alTranspSW)
+        color alswBcol = color.new(AL_CORRECTIVE, alTranspSW)
+
+        // Alt W3 subwaves
+        array<int> asw3_ts = array.new<int>()
+        array<float> asw3_p = array.new<float>()
+        array<string> asw3_names = array.new<string>()
+        array<string> asw3_ohlc = array.new<string>()
+        array<string> asw3_fibs = array.new<string>()
+        array.push(asw3_ts, al_w3sw1_ts)
+        array.push(asw3_p, al_w3sw1_p)
+        array.push(asw3_names, "W3.sw1")
+        array.push(asw3_ohlc, "H")
+        array.push(asw3_fibs, "--")
+        array.push(asw3_ts, al_w3sw2_ts)
+        array.push(asw3_p, al_w3sw2_p)
+        array.push(asw3_names, "W3.sw2")
+        array.push(asw3_ohlc, "L")
+        array.push(asw3_fibs, "63.8%")
+        array.push(asw3_ts, al_w3sw3_ts)
+        array.push(asw3_p, al_w3sw3_p)
+        array.push(asw3_names, "W3.sw3")
+        array.push(asw3_ohlc, "H")
+        array.push(asw3_fibs, "146.5%")
+        array.push(asw3_ts, al_w3sw4_ts)
+        array.push(asw3_p, al_w3sw4_p)
+        array.push(asw3_names, "W3.sw4")
+        array.push(asw3_ohlc, "L")
+        array.push(asw3_fibs, "26.6%")
+        array.push(asw3_ts, al_w3sw5_ts)
+        array.push(asw3_p, al_w3sw5_p)
+        array.push(asw3_names, "W3.sw5")
+        array.push(asw3_ohlc, "H")
+        array.push(asw3_fibs, "90.5%")
+
+        if array.size(asw3_ts) > 0
+            int asi = 1
+            while asi < array.size(asw3_ts)
+                // array size checked before access
+                line aswl = line.new(array.get(asw3_ts, asi - 1), array.get(asw3_p, asi - 1), array.get(asw3_ts, asi), array.get(asw3_p, asi), xloc=xloc.bar_time, color=alsw3col, style=STYLE_DASHED, width=1)
+                array.push(allLines, aswl)
+                asi += 1
+
+        if showLabels
+            if array.size(asw3_ts) > 0
+                int asli = 0
+                while asli < array.size(asw3_ts)
+                    // array size checked before access
+                    string aslohlc = array.get(asw3_ohlc, asli)
+                    string asltxt = makePivotText(array.get(asw3_names, asli), array.get(asw3_p, asli), array.get(asw3_fibs, asli), true, false)
+                    if aslohlc == "H"
+                        label aslbl = label.new(array.get(asw3_ts, asli), array.get(asw3_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alsw3col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    else
+                        label aslbl = label.new(array.get(asw3_ts, asli), array.get(asw3_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alsw3col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    asli += 1
+
+        // Alt W5 subwaves
+        array<int> asw5_ts = array.new<int>()
+        array<float> asw5_p = array.new<float>()
+        array<string> asw5_names = array.new<string>()
+        array<string> asw5_ohlc = array.new<string>()
+        array<string> asw5_fibs = array.new<string>()
+        array.push(asw5_ts, al_w5sw1_ts)
+        array.push(asw5_p, al_w5sw1_p)
+        array.push(asw5_names, "W5.sw1")
+        array.push(asw5_ohlc, "H")
+        array.push(asw5_fibs, "--")
+        array.push(asw5_ts, al_w5sw2_ts)
+        array.push(asw5_p, al_w5sw2_p)
+        array.push(asw5_names, "W5.sw2")
+        array.push(asw5_ohlc, "L")
+        array.push(asw5_fibs, "45.9%")
+        array.push(asw5_ts, al_w5sw3_ts)
+        array.push(asw5_p, al_w5sw3_p)
+        array.push(asw5_names, "W5.sw3")
+        array.push(asw5_ohlc, "H")
+        array.push(asw5_fibs, "129.1%")
+        array.push(asw5_ts, al_w5sw4_ts)
+        array.push(asw5_p, al_w5sw4_p)
+        array.push(asw5_names, "W5.sw4")
+        array.push(asw5_ohlc, "L")
+        array.push(asw5_fibs, "48.4%")
+        array.push(asw5_ts, al_w5sw5_ts)
+        array.push(asw5_p, al_w5sw5_p)
+        array.push(asw5_names, "W5.sw5")
+        array.push(asw5_ohlc, "H")
+        array.push(asw5_fibs, "70.2%")
+
+        if array.size(asw5_ts) > 0
+            int as5i = 1
+            while as5i < array.size(asw5_ts)
+                // array size checked before access
+                line aswl = line.new(array.get(asw5_ts, as5i - 1), array.get(asw5_p, as5i - 1), array.get(asw5_ts, as5i), array.get(asw5_p, as5i), xloc=xloc.bar_time, color=alsw5col, style=STYLE_DASHED, width=1)
+                array.push(allLines, aswl)
+                as5i += 1
+
+        if showLabels
+            if array.size(asw5_ts) > 0
+                int asli = 0
+                while asli < array.size(asw5_ts)
+                    // array size checked before access
+                    string aslohlc = array.get(asw5_ohlc, asli)
+                    string asltxt = makePivotText(array.get(asw5_names, asli), array.get(asw5_p, asli), array.get(asw5_fibs, asli), true, false)
+                    if aslohlc == "H"
+                        label aslbl = label.new(array.get(asw5_ts, asli), array.get(asw5_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alsw5col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    else
+                        label aslbl = label.new(array.get(asw5_ts, asli), array.get(asw5_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alsw5col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    asli += 1
+
+        // Alt WA subwaves
+        array<int> aswA_ts = array.new<int>()
+        array<float> aswA_p = array.new<float>()
+        array<string> aswA_names = array.new<string>()
+        array<string> aswA_ohlc = array.new<string>()
+        array<string> aswA_fibs = array.new<string>()
+        array.push(aswA_ts, al_waswa_ts)
+        array.push(aswA_p, al_waswa_p)
+        array.push(aswA_names, "WA.swa")
+        array.push(aswA_ohlc, "L")
+        array.push(aswA_fibs, "48.4%")
+        array.push(aswA_ts, al_waswb_ts)
+        array.push(aswA_p, al_waswb_p)
+        array.push(aswA_names, "WA.swb")
+        array.push(aswA_ohlc, "H")
+        array.push(aswA_fibs, "42.1%")
+        array.push(aswA_ts, al_waswc_ts)
+        array.push(aswA_p, al_waswc_p)
+        array.push(aswA_names, "WA.swc")
+        array.push(aswA_ohlc, "L")
+        array.push(aswA_fibs, "100.0%")
+
+        if array.size(aswA_ts) > 0
+            int asAi = 1
+            while asAi < array.size(aswA_ts)
+                // array size checked before access
+                line aswl = line.new(array.get(aswA_ts, asAi - 1), array.get(aswA_p, asAi - 1), array.get(aswA_ts, asAi), array.get(aswA_p, asAi), xloc=xloc.bar_time, color=alswAcol, style=STYLE_DASHED, width=1)
+                array.push(allLines, aswl)
+                asAi += 1
+
+        if showLabels
+            if array.size(aswA_ts) > 0
+                int asli = 0
+                while asli < array.size(aswA_ts)
+                    // array size checked before access
+                    string aslohlc = array.get(aswA_ohlc, asli)
+                    string asltxt = makePivotText(array.get(aswA_names, asli), array.get(aswA_p, asli), array.get(aswA_fibs, asli), true, false)
+                    if aslohlc == "H"
+                        label aslbl = label.new(array.get(aswA_ts, asli), array.get(aswA_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    else
+                        label aslbl = label.new(array.get(aswA_ts, asli), array.get(aswA_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    asli += 1
+
+        // Alt WB subwaves (partial: sw3-sw5)
+        array<int> aswB_ts = array.new<int>()
+        array<float> aswB_p = array.new<float>()
+        array<string> aswB_names = array.new<string>()
+        array<string> aswB_ohlc = array.new<string>()
+        array<string> aswB_fibs = array.new<string>()
+        array.push(aswB_ts, al_wbsw3_ts)
+        array.push(aswB_p, al_wbsw3_p)
+        array.push(aswB_names, "WB.sw3")
+        array.push(aswB_ohlc, "H")
+        array.push(aswB_fibs, "--")
+        array.push(aswB_ts, al_wbsw4_ts)
+        array.push(aswB_p, al_wbsw4_p)
+        array.push(aswB_names, "WB.sw4")
+        array.push(aswB_ohlc, "L")
+        array.push(aswB_fibs, "56.3%")
+        array.push(aswB_ts, al_wbsw5_ts)
+        array.push(aswB_p, al_wbsw5_p)
+        array.push(aswB_names, "WB.sw5")
+        array.push(aswB_ohlc, "H")
+        array.push(aswB_fibs, "121.6%")
+
+        if array.size(aswB_ts) > 0
+            int asBi = 1
+            while asBi < array.size(aswB_ts)
+                // array size checked before access
+                line aswl = line.new(array.get(aswB_ts, asBi - 1), array.get(aswB_p, asBi - 1), array.get(aswB_ts, asBi), array.get(aswB_p, asBi), xloc=xloc.bar_time, color=alswBcol, style=STYLE_DASHED, width=1)
+                array.push(allLines, aswl)
+                asBi += 1
+
+        if showLabels
+            if array.size(aswB_ts) > 0
+                int asli = 0
+                while asli < array.size(aswB_ts)
+                    // array size checked before access
+                    string aslohlc = array.get(aswB_ohlc, asli)
+                    string asltxt = makePivotText(array.get(aswB_names, asli), array.get(aswB_p, asli), array.get(aswB_fibs, asli), true, false)
+                    if aslohlc == "H"
+                        label aslbl = label.new(array.get(aswB_ts, asli), array.get(aswB_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    else
+                        label aslbl = label.new(array.get(aswB_ts, asli), array.get(aswB_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        array.push(allLabels, aslbl)
+                    asli += 1
+
+    // === INVALIDATION LEVELS ===
+    if showInval
+        if drawPrimary
+            // Primary invalidation: horizontal from W4 date to WC proj date
+            line prInvalLine = line.new(pr_w4_ts, pr_inval, pr_wc_ts, pr_inval, xloc=xloc.bar_time, color=PR_INVAL_COL, style=STYLE_DASHED, width=1)
+            array.push(allLines, prInvalLine)
+            if showLabels
+                string prInvalTxt = "Primary Inval\n$" + str.tostring(pr_inval, "#.##")
+                label prInvalLbl = label.new(pr_w4_ts, pr_inval, prInvalTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=PR_INVAL_COL, textcolor=color.white, size=size.small, textalign=text.align_center)
+                array.push(allLabels, prInvalLbl)
+
+        if drawAlternate
+            // Alternate invalidation: horizontal from WB date to WC proj date
+            line alInvalLine = line.new(al_wb_ts, al_inval, al_wc_ts, al_inval, xloc=xloc.bar_time, color=AL_INVAL_COL, style=STYLE_DASHED, width=1)
+            array.push(allLines, alInvalLine)
+            if showLabels
+                string alInvalTxt = "Alt Inval\n$" + str.tostring(al_inval, "#.##")
+                label alInvalLbl = label.new(al_wb_ts, al_inval, alInvalTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=AL_INVAL_COL, textcolor=color.white, size=size.small, textalign=text.align_center)
+                array.push(allLabels, alInvalLbl)
+
+    // === TARGET LEVELS ===
+    if showTargets
+        if drawPrimary
+            // Primary target: from W5 to WC
+            line prTargetLine = line.new(pr_w5_ts, pr_target, pr_wc_ts, pr_target, xloc=xloc.bar_time, color=PR_TARGET_COL, style=STYLE_DOTTED, width=1)
+            array.push(allLines, prTargetLine)
+            if showLabels
+                string prTargetTxt = "Primary Target\n$" + str.tostring(pr_target, "#.##") + "\nFib " + pr_target_fib
+                label prTargetLbl = label.new(pr_wc_ts, pr_target, prTargetTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=PR_TARGET_COL, textcolor=color.black, size=size.small, textalign=text.align_center)
+                array.push(allLabels, prTargetLbl)
+
+        if drawAlternate
+            // Alternate target: from WB to WC
+            line alTargetLine = line.new(al_wb_ts, al_target, al_wc_ts, al_target, xloc=xloc.bar_time, color=AL_TARGET_COL, style=STYLE_DOTTED, width=1)
+            array.push(allLines, alTargetLine)
+            if showLabels
+                string alTargetTxt = "Alt Target\n$" + str.tostring(al_target, "#.##") + "\nFib " + al_target_fib
+                label alTargetLbl = label.new(al_wc_ts, al_target, alTargetTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=AL_TARGET_COL, textcolor=color.white, size=size.small, textalign=text.align_center)
+                array.push(allLabels, alTargetLbl)
+
+    // === LEGEND ===
+    if showLegend
+        int firstPivotTs = pr_w0_ts
+        float highestPrice = priceHigh
+        float lowestPrice = priceLow
+        float legendStep = priceRange * 0.04
+
+        int leg_x = todayTime + 86400000 * 7
+        float leg_base = lowestPrice
+
+        if legendPos == "Top Right"
+            leg_x := todayTime + 86400000 * 7
+            leg_base := highestPrice
+        else if legendPos == "Bottom Right"
+            leg_x := todayTime + 86400000 * 7
+            leg_base := lowestPrice
+        else if legendPos == "Top Left"
+            leg_x := firstPivotTs - 86400000 * 30
+            leg_base := highestPrice
+        else if legendPos == "Bottom Left"
+            leg_x := firstPivotTs - 86400000 * 30
+            leg_base := lowestPrice
+
+        if drawPrimary
+            string prLegTxt = "Primary Count (55%)"
+            label prLegLbl = label.new(leg_x, leg_base, prLegTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=PR_MOTIVE_UP, textcolor=color.white, size=size.small, textalign=text.align_center)
+            array.push(allLabels, prLegLbl)
+
+        if drawAlternate
+            float altLegY = leg_base - legendStep
+            string alLegTxt = "Alternate Count (45%)"
+            label alLegLbl = label.new(leg_x, altLegY, alLegTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=AL_MOTIVE_UP, textcolor=color.white, size=size.small, textalign=text.align_center)
+            array.push(allLabels, alLegLbl)
