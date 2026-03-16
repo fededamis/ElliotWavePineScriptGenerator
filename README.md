@@ -15,8 +15,3 @@ Generates a .pine script to be imported into TradingView with Elliot Wave Analys
 When editing a rule, update it **only in the authoritative file** listed above. Do not restate it elsewhere.
 
 ## Pending Tasks
-- ADD INTERNAL COUNTS ON LARGE TRENDS
-- ADD CONFIDENCE ON COUNTS
-- RUN OPTIMIZATION SKILL ON PROMPT
-- FIX BUG ON SCREENSHOT
-- Check for Node or Python installations (numpy)
