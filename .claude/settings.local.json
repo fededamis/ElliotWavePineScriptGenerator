@@ -5,7 +5,12 @@
       "WebFetch(domain:query1.finance.yahoo.com)",
       "WebFetch(domain:finance.yahoo.com)",
       "WebSearch",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Read(**/ElliotWavePineScriptGenerator/**)",
+      "Read(//c/tmp/**)",
+      "Bash(echo $TEMP)",
+      "Bash(python3 /tmp/*.py)",
+      "Bash(python3 **/ElliotWavePineScriptGenerator/**/*.py)"      
     ]
   }
 }
