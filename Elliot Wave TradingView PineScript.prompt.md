@@ -52,7 +52,7 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 > **IMPORTANT: Always use Opus models for this subagent section.**
 > Delegate the entire Elliott Wave analysis to a subagent using the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`).
 > The subagent must:
-> 1. Execute the `/elliott-wave-analysis` skill in full, including all 8 steps: data fetching, pivot identification, Fibonacci validation, and the PIVOT ACCEPTANCE GATE
+> 1. Execute the `/elliott-wave-analysis` skill in full
 > 2. Return ONLY the compact pivot summary table (primary count, alternate count, invalidation levels, targets) — no reasoning, no narration, no step-by-step output
 >
 > The main agent receives only the compact pivot table from the subagent. Do not re-run or re-derive any part of the analysis in the main context.

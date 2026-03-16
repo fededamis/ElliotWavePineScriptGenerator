@@ -115,13 +115,13 @@ This is the most impactful fix because it's an active bug, not just inefficiency
 
 ### TIER 2 — MEDIUM IMPACT
 
-**T2-A: Trim main prompt subagent step enumeration** *(Issues #7, #8)*
+**T2-A: Trim main prompt subagent step enumeration** *(Issues #7, #8)* ✅ SOLVED
 
 - In the main prompt's Wave Analysis delegation block (L55), replace the itemized step list with: *"Execute the `/elliott-wave-analysis` skill in full."*
 - The skill already defines its own steps — the main prompt re-listing them is a maintenance liability
 - Estimated savings: ~40 tokens; eliminates drift risk
 
-**T2-B: Make the `.wave` file header schema explicit** *(Issue #14)*
+**T2-B: Make the `.wave` file header schema explicit** *(Issue #14)* ✅ SOLVED
 
 - Add a one-line schema comment to `elliott-wave-analysis.md`'s COMPACT OUTPUT FORMAT section: *"Header format (consumed by generation rules): `PRIMARY COUNT (X% confidence)` — the integer X is parsed by the legend rule in `pinescript-generation-rules.md`"*
 - This makes the coupling explicit and survives future format changes

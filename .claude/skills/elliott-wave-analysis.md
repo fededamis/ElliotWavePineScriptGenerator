@@ -188,7 +188,9 @@ If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real s
 
 ### COMPACT OUTPUT FORMAT
 
-After completing Step 8, output exactly this structure and nothing else:
+After completing Step 8, output exactly this structure and nothing else.
+
+**Header format note (consumed by `pinescript-generation-rules.md`):** The first line of the primary count block — `PRIMARY COUNT (X% confidence)` — is parsed by the generation rules' legend rule. The integer `X` is extracted as the confidence percentage displayed in the script legend. Do not alter this line's format.
 
 ```
 PRIMARY COUNT (X% confidence)
