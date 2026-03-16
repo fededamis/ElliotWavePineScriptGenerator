@@ -127,12 +127,6 @@ This is the most impactful fix because it's an active bug, not just inefficiency
 - This makes the coupling explicit and survives future format changes
 - Cost: ~20 tokens; prevents silent legend breakage
 
-**T2-C: Add pre-delegation input validation** *(General reliability)*
-
-- Before launching the Wave Analysis subagent, the main prompt should verify TICKER is non-empty, non-numeric, and START DATE matches `YYYY-MM-DD` format
-- If invalid: prompt the user immediately without burning an LLM call
-- Estimated cost: ~30 tokens in main prompt; saves 1 full Opus LLM call on bad input
-
 ---
 
 ### TIER 3 — LOW IMPACT / MAINTAINABILITY
@@ -167,7 +161,7 @@ Ordered by recommended edit sequence:
 
 4. `.claude/skills/elliott-wave-analysis.md` — Collapse Stage 1/2/3 restatements of PIVOT ACCEPTANCE GATE to back-references (T1-C); simplify PRE-ANALYSIS CHECKLIST (T3-C); add `.wave` header schema note (T2-B)
 
-5. `Elliot Wave TradingView PineScript.prompt.md` — Trim Wave Analysis delegation step enumeration (T2-A); add input validation block (T2-C); remove dead HTML comment (T3-A)
+5. `Elliot Wave TradingView PineScript.prompt.md` — Trim Wave Analysis delegation step enumeration (T2-A); remove dead HTML comment (T3-A)
 
 6. `README.md` — Add rule ownership table (T3-D)
 

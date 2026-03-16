@@ -5,21 +5,7 @@
       "WebFetch(domain:query1.finance.yahoo.com)",
       "WebFetch(domain:finance.yahoo.com)",
       "WebSearch",
-      "Bash(ls /usr/bin/python*)",
-      "Bash(ls /usr/local/bin/python*)",
-      "Bash(ls /opt/*/bin/python*)",
-      "Bash(find /usr -name python* -type f)",
-      "Bash(perl -e 'print \"\"perl works\\\\n\"\"')",
-      "Bash(awk 'BEGIN{print \"\"awk works\"\"}')",
-      "Bash(python3 -c \":*)",
-      "Bash(node -e \":*)",
-      "Bash(cmd.exe /c \"where node\")",
-      "Bash(pip install:*)",
-      "Bash(/c/Users/fede_/AppData/Local/Microsoft/WindowsApps/python.exe --version)",
-      "Read(//c/Users/fede_/AppData/Local/Programs/**)",
-      "Bash(ls /c/Python*/python.exe)",
-      "Read(//usr/**)",
-      "Bash(perl -e ':*)"
+      "Bash(ls *)"
     ]
   }
 }
