@@ -15,4 +15,3 @@ Generates a .pine script to be imported into TradingView with Elliot Wave Analys
 When editing a rule, update it **only in the authoritative file** listed above. Do not restate it elsewhere.
 
 ## Pending Tasks
-make a slideshow presentation of the repo, the idea is to share what was done to share on LinkedIn, this is part of my work portfolio so this should showcase the use of AI to perform a complex task, like stock trade analysis in this case,
