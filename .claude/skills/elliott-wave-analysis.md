@@ -9,6 +9,8 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 **OUTPUT RULE: Perform all 8 steps silently — do not narrate, explain, or output any step-by-step reasoning. This includes all Yahoo Finance API fetches: call them immediately and silently without asking for permission or announcing the action. After completing Step 8, output ONLY the compact pivot summary defined at the bottom of this file. No other text.**
 
+**NO PYTHON RULE: Do not write, generate, or execute any Python scripts at any point during this analysis. All data fetching must use WebFetch directly against the Yahoo Finance API. All calculations (Fibonacci, pivot identification, retracement percentages) must be performed in-context. Using Bash to run Python is forbidden.**
+
 ---
 
 **Step 1 — Identify the Trend Structure**
