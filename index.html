@@ -959,6 +959,7 @@
     document.getElementById('counter').textContent = n + ' / ' + total;
     document.getElementById('progress').style.width = (n / total * 100) + '%';
     current = n;
+    localStorage.setItem('currentSlide', n);
   }
 
   function go(dir) {
@@ -971,7 +972,8 @@
     if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
   });
 
-  show(1);
+  const saved = parseInt(localStorage.getItem('currentSlide'), 10);
+  show((saved >= 1 && saved <= total) ? saved : 1);
 </script>
 </body>
 </html>
