@@ -363,14 +363,17 @@
       grid-template-columns: 1fr;
     }
 
-    /* Pipeline: stack vertically */
+    /* Pipeline: stack vertically, centered */
     .pipeline {
       flex-direction: column;
-      align-items: stretch;
+      align-items: center;
+      width: 100%;
     }
     .pipe-step {
       min-width: unset;
-      width: 100%;
+      width: 80%;
+      max-width: 280px;
+      text-align: center;
     }
     .pipe-arrow {
       transform: rotate(90deg);
