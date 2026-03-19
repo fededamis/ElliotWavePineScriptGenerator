@@ -574,7 +574,7 @@
 ══════════════════════════════════════════ -->
 <div class="slide" id="slide-2">
   <div class="section-label">The Problem</div>
-  <h2>Elliott Wave is powerful<br/>but brutally complex</h2>
+  <h2>Elliott Wave is powerful.<br/>but brutally complex</h2>
   <div class="two-col">
     <div>
       <p class="lead">
@@ -662,7 +662,7 @@
 ══════════════════════════════════════════ -->
 <div class="slide" id="slide-4">
   <div class="section-label">Prompt Engineering</div>
-  <h2>Modular skill architecture<br/>with strict rule ownership</h2>
+  <h2>Modular skill architecture<br/>with strict rule ownership.</h2>
   <div class="two-col">
     <div>
       <p class="lead" style="font-size: 16px;">Each domain has exactly one authoritative source file. No rule duplication. Clear ownership prevents contradictions.</p>
@@ -785,7 +785,7 @@
 ══════════════════════════════════════════ -->
 <div class="slide" id="slide-7" style="padding: 40px 60px;">
   <div class="section-label">Live Result</div>
-  <h2 style="margin-bottom: 12px;">SPY Elliott Wave — rendered on TradingView</h2>
+  <h2 style="margin-bottom: 12px;">SPY Elliott Wave — rendered on TradingView.</h2>
   <p style="font-size: 15px; color: var(--muted); margin-bottom: 20px; max-width: 860px;">
     Primary count (55% confidence) — 5-wave motive impulse from the October 2022 lows.
     Subwaves, Fibonacci labels, projected correction targets, and invalidation level all generated automatically.
@@ -807,7 +807,7 @@
 ══════════════════════════════════════════ -->
 <div class="slide" id="slide-8">
   <div class="section-label">Quality Assurance</div>
-  <h2>5-pass automated validation<br/>before any output is written</h2>
+  <h2>5-pass automated validation<br/>before any output is written.</h2>
   <div class="three-col" style="margin-bottom: 24px;">
     <div class="card">
       <div class="card-icon">🔤</div>
@@ -847,7 +847,7 @@
 ══════════════════════════════════════════ -->
 <div class="slide" id="slide-9">
   <div class="section-label">Continuous Improvement</div>
-  <h2>Prompt optimization<br/>as an engineering discipline</h2>
+  <h2>Prompt optimization<br/>as an engineering discipline.</h2>
   <div class="two-col">
     <div>
       <p class="lead" style="font-size: 16px; margin-bottom: 24px;">
@@ -879,7 +879,7 @@
 ══════════════════════════════════════════ -->
 <div class="slide" id="slide-10">
   <div class="section-label">Key Takeaways</div>
-  <h2>What this project demonstrates</h2>
+  <h2>What this project demonstrates.</h2>
   <div class="three-col">
     <div class="card" style="border-color: rgba(0,212,255,0.4);">
       <div class="card-icon">🤖</div>
@@ -969,16 +969,6 @@
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
     if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
-  });
-
-  // Touch swipe support
-  let touchX = null;
-  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
-  document.addEventListener('touchend', e => {
-    if (touchX === null) return;
-    const dx = e.changedTouches[0].clientX - touchX;
-    if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
-    touchX = null;
   });
 
   show(1);
