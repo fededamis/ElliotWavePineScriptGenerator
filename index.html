@@ -344,6 +344,188 @@
     padding: 2px 7px;
     font-size: 11px;
   }
+
+  /* ── Mobile Responsive ────────────────────────────────────── */
+  @media (max-width: 768px) {
+    /* Allow each slide to scroll internally for tall content */
+    .slide {
+      padding: 20px 16px;
+      padding-bottom: 80px;
+      overflow-y: auto;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    /* Stack two-column, three-column, and result-grid layouts */
+    .two-col,
+    .three-col,
+    .result-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* Pipeline: stack vertically */
+    .pipeline {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .pipe-step {
+      min-width: unset;
+      width: 100%;
+    }
+    .pipe-arrow {
+      transform: rotate(90deg);
+      align-self: center;
+    }
+
+    /* Metrics: at least 2 per row */
+    .metric-row {
+      gap: 10px;
+    }
+    .metric {
+      flex: 1 1 calc(50% - 10px);
+      min-width: calc(50% - 10px);
+      padding: 14px 10px;
+    }
+    .metric .val {
+      font-size: 28px;
+    }
+
+    /* Code blocks: smaller font */
+    .code-block {
+      font-size: 11px;
+    }
+
+    /* Lead paragraph */
+    .lead {
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    /* Headings */
+    h2 {
+      font-size: clamp(22px, 5vw, 32px);
+    }
+
+    /* Hide keyboard hint on mobile */
+    .kbd-hint {
+      display: none;
+    }
+
+    /* Navigation bar */
+    .nav {
+      bottom: 16px;
+      padding: 8px 14px;
+      gap: 10px;
+    }
+    .nav button {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    /* Title slide subtitle */
+    .title-slide .subtitle {
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* Title slide h1 */
+    .title-slide h1 {
+      font-size: clamp(28px, 7vw, 48px);
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px;
+    }
+
+    /* Cards: reduce padding */
+    .card {
+      padding: 16px;
+    }
+    .card .card-icon {
+      font-size: 22px;
+    }
+
+    /* Swatch row */
+    .swatch-row {
+      gap: 8px;
+    }
+
+    /* Quote block */
+    .quote-block {
+      font-size: 13px;
+    }
+
+    /* Tag row */
+    .tag-row {
+      gap: 6px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .slide {
+      padding: 14px 12px;
+      padding-bottom: 80px;
+    }
+
+    h2 {
+      font-size: clamp(18px, 6vw, 26px);
+    }
+
+    .title-slide h1 {
+      font-size: clamp(22px, 8vw, 36px);
+    }
+
+    .title-slide .subtitle {
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    /* Stack metrics to 1 per row on very small screens */
+    .metric {
+      flex: 1 1 100%;
+      min-width: 100%;
+    }
+
+    .code-block {
+      font-size: 10px;
+    }
+
+    .lead {
+      font-size: 14px;
+    }
+
+    .nav {
+      bottom: 10px;
+      padding: 6px 10px;
+      gap: 6px;
+    }
+    .nav button {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .nav .counter {
+      font-size: 11px;
+      min-width: 40px;
+    }
+
+    .card {
+      padding: 12px;
+    }
+    .card .card-icon {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .pipe-step {
+      padding: 10px 12px;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+  }
 </style>
 </head>
 <body>
