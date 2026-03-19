@@ -164,7 +164,3 @@ Ordered by recommended edit sequence:
 5. `Elliot Wave TradingView PineScript.prompt.md` — Trim Wave Analysis delegation step enumeration (T2-A); remove dead HTML comment (T3-A) ✅ DONE
 
 6. `README.md` — Add rule ownership table (T3-D) ✅ DONE
-
----
-
-**Most urgent action:** Fix the `textalign` contradiction (T1-A) — it's an active silent bug that causes the validation subagent to override the visual style on every run. The generated `.pine` file currently uses `text.align_left` throughout, which contradicts the visual style spec's `text.align_center`.
