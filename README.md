@@ -19,4 +19,3 @@ When editing a rule, update it **only in the authoritative file** listed above. 
 - Repo: https://github.com/fededamis/ElliotWavePineScriptGenerator
 
 ## Pending Tasks
-- Check mobile version of slideshow.

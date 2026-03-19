@@ -174,9 +174,9 @@ If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real s
 
 **Stage 1 — Historical Pivot Identification:** Re-apply the PIVOT ACCEPTANCE GATE (defined above) to every pivot before accepting it.
 
-**Stage 2 — Fibonacci Alignment Verification:** After all pivots pass the gate, verify each Fibonacci level calculation uses the exact gated prices. Flag any Fibonacci level that required a non-gated price — replace that pivot.
+**Stage 2 — Fibonacci Alignment Verification:** Verify each Fibonacci level calculation uses the exact gated prices. Flag any Fibonacci level that required a non-gated price — replace that pivot.
 
-**Stage 3 — Final Accuracy Cross-Check (Before Output):** Re-apply the PIVOT ACCEPTANCE GATE to every historical pivot one final time. For projected pivots, also apply the PRICE BOUNDS CHECK FOR PROJECTIONS (defined in Step 8). If ANY historical pivot fails, correct it before output.
+**Stage 3 — Final Accuracy Cross-Check (Before Output):** Re-apply the PIVOT ACCEPTANCE GATE (defined above) to every historical pivot one final time. For projected pivots, also apply the PRICE BOUNDS CHECK FOR PROJECTIONS (defined in Step 8). Correct any failure before output.
 
 **PENALTY FOR ACCURACY VIOLATIONS:**
 - Pivot using Close, Open, or any non-extreme OHLC field: REJECTED — must be replaced before output

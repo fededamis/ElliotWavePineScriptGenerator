@@ -153,17 +153,17 @@ This is the most impactful fix because it's an active bug, not just inefficiency
 
 Ordered by recommended edit sequence:
 
-1. `.claude/skills/pinescript-visual-style.md` — **Establish as authoritative source** for all label style rules (size, textalign, style direction); add explicit canonical `textalign` value (T1-A, T1-B)
+1. `.claude/skills/pinescript-visual-style.md` — **Establish as authoritative source** for all label style rules (size, textalign, style direction); add explicit canonical `textalign` value (T1-A, T1-B) ✅ DONE
 
-2. `.claude/skills/pinescript-validation-passes.md` — Remove `size=size.small` and `textalign` checks from section D (now owned by visual style); update `textalign` value in remaining D checks to match canonical (T1-A, T1-B)
+2. `.claude/skills/pinescript-validation-passes.md` — Remove `size=size.small` and `textalign` checks from section D (now owned by visual style); update `textalign` value in remaining D checks to match canonical (T1-A, T1-B) ✅ DONE
 
-3. `.claude/skills/pinescript-generation-rules.md` — Remove duplicated label rules (size, textalign, style direction); replace with single reference to visual style file; remove duplicate OUTPUT RULE (T1-B, T3-B)
+3. `.claude/skills/pinescript-generation-rules.md` — Remove duplicated label rules (size, textalign, style direction); replace with single reference to visual style file; remove duplicate OUTPUT RULE (T1-B, T3-B) ✅ DONE
 
-4. `.claude/skills/elliott-wave-analysis.md` — Collapse Stage 1/2/3 restatements of PIVOT ACCEPTANCE GATE to back-references (T1-C); simplify PRE-ANALYSIS CHECKLIST (T3-C); add `.wave` header schema note (T2-B)
+4. `.claude/skills/elliott-wave-analysis.md` — Collapse Stage 1/2/3 restatements of PIVOT ACCEPTANCE GATE to back-references (T1-C); simplify PRE-ANALYSIS CHECKLIST (T3-C); add `.wave` header schema note (T2-B) ✅ DONE
 
-5. `Elliot Wave TradingView PineScript.prompt.md` — Trim Wave Analysis delegation step enumeration (T2-A); remove dead HTML comment (T3-A)
+5. `Elliot Wave TradingView PineScript.prompt.md` — Trim Wave Analysis delegation step enumeration (T2-A); remove dead HTML comment (T3-A) ✅ DONE
 
-6. `README.md` — Add rule ownership table (T3-D)
+6. `README.md` — Add rule ownership table (T3-D) ✅ DONE
 
 ---
 
