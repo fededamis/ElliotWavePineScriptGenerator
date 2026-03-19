@@ -475,6 +475,18 @@
     .tag-row {
       gap: 6px;
     }
+
+    /* Align checklist labels into a fixed-width column */
+    ul.checklist li strong {
+      min-width: 130px;
+      flex-shrink: 0;
+    }
+    ul.checklist li strong.wide-label {
+      min-width: 0;
+      width: 140px;
+      flex-shrink: 0;
+      word-break: break-word;
+    }
   }
 
   @media (max-width: 480px) {
@@ -667,12 +679,12 @@
     <div>
       <p class="lead" style="font-size: 16px;">Each domain has exactly one authoritative source file. No rule duplication. Clear ownership prevents contradictions.</p>
       <ul class="checklist">
-        <li><strong>Main Orchestrator</strong> — controls flow, cache, subagent delegation</li>
-        <li><strong>elliott-wave-analysis.md</strong> — 8-step methodology, Fibonacci validation, PIVOT ACCEPTANCE GATE</li>
-        <li><strong>pinescript-generation-rules.md</strong> — v6 type constraints, array safety, coordinate system</li>
-        <li><strong>pinescript-visual-style.md</strong> — color scheme, label sizes, opacity rules</li>
-        <li><strong>pinescript-validation-passes.md</strong> — 5 integrated QA passes (syntax → type → logic → coords → bounds)</li>
-        <li><strong>bug-fix-protocol.md</strong> — fixes applied to source to prevent bug reproduction</li>
+        <li><strong class="wide-label">Main Orchestrator</strong> — controls flow, cache, subagent delegation</li>
+        <li><strong class="wide-label">elliott-wave-analysis.md</strong> — 8-step methodology, Fibonacci validation, PIVOT ACCEPTANCE GATE</li>
+        <li><strong class="wide-label">pinescript-generation-rules.md</strong> — v6 type constraints, array safety, coordinate system</li>
+        <li><strong class="wide-label">pinescript-visual-style.md</strong> — color scheme, label sizes, opacity rules</li>
+        <li><strong class="wide-label">pinescript-validation-passes.md</strong> — 5 integrated QA passes (syntax → type → logic → coords → bounds)</li>
+        <li><strong class="wide-label">bug-fix-protocol.md</strong> — fixes applied to source to prevent bug reproduction</li>
       </ul>
     </div>
     <div>
@@ -700,11 +712,11 @@
     <div>
       <p class="lead" style="font-size: 16px; margin-bottom: 24px;">The AI fetches live OHLC data from Yahoo Finance and applies the full Elliott Wave ruleset — including subwave decomposition at one level deep.</p>
       <ul class="checklist">
-        <li><strong>Primary + Alternate counts</strong> with calibrated confidence scores (e.g., 55% / 45%)</li>
-        <li><strong>Fibonacci validation</strong> at 23.6%, 38.2%, 50%, 61.8%, 78.6%, 100%, 127.2%, 161.8%</li>
-        <li><strong>Subwaves mandatory</strong> for every impulse — 5-wave for motive, 3-wave for corrective</li>
-        <li><strong>Price targets &amp; invalidation levels</strong> per count</li>
-        <li><strong>Timeframe selection</strong> — daily (≤2 yr) or weekly (>2 yr) automatically</li>
+        <li><strong class="wide-label">Primary + Alternate counts</strong> with calibrated confidence scores (e.g., 55% / 45%)</li>
+        <li><strong class="wide-label">Fibonacci validation</strong> at 23.6%, 38.2%, 50%, 61.8%, 78.6%, 100%, 127.2%, 161.8%</li>
+        <li><strong class="wide-label">Subwaves mandatory</strong> for every impulse — 5-wave for motive, 3-wave for corrective</li>
+        <li><strong class="wide-label">Price targets &amp; invalidation levels</strong> per count</li>
+        <li><strong class="wide-label">Timeframe selection</strong> — daily (≤2 yr) or weekly (>2 yr) automatically</li>
       </ul>
     </div>
     <div class="code-block">
@@ -745,11 +757,11 @@
         <div class="swatch"><div class="dot" style="background:#ff9900;"></div>Corrective waves (orange)</div>
       </div>
       <ul class="checklist">
-        <li><strong>Show Count:</strong> Primary / Both / Alternate</li>
-        <li><strong>Alternate at 55% opacity</strong> when "Both" selected</li>
-        <li><strong>Toggle:</strong> Invalidation levels, Targets, Projections, Labels, Subwaves, Legend</li>
-        <li><strong>Legend position:</strong> 4 corners</li>
-        <li><strong>Collision detection</strong> for overlapping labels</li>
+        <li><strong class="wide-label">Show Count:</strong> Primary / Both / Alternate</li>
+        <li><strong class="wide-label">Alternate at 55% opacity</strong> when "Both" selected</li>
+        <li><strong class="wide-label">Toggle:</strong> Invalidation levels, Targets, Projections, Labels, Subwaves, Legend</li>
+        <li><strong class="wide-label">Legend position:</strong> 4 corners</li>
+        <li><strong class="wide-label">Collision detection</strong> for overlapping labels</li>
       </ul>
     </div>
     <div class="code-block" style="font-size: 12px;">
