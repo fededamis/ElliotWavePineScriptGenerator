@@ -164,3 +164,5 @@ Ordered by recommended edit sequence:
 5. `Elliot Wave TradingView PineScript.prompt.md` — Trim Wave Analysis delegation step enumeration (T2-A); remove dead HTML comment (T3-A) ✅ DONE
 
 6. `README.md` — Add rule ownership table (T3-D) ✅ DONE
+
+---
