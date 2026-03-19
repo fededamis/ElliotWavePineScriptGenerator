@@ -352,11 +352,11 @@
 
   @media (max-width: 768px) {
     /* Show mobile chart image in slide 7 */
-    .mobile-chart-img { display: block; margin-top: 8px; }
+    .mobile-chart-img { display: block; margin-top: 4px; }
     .desktop-chart-img { display: none; }
-    #slide-7 .desktop-chart-wrapper { display: none; }
+    #slide-7 .desktop-chart-wrapper { display: none !important; }
     #slide-7 { justify-content: flex-start !important; padding: 20px 16px !important; padding-bottom: 80px !important; }
-    #slide-7 > p { margin-bottom: 12px; }
+    #slide-7 > p { margin-bottom: 0 !important; }
 
     /* Allow each slide to scroll internally for tall content */
     .slide {
