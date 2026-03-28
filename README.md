@@ -21,3 +21,4 @@ When editing a rule, update it **only in the authoritative file** listed above. 
 ## Pending Tasks
 - Check improvement ideas.
 - Check: https://www.youtube.com/watch?v=aqtseECSdtY
+- Add tooltips for subwave labels.
