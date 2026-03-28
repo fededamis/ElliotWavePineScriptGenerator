@@ -38,11 +38,11 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 **Step 4.5 — Identify Subwaves (one level of depth only)**
 
-**DEPTH LIMIT: Subwave identification is strictly one level deep. You may only subdivide primary waves (W1, W2, W3, W4, W5) into their subwaves. You must NOT subdivide a subwave into its own sub-subwaves (e.g. W1.sw5 must not have its own sw1–sw5; W1.sw2 must not have its own swa–swc). Any second-level nesting is invalid and must not appear in the output.**
+**DEPTH LIMIT: Subwave identification is strictly one level deep. You may only subdivide primary waves (W1, W2, W3, W4, W5) into their subwaves. You must NOT subdivide a subwave into its own sub-subwaves (e.g. W1.sw5 must not have its own sw1–sw5). Any second-level nesting is invalid and must not appear in the output.**
 
-Apply the PIVOT ACCEPTANCE GATE to all subwave pivots — same rules as primary pivots.
+Apply the PIVOT ACCEPTANCE GATE to all subwave pivots (same rules as primary pivots) using the already-fetched Yahoo Finance data — do not invent prices.
 
-**MANDATORY COVERAGE RULE: You MUST attempt subwave identification for EVERY primary wave (W1, W2, W3, W4, W5). Skipping a wave silently is not allowed. For each wave, either (a) produce its confirmed subwave rows, or (b) explicitly state why it was skipped (e.g. "W1: only 3 bars — insufficient for subwave identification"). The Subwave note at the bottom of the output must list every primary wave and its result (✓, ⚠, or ✗(reason)).**
+**MANDATORY COVERAGE RULE: Attempt subwave identification for every primary wave (W1, W2, W3, W4, W5). The Subwave note at the bottom of the output must list every primary wave with a result symbol: ✓ (confirmed), ⚠ (partial), or ✗(reason) (skipped/insufficient). No prose justification — symbol and short reason only.**
 
 For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the selected timeframe:
 - Identify the 5 internal subwave pivots (sw1 through sw5) on the same timeframe
@@ -66,9 +66,7 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 - Any subwave EW rule violation: primary count is INVALIDATED (see rule above) — confidence adjustments do not apply; a valid count must be found instead
 - If fewer than 2 waves can be subwave-confirmed (too few bars or data unavailable): note "subwave confirmation: insufficient data" — do not penalize confidence
 
-**Alternate count subwaves:** Apply the same subwave identification process to the alternate count's confirmed historical waves. For each alternate count wave that spans sufficient bars (motive ≥ 5 bars, corrective ≥ 3 bars), produce a `SUBWAVES (Alternate — confirmed waves only)` section in the output using the same naming conventions (e.g. `WI.sw1`…`WI.sw5`, `WA.swa`…`WA.swc`). If no alternate count waves qualify, omit the section. The same one-level depth limit applies.
-
-**Subwave data sourcing:** Use the same Yahoo Finance fetch already performed in Step 4. Subwave pivots must be verified against the OHLC arrays — do not invent prices.
+**Alternate count subwaves:** Only if the alternate count has at least 2 historical waves spanning sufficient bars (motive ≥ 5 bars, corrective ≥ 3 bars), produce a `SUBWAVES (Alternate — confirmed waves only)` section using the same naming conventions (e.g. `WI.sw1`…`WI.sw5`, `WA.swa`…`WA.swc`). If fewer than 2 alternate waves qualify, omit the section entirely. The same one-level depth limit applies.
 
 **Step 5 — Select the PRIMARY Count**
 - Choose the wave count that satisfies all three Elliott Wave rules
@@ -104,31 +102,19 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 - **COMPLETE STRUCTURE RULE: Projected sequences must be structurally complete. For A-B-C corrections, all three legs (WA, WB, WC) must be projected. For impulse sequences, project through the full next wave. Never stop mid-structure (e.g. at WB without WC) — an incomplete projection does not represent a valid Elliott Wave scenario.**
 - **MINIMUM PROJECTION SPAN: The last projected pivot in each count must be dated at least 60 calendar days after today's date. If Fibonacci-based timing yields a last projected pivot sooner than 60 days from today, extend the projection sequence by adding the next wave in the structure until coverage reaches at least today + 60 days. Do NOT use a horizontal flat line as a substitute — only real projected pivots count.**
 
-**STEP 8 HARD STOP — Do not write any output until all four of the following are confirmed true:**
+**STEP 8 HARD STOP — Do not write any output until all three of the following are confirmed true:**
 
-1. **Data fetched through today**: The Yahoo Finance API was called with `period2` set to today's Unix timestamp (not the analysis start date, not an arbitrary past date). Confirm the last bar in the returned data is within the current week.
+1. **Data fetched through today**: The Yahoo Finance API was called with `period2` set to today's Unix timestamp. Confirm the last bar in the returned data is within the current week — if not, the fetch was truncated, retry with a corrected `period2` before proceeding.
 2. **Proximity satisfied**: The last `hist` pivot date is within 8 weekly bars (56 calendar days) of today. If not — STOP. Fetch the latest data, walk forward, and add the missing pivots before continuing.
 3. **No stale projections**: For every `proj` pivot, confirm its price is outside the already-traded range since the last `hist` pivot. If any `proj` price has already been traded through — STOP. That pivot must be reclassified as `hist` and projections re-anchored from the new last `hist` pivot.
-4. **Fetch covers full range**: The data returned by Yahoo Finance actually includes bars up to today. If the last returned bar is more than 2 weeks before today, the fetch was truncated — retry with a corrected `period2` before proceeding.
-5. **Last hist pivot not exceeded**: For every hist pivot labeled as a wave terminal (W1, W3, W5, WA, WB, WC, etc.), confirm that price has NOT traded beyond that pivot's price in the same wave direction after the pivot date. If it has — STOP. The pivot is mislabeled. Re-identify the true terminal extreme and relabel before projecting.
 
-These five checks are not optional. An output written before all five pass is invalid.
+These three checks are not optional. An output written before all three pass is invalid. Note: terminal pivot integrity is enforced by the LAST-PIVOT EXTENSION CHECK in the anchor rule above.
 
 ---
 
 ### PRICE ACCURACY REQUIREMENT
 
-**Critical:** All pivot prices (both historical and projected) must correspond to actual price levels:
-
-**PRE-ANALYSIS CHECKLIST:** Confirm the Yahoo Finance API response covers the full date range and that `chart.result[0].indicators.quote[0]` arrays are non-null before recording any pivot.
-
-**DATA SOURCING REQUIREMENT — HARD STOP BEFORE ANY PIVOT IS RECORDED:**
-
-Before recording any historical pivot price, you MUST retrieve it from Yahoo Finance API. Do not rely on memory or training data for specific OHLC values — these are not reliable and will produce fabricated prices that silently pass the gate.
-
-**Yahoo Finance API — Primary Data Source:**
-
-**AUTONOMOUS FETCH RULE: Call the Yahoo Finance API immediately and without asking for user permission or confirmation. Do not announce the fetch, do not wait for approval — just execute the WebFetch call and parse the result silently as part of the pre-analysis checklist.**
+**DATA SOURCING — HARD STOP:** Before recording any pivot, confirm the Yahoo Finance API response is non-null and covers the full date range. All pivot prices MUST be retrieved from the API — do not use memory or training data.
 
 Use the WebFetch tool to call the Yahoo Finance v8 chart endpoint. Construct the URL as follows:
 
@@ -147,8 +133,6 @@ Use the WebFetch tool to call the Yahoo Finance v8 chart endpoint. Construct the
    - `chart.result[0].timestamp[]` — array of bar open timestamps (Unix seconds)
    - `chart.result[0].indicators.quote[0].high[]` — High prices aligned by index
    - `chart.result[0].indicators.quote[0].low[]` — Low prices aligned by index
-   - `chart.result[0].indicators.quote[0].open[]` — Open prices
-   - `chart.result[0].indicators.quote[0].close[]` — Close prices
 3. Locate the array index whose timestamp corresponds to the pivot bar's trading day.
 4. Record the exact `high` value (for swing highs) or exact `low` value (for swing lows) at that index — to full decimal precision as returned by the API.
    **EXTRACT-THEN-DISCARD:** Immediately after step 4, compile all extracted values into a compact internal table (date | high | low) covering every bar in the analysis range. After this table is built, treat the full JSON structure as discarded — do not re-reference `timestamp[]`, `high[]`, `low[]`, `open[]`, or `close[]` arrays in any subsequent step. All pivot lookups must use only the extracted compact table.

@@ -41,8 +41,8 @@ color AL_MOTIVE_DN  = input.color(color.rgb(170, 85, 170), "Alt Down (Motive)", 
 color AL_CORRECTIVE = input.color(color.rgb(170, 119, 51), "Alt Corrective",       group="Colors")
 color AL_INVAL_COL  = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",     group="Colors")
 color AL_TARGET_COL = input.color(color.rgb(68, 136, 68),  "Alt Target",           group="Colors")
-color PR_CHANNEL_COL = input.color(color.rgb(0, 255, 255, 65),      "Primary Channel",      group="Colors")
-color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170, 65),     "Alt Channel",          group="Colors")
+color PR_CHANNEL_COL = input.color(color.aqua,              "Primary Channel",      group="Colors")
+color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",          group="Colors")
 ```
 
 #### LABEL BACKGROUND DISTINCTION

@@ -92,7 +92,7 @@ For `<last pivot ts>`: use the last timestamp variable declared in the count's d
 
 **Line style:**
 - `style=STYLE_DASHED`, `width=1`
-- Color: `PR_CHANNEL_COL` for primary, `AL_CHANNEL_COL` for alternate
+- Color: apply 50% transparency at draw time — `color.new(PR_CHANNEL_COL, 50)` for primary, `color.new(AL_CHANNEL_COL, 50)` for alternate. **Never** embed transparency in the `input.color()` default (e.g. via `color.rgb(r,g,b,transp)`) — Pine Script v6 does not reliably support transparent defaults there, causing the color to resolve to `na` and the lines to be invisible.
 - `xloc=xloc.bar_time` on all `line.new()` calls
 
 **Add both channel lines to `allLines`** so they are cleaned up on each bar.
