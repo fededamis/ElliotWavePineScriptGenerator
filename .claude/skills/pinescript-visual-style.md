@@ -23,6 +23,26 @@ description: Color scheme, label style, and visual design rules for Elliott Wave
 - Invalidation level line and label: #CC4444 (darker red, distinct from primary red)
 - Target level line and label: #448844 (darker green, distinct from primary lime)
 
+#### COLOR DECLARATION (how colors must appear in generated scripts)
+All 10 color variables must be declared as `input.color()` — **never** as hardcoded `color` constants. This exposes a "Colors" group in TradingView's Settings panel so users can override any color without editing source code. Use the palette values above as defaults.
+
+The section comment must read `// === COLOR INPUTS ===` (not `// === COLOR CONSTANTS ===`).
+
+Required declarations (copy exactly, including the `group="Colors"` argument):
+```pine
+// === COLOR INPUTS ===
+color PR_MOTIVE_UP  = input.color(color.aqua,             "Primary Up (Motive)",   group="Colors")
+color PR_MOTIVE_DN  = input.color(color.fuchsia,          "Primary Down (Motive)", group="Colors")
+color PR_CORRECTIVE = input.color(color.orange,           "Primary Corrective",    group="Colors")
+color PR_INVAL_COL  = input.color(color.red,              "Invalidation Level",    group="Colors")
+color PR_TARGET_COL = input.color(color.lime,             "Target Level",          group="Colors")
+color AL_MOTIVE_UP  = input.color(color.rgb(85, 153, 170), "Alt Up (Motive)",      group="Colors")
+color AL_MOTIVE_DN  = input.color(color.rgb(170, 85, 170), "Alt Down (Motive)",    group="Colors")
+color AL_CORRECTIVE = input.color(color.rgb(170, 119, 51), "Alt Corrective",       group="Colors")
+color AL_INVAL_COL  = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",     group="Colors")
+color AL_TARGET_COL = input.color(color.rgb(68, 136, 68),  "Alt Target",           group="Colors")
+```
+
 #### LABEL BACKGROUND DISTINCTION
 - Primary count pivot labels: full-opacity background using the wave's primary color
 - Alternate count pivot labels: semi-transparent background (color.new(wave_color, 50)) so they visually recede

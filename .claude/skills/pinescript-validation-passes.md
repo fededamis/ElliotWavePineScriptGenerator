@@ -96,7 +96,7 @@ Do not output anything during this scan.
 - Invalidation and target levels are on the correct side of current price
 - "Alternate Only" mode renders alternate lines as solid and full opacity — not dashed or transparent
 - Projected lines are dotted, distinct from solid historical (primary) and dashed historical (alternate)
-- Upward motive segments use color.aqua, downward motive use color.fuchsia, corrective use color.orange
+- Color variables (PR_MOTIVE_UP, PR_MOTIVE_DN, PR_CORRECTIVE, AL_MOTIVE_UP, AL_MOTIVE_DN, AL_CORRECTIVE, PR_INVAL_COL, PR_TARGET_COL, AL_INVAL_COL, AL_TARGET_COL) must be declared as `input.color()` with `group="Colors"` and the correct palette defaults (aqua, fuchsia, orange, red, lime, and their muted alternates) — NOT as hardcoded `color` constants
 - All drawing calls (line.new, label.new) are inside barstate.islast
 - max_lines_count and max_labels_count in indicator() are high enough for all drawn objects
 - No division by zero or operations on na values
