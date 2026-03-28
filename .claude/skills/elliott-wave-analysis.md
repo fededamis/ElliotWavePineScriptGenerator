@@ -91,14 +91,14 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 
 **Step 8 — Project Future Wave Movement**
 - **ANCHOR RULE: Before projecting, walk the historical count all the way forward to today. Identify every confirmed swing high and swing low between the last labeled pivot and today's date on the selected timeframe. Each one that fits the wave structure must be added as a historical pivot (type: hist). Do NOT leave a gap of more than one timeframe period between the last historical pivot and today.**
-- **LAST-PIVOT EXTENSION CHECK: After labeling the last hist pivot, check whether price has since traded beyond that pivot's price in the same direction. For example — if W5 is labeled at $613 as a swing high, but price subsequently traded above $613, then W5 is NOT the terminal pivot: price extended the wave further. In that case you MUST re-identify the actual terminal pivot at the true swing extreme reached after $613, relabel it as W5 (or the appropriate wave), and only then begin projections from that new anchor. A hist pivot that has been exceeded in its own direction is a mislabeled pivot — correct it before projecting.**
+- **LAST-PIVOT EXTENSION CHECK: After labeling the last hist pivot, confirm price has not since traded beyond it in the same direction. If it has, the pivot is mislabeled — re-identify the true terminal extreme, relabel it, and anchor projections from there.**
 - **PROXIMITY CHECK: The last historical pivot must be within 8 weekly bars (or 8 daily bars on a daily chart) of today's date. If the most recently labeled hist pivot is older than that, the count is incomplete — continue identifying pivots until the last hist pivot is within that window.**
 - From that final confirmed pivot (now close to today), project the most probable future path for each count
 - For the PRIMARY count: project at least 2 future pivots showing the expected next wave sequence
 - For the ALTERNATE count: project at least 2 future pivots showing the expected next wave sequence under that scenario
 - Estimate future pivot dates based on typical wave durations observed earlier in the same wave sequence
 - Future pivots must be dated beyond today and clearly distinguished from historical pivots
-- **PRICE BOUNDS CHECK FOR PROJECTIONS: Every projected pivot price must be beyond the price range that has already traded since the last historical pivot. Specifically — if projecting a swing low, its price must be below the lowest Low printed since the last hist pivot; if projecting a swing high, its price must be above the highest High printed since the last hist pivot. A projected price that falls inside the already-traded range since the last hist pivot is invalid — it means price has already passed through that level and the projection is stale. In that case, either (a) identify the pivot that price already completed as a new hist pivot and re-anchor projections from there, or (b) revise the Fibonacci target to a level price has not yet reached.**
+- **PRICE BOUNDS CHECK FOR PROJECTIONS: Every projected pivot must be at a price level not yet traded since the last hist pivot — projected lows below the lowest Low, projected highs above the highest High printed since then. If a projected price falls inside the already-traded range, reclassify it as hist and re-anchor projections from the new last hist pivot.**
 - **COMPLETE STRUCTURE RULE: Projected sequences must be structurally complete. For A-B-C corrections, all three legs (WA, WB, WC) must be projected. For impulse sequences, project through the full next wave. Never stop mid-structure (e.g. at WB without WC) — an incomplete projection does not represent a valid Elliott Wave scenario.**
 - **MINIMUM PROJECTION SPAN: The last projected pivot in each count must be dated at least 60 calendar days after today's date. If Fibonacci-based timing yields a last projected pivot sooner than 60 days from today, extend the projection sequence by adding the next wave in the structure until coverage reaches at least today + 60 days. Do NOT use a horizontal flat line as a substitute — only real projected pivots count.**
 
@@ -135,7 +135,7 @@ Use the WebFetch tool to call the Yahoo Finance v8 chart endpoint. Construct the
    - `chart.result[0].indicators.quote[0].low[]` — Low prices aligned by index
 3. Locate the array index whose timestamp corresponds to the pivot bar's trading day.
 4. Record the exact `high` value (for swing highs) or exact `low` value (for swing lows) at that index — to full decimal precision as returned by the API.
-   **EXTRACT-THEN-DISCARD:** Immediately after step 4, compile all extracted values into a compact internal table (date | high | low) covering every bar in the analysis range. After this table is built, treat the full JSON structure as discarded — do not re-reference `timestamp[]`, `high[]`, `low[]`, `open[]`, or `close[]` arrays in any subsequent step. All pivot lookups must use only the extracted compact table.
+   **EXTRACT-THEN-DISCARD:** Immediately after step 4, compile all extracted values into a compact internal table (date | high | low) covering every bar in the analysis range. After this table is built, treat the full JSON structure as discarded — do not re-reference `timestamp[]`, `high[]`, or `low[]` arrays in any subsequent step. All pivot lookups must use only the extracted compact table.
 5. If the WebFetch call fails, returns an error, or the ticker/date is not found in the response, output a HARD STOP:
    > **HARD STOP: Cannot verify pivot price for [TICKER] on [DATE] — Yahoo Finance API returned no data. Analysis halted. Verify ticker symbol and date range, then retry.**
    Do NOT substitute a remembered, estimated, or approximate price. Do NOT continue the analysis with unverified pivots.
@@ -183,15 +183,12 @@ SUBWAVES (Primary — confirmed waves only)
 |---------|------------|----------|------|--------|------|
 | W1.sw1  | YYYY-MM-DD | $XXX.XX  | L    | --     | hist |
 | W1.sw2  | YYYY-MM-DD | $XXX.XX  | H    | XX.X%  | hist |
-[... one row per confirmed subwave pivot ...]
-[... omit any parent wave whose subwaves could not be confirmed ...]
+[... confirmed subwave rows only; omit waves that could not be confirmed ...]
 
 SUBWAVES (Alternate — confirmed waves only)
 | Wave    | Date       | Price    | OHLC | Fib    | Type |
 |---------|------------|----------|------|--------|------|
-[... one row per confirmed subwave pivot for alternate count historical waves ...]
-[... omit any parent wave whose subwaves could not be confirmed ...]
-[... omit entirely if no alternate count waves have confirmable subwaves ...]
+[... omit section entirely if fewer than 2 alternate waves qualify ...]
 
 ALTERNATE COUNT (X% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
@@ -211,8 +208,5 @@ The OHLC column must contain:
 Any pivot row with a missing or incorrect OHLC value is a signal that the PIVOT ACCEPTANCE GATE was not applied correctly.
 
 **Subwave naming conventions for the output:**
-- Motive subwaves: `W1.sw1`, `W1.sw2`, `W1.sw3`, `W1.sw4`, `W1.sw5` (substitute W3, W5 as appropriate)
+- Motive subwaves: `W1.sw1`…`W1.sw5` (substitute W3, W5 as appropriate)
 - Corrective subwaves: `W2.swa`, `W2.swb`, `W2.swc` (substitute W4, WA, WB, WC as appropriate)
-- Projected subwaves (future parent waves only): use `proj` in the Type column
-- If a parent wave has no confirmed subwaves, omit it from the SUBWAVES table entirely — do not add placeholder rows
-- **NEVER add a second subwave table for a subwave itself (e.g. "W1.sw5 subwaves" or "W1.sw2 subwaves"). Only primary waves may have subwave tables. Maximum nesting depth is one level.**

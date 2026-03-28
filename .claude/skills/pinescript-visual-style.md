@@ -65,3 +65,7 @@ color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",      
 - **CRITICAL: All label.new() calls must set textalign=text.align_center — NEVER text.align_left**
 - **All pivot label.new() calls must set style to label.style_label_down (for highs) or label.style_label_up (for lows) so the label floats above/below the pin without obscuring price action**
 - **For labels at level lines (invalidation, targets): use style=label.style_label_down or label.style_label_up depending on chart position**
+- **Subwave labels are a special case — do NOT call `makePivotText()` for subwave labels:**
+  - `text` = wave name only (e.g. `"W1.sw3"`, `"W2.swa"`) — no price, no fib in the label body
+  - `tooltip` = `"$" + str.tostring(price, "#.##") + (fib != "--" ? "\nFib:" + fib : "")` — price and fib shown on hover only
+  - This keeps subwave labels compact on-chart while preserving full detail on hover
