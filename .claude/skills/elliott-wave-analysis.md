@@ -151,6 +151,7 @@ Use the WebFetch tool to call the Yahoo Finance v8 chart endpoint. Construct the
    - `chart.result[0].indicators.quote[0].close[]` — Close prices
 3. Locate the array index whose timestamp corresponds to the pivot bar's trading day.
 4. Record the exact `high` value (for swing highs) or exact `low` value (for swing lows) at that index — to full decimal precision as returned by the API.
+   **EXTRACT-THEN-DISCARD:** Immediately after step 4, compile all extracted values into a compact internal table (date | high | low) covering every bar in the analysis range. After this table is built, treat the full JSON structure as discarded — do not re-reference `timestamp[]`, `high[]`, `low[]`, `open[]`, or `close[]` arrays in any subsequent step. All pivot lookups must use only the extracted compact table.
 5. If the WebFetch call fails, returns an error, or the ticker/date is not found in the response, output a HARD STOP:
    > **HARD STOP: Cannot verify pivot price for [TICKER] on [DATE] — Yahoo Finance API returned no data. Analysis halted. Verify ticker symbol and date range, then retry.**
    Do NOT substitute a remembered, estimated, or approximate price. Do NOT continue the analysis with unverified pivots.
