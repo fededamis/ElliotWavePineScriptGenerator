@@ -171,21 +171,11 @@ For every candidate historical pivot (primary and alternate):
 
 If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real swing extreme that passes all 6 checks.
 
-**VALIDATION AT THREE STAGES:**
+**VALIDATION AT TWO STAGES:**
 
-**Stage 1 — Historical Pivot Identification:** Re-apply the PIVOT ACCEPTANCE GATE (defined above) to every pivot before accepting it.
+**Stage 1 — Historical Pivot Identification:** Apply the full PIVOT ACCEPTANCE GATE (defined above) to every pivot before accepting it. A pivot that fails any check is REJECTED at this stage — do not carry it forward.
 
-**Stage 2 — Fibonacci Alignment Verification:** Verify each Fibonacci level calculation uses the exact gated prices. Flag any Fibonacci level that required a non-gated price — replace that pivot.
-
-**Stage 3 — Final Accuracy Cross-Check (Before Output):** Re-apply the PIVOT ACCEPTANCE GATE (defined above) to every historical pivot one final time. For projected pivots, also apply the PRICE BOUNDS CHECK FOR PROJECTIONS (defined in Step 8). Correct any failure before output.
-
-**PENALTY FOR ACCURACY VIOLATIONS:**
-- Pivot using Close, Open, or any non-extreme OHLC field: REJECTED — must be replaced before output
-- Interpolated or theoretical price: REJECTED — must be replaced before output
-- Rounded price (when precision available): REJECTED — must be replaced before output
-- Price recalled from model memory without external source retrieval: REJECTED — analysis must HARD STOP until real data is fetched
-- Non-trading day error: Correction required, re-timestamp and re-run gate
-- Alternate count pivot that fails the real-swing check: REJECTED — alternate count must be restructured or pivot replaced; also reduce alternate confidence by 20% per instance
+**Stage 2 — Final Cross-Check (Before Output Only):** Re-apply checks 1, 3, and 6 of the PIVOT ACCEPTANCE GATE to every accepted historical pivot. For projected pivots, apply the PRICE BOUNDS CHECK FOR PROJECTIONS (defined in Step 8). Checks 2, 4, and 5 were enforced at Stage 1 and do not require re-verification.
 
 ---
 

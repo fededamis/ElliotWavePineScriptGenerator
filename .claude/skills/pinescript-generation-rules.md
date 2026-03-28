@@ -58,3 +58,46 @@ do not generate code that violates any of these, so they require no fix cycle du
 - A toggle (bool input) called "Show Subwaves" to show/hide the subwave lines and labels (primary count only); default value is `true`
   - When hidden, suppress all subwave lines, subwave pivot labels, and the subwave legend row
   - When visible, render subwave lines as dashed, width=1, at 55% transparency relative to the primary count color; render subwave labels at size=size.tiny
+- A toggle (bool input) called "Show Channel" to show/hide the Elliott Wave base channel; default value is `true`
+  - Only draw the channel for impulse (5-wave) structures that have W1, W2, W3 confirmed — skip silently if the count is corrective-only (WA-WB-WC) or W3 has not yet been identified
+  - Respects "Show Count" mode: draw primary channel when rendering primary, alternate channel when rendering alternate (if the alternate is an impulse)
+
+---
+
+### CHANNEL DRAWING
+
+The Elliott Wave channel is a two-line parallel channel that frames the impulse structure. Draw it inside the `if barstate.islast` block whenever `showChannel` is true and the count has W1, W2, W3 confirmed.
+
+**Construction (use the individual pivot variables, not the arrays):**
+
+```
+// slope defined by the W1→W3 motive line
+float ch_slope = (w3_p - w1_p) / float(w3_ts - w1_ts)
+
+int ch_start_ts = w0_ts                   // channel begins at the wave origin
+int ch_end_ts   = <last pivot ts>         // last timestamp in the count (historical or projected)
+
+// Motive line: through W1 and W3
+float mot_y_start = w1_p + ch_slope * float(ch_start_ts - w1_ts)
+float mot_y_end   = w1_p + ch_slope * float(ch_end_ts   - w1_ts)
+
+// Base line: parallel, anchored at W2
+float base_y_start = w2_p + ch_slope * float(ch_start_ts - w2_ts)
+float base_y_end   = w2_p + ch_slope * float(ch_end_ts   - w2_ts)
+```
+
+Replace `w0_p`, `w1_ts`, etc. with the actual variable names for the count being drawn (e.g. `pr_w0_ts`, `pr_w1_p` for primary; `al_w0_ts`, `al_w1_p` for alternate).
+
+For `<last pivot ts>`: use the last timestamp variable declared in the count's data section (e.g. `pr_wc_ts` or `pr_w5_ts` — whichever is the final pivot in that count). Do NOT use `array.size()` or array lookups here; reference the scalar variable directly.
+
+**Line style:**
+- `style=STYLE_DASHED`, `width=1`
+- Color: `PR_CHANNEL_COL` for primary, `AL_CHANNEL_COL` for alternate
+- `xloc=xloc.bar_time` on all `line.new()` calls
+
+**Add both channel lines to `allLines`** so they are cleaned up on each bar.
+
+**Do NOT draw the channel when:**
+- `showChannel` is false
+- The count does not have W1, W2, W3 variables (corrective-only structure)
+- `drawPrimary` / `drawAlternate` is false for that count's rendering branch

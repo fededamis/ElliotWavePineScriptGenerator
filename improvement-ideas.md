@@ -18,7 +18,7 @@ A toggle in the Pine Script that switches between showing just primary waves, pr
 
 ## 2. New Pine Script Visual Features
 
-**2.1. Channel Drawing**
+**2.1. Channel Drawing** ✅
 Auto-draw the Elliott Wave channel: a parallel channel connecting W1–W3 endpoints, with W2 and W4 inside it. This is a core EW tool currently missing from the output.
 
 **2.2. RSI Divergence Overlay**
