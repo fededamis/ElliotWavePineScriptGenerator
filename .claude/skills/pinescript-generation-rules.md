@@ -57,7 +57,7 @@ do not generate code that violates any of these, so they require no fix cycle du
 - A toggle (bool input) called "Show Labels" to show/hide all pivot labels (does not affect invalidation, target, or legend labels)
 - A toggle (bool input) called "Show Subwaves" to show/hide the subwave lines and labels (primary count only); default value is `true`
   - When hidden, suppress all subwave lines, subwave pivot labels, and the subwave legend row
-  - When visible, render subwave lines as dashed, width=1, at 55% transparency relative to the primary count color; render subwave labels at size=size.tiny
+  - When visible, render subwave lines as dashed, width=1, at 55% transparency relative to the primary count color; render subwave labels at size=size.tiny with wave name only in label text and price+fib in tooltip (see visual-style: LABEL STYLE & CONTENT)
 - A toggle (bool input) called "Show Channel" to show/hide the Elliott Wave base channel; default value is `true`
   - Only draw the channel for impulse (5-wave) structures that have W1, W2, W3 confirmed — skip silently if the count is corrective-only (WA-WB-WC) or W3 has not yet been identified
   - Respects "Show Count" mode: draw primary channel when rendering primary, alternate channel when rendering alternate (if the alternate is an impulse)

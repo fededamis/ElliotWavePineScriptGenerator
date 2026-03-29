@@ -640,12 +640,13 @@ if barstate.islast
                     string sln = array.get(sw3_names, sli)
                     string slohlc = array.get(sw3_ohlc, sli)
                     string slf = array.get(sw3_fibs, sli)
-                    string sltxt = makePivotText(sln, slp, slf, false, false)
+                    string sltxt = sln
+                    string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
                     if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
                         array.push(allLabels, slbl)
                     else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
                         array.push(allLabels, slbl)
                     sli += 1
 
@@ -693,12 +694,13 @@ if barstate.islast
                     string sln = array.get(sw4_names, sli)
                     string slohlc = array.get(sw4_ohlc, sli)
                     string slf = array.get(sw4_fibs, sli)
-                    string sltxt = makePivotText(sln, slp, slf, false, false)
+                    string sltxt = sln
+                    string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
                     if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
                         array.push(allLabels, slbl)
                     else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
                         array.push(allLabels, slbl)
                     sli += 1
 
@@ -746,12 +748,13 @@ if barstate.islast
                     string sln = array.get(sw5_names, sli)
                     string slohlc = array.get(sw5_ohlc, sli)
                     string slf = array.get(sw5_fibs, sli)
-                    string sltxt = makePivotText(sln, slp, slf, false, false)
+                    string sltxt = sln
+                    string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
                     if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
                         array.push(allLabels, slbl)
                     else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
                         array.push(allLabels, slbl)
                     sli += 1
 
@@ -809,12 +812,15 @@ if barstate.islast
                 while asli < array.size(asw3_ts)
                     // array size checked before access
                     string aslohlc = array.get(asw3_ohlc, asli)
-                    string asltxt = makePivotText(array.get(asw3_names, asli), array.get(asw3_p, asli), array.get(asw3_fibs, asli), true, false)
+                    float aslp = array.get(asw3_p, asli)
+                    string aslf = array.get(asw3_fibs, asli)
+                    string asltxt = array.get(asw3_names, asli)
+                    string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
                     if aslohlc == "H"
-                        label aslbl = label.new(array.get(asw3_ts, asli), array.get(asw3_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alsw3col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(asw3_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alsw3col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     else
-                        label aslbl = label.new(array.get(asw3_ts, asli), array.get(asw3_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alsw3col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(asw3_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alsw3col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     asli += 1
 
@@ -864,12 +870,15 @@ if barstate.islast
                 while asli < array.size(asw5_ts)
                     // array size checked before access
                     string aslohlc = array.get(asw5_ohlc, asli)
-                    string asltxt = makePivotText(array.get(asw5_names, asli), array.get(asw5_p, asli), array.get(asw5_fibs, asli), true, false)
+                    float aslp = array.get(asw5_p, asli)
+                    string aslf = array.get(asw5_fibs, asli)
+                    string asltxt = array.get(asw5_names, asli)
+                    string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
                     if aslohlc == "H"
-                        label aslbl = label.new(array.get(asw5_ts, asli), array.get(asw5_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alsw5col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(asw5_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alsw5col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     else
-                        label aslbl = label.new(array.get(asw5_ts, asli), array.get(asw5_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alsw5col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(asw5_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alsw5col, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     asli += 1
 
@@ -909,12 +918,15 @@ if barstate.islast
                 while asli < array.size(aswA_ts)
                     // array size checked before access
                     string aslohlc = array.get(aswA_ohlc, asli)
-                    string asltxt = makePivotText(array.get(aswA_names, asli), array.get(aswA_p, asli), array.get(aswA_fibs, asli), true, false)
+                    float aslp = array.get(aswA_p, asli)
+                    string aslf = array.get(aswA_fibs, asli)
+                    string asltxt = array.get(aswA_names, asli)
+                    string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
                     if aslohlc == "H"
-                        label aslbl = label.new(array.get(aswA_ts, asli), array.get(aswA_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(aswA_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     else
-                        label aslbl = label.new(array.get(aswA_ts, asli), array.get(aswA_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(aswA_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     asli += 1
 
@@ -954,12 +966,15 @@ if barstate.islast
                 while asli < array.size(aswB_ts)
                     // array size checked before access
                     string aslohlc = array.get(aswB_ohlc, asli)
-                    string asltxt = makePivotText(array.get(aswB_names, asli), array.get(aswB_p, asli), array.get(aswB_fibs, asli), true, false)
+                    float aslp = array.get(aswB_p, asli)
+                    string aslf = array.get(aswB_fibs, asli)
+                    string asltxt = array.get(aswB_names, asli)
+                    string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
                     if aslohlc == "H"
-                        label aslbl = label.new(array.get(aswB_ts, asli), array.get(aswB_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(aswB_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     else
-                        label aslbl = label.new(array.get(aswB_ts, asli), array.get(aswB_p, asli), asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center)
+                        label aslbl = label.new(array.get(aswB_ts, asli), aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     asli += 1
 
