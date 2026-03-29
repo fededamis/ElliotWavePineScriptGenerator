@@ -58,6 +58,7 @@ do not generate code that violates any of these, so they require no fix cycle du
 - A toggle (bool input) called "Show Subwaves" to show/hide the subwave lines and labels (primary count only); default value is `true`
   - When hidden, suppress all subwave lines, subwave pivot labels, and the subwave legend row
   - When visible, render subwave lines as dashed, width=1, at 55% transparency relative to the primary count color; render subwave labels at size=size.tiny with wave name only in label text and price+fib in tooltip (see visual-style: LABEL STYLE & CONTENT)
+  - **Subwave label Y-offset (anti-overlap): for every subwave label, compute `sw_yoff = ohlc == "H" ? priceRange * 0.04 : -(priceRange * 0.04)` and place the label at `price + sw_yoff`. This displaces subwave labels (tiny) away from the exact pivot price in their natural direction, preventing them from stacking on top of parent-wave labels (small) that sit at the same pivot. Apply to all subwave groups (W3, W4, W5, WA, WB, etc.) for both primary and alternate counts.**
 - A toggle (bool input) called "Show Channel" to show/hide the Elliott Wave base channel; default value is `true`
   - Only draw the channel for impulse (5-wave) structures that have W1, W2, W3 confirmed — skip silently if the count is corrective-only (WA-WB-WC) or W3 has not yet been identified
   - Respects "Show Count" mode: draw primary channel when rendering primary, alternate channel when rendering alternate (if the alternate is an impulse)

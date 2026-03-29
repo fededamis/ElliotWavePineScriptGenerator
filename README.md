@@ -19,7 +19,7 @@ When editing a rule, update it **only in the authoritative file** listed above. 
 - Repo: https://github.com/fededamis/ElliotWavePineScriptGenerator
 
 ## Pending Tasks
-- Add tooltips for subwave labels.
-- bug-fix-protocol => add token optimization checks before fixing
+- Fix wave label/subwave label overlapping.
+- Compress .pine files for token optimization.
 - Check improvement ideas.
 - Check: https://www.youtube.com/watch?v=aqtseECSdtY
