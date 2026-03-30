@@ -441,6 +441,7 @@ if barstate.islast
 
                 string ltxt = makePivotText(lname, lprice, lfib, false, isProj2)
                 float labelY = lprice + lyoff
+                string lswTooltip = lname == "W1" ? "W1.sw5\nFib:1.24x" : lname == "W2" ? "W2.swc\nFib:0.71x" : lname == "W3" ? "W3.sw5\nFib:0.82x" : lname == "W4" ? "W4.swc\nFib:1.43x" : lname == "W5" ? "W5.sw5\nFib:0.84x" : lname == "WA" ? "WA.swc\nFib:0.81x" : na
 
                 color lblCol = PR_MOTIVE_UP
                 if li > 0
@@ -448,10 +449,10 @@ if barstate.islast
                     lblCol := array.size(pr_segColors) > (li - 1) ? array.get(pr_segColors, li - 1) : PR_MOTIVE_UP
 
                 if lohlc == "H"
-                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center)
+                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center, tooltip=lswTooltip)
                     array.push(allLabels, lbl)
                 else
-                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center)
+                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center, tooltip=lswTooltip)
                     array.push(allLabels, lbl)
                 li += 1
 
@@ -587,12 +588,13 @@ if barstate.islast
                     string slf = array.get(sw1_fibs, sli)
                     string sltxt = sln
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
-                    else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
+                    if sli < array.size(sw1_ts) - 1
+                        if slohlc == "H"
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
+                        else
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
                     sli += 1
 
         // W2 subwaves
@@ -641,12 +643,13 @@ if barstate.islast
                     string slf = array.get(sw2_fibs, sli)
                     string sltxt = sln
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
-                    else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
+                    if sli < array.size(sw2_ts) - 1
+                        if slohlc == "H"
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
+                        else
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
                     sli += 1
 
         // W3 subwaves
@@ -705,12 +708,13 @@ if barstate.islast
                     string slf = array.get(sw3_fibs, sli)
                     string sltxt = sln
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
-                    else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
+                    if sli < array.size(sw3_ts) - 1
+                        if slohlc == "H"
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
+                        else
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
                     sli += 1
 
         // W4 subwaves
@@ -759,12 +763,13 @@ if barstate.islast
                     string slf = array.get(sw4_fibs, sli)
                     string sltxt = sln
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
-                    else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
+                    if sli < array.size(sw4_ts) - 1
+                        if slohlc == "H"
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
+                        else
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
                     sli += 1
 
         // W5 subwaves
@@ -823,12 +828,13 @@ if barstate.islast
                     string slf = array.get(sw5_fibs, sli)
                     string sltxt = sln
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
-                    else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
+                    if sli < array.size(sw5_ts) - 1
+                        if slohlc == "H"
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
+                        else
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
                     sli += 1
 
         // WA subwaves
@@ -877,12 +883,13 @@ if barstate.islast
                     string slf = array.get(swA_fibs, sli)
                     string sltxt = sln
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if slohlc == "H"
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
-                    else
-                        label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                        array.push(allLabels, slbl)
+                    if sli < array.size(swA_ts) - 1
+                        if slohlc == "H"
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
+                        else
+                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
+                            array.push(allLabels, slbl)
                     sli += 1
 
     // === DRAW ALTERNATE SUBWAVES ===

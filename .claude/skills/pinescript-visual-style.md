@@ -69,3 +69,4 @@ color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",      
   - `text` = wave name only (e.g. `"W1.sw3"`, `"W2.swa"`) — no price, no fib in the label body
   - `tooltip` = `"$" + str.tostring(price, "#.##") + (fib != "--" ? "\nFib:" + fib : "")` — price and fib shown on hover only
   - This keeps subwave labels compact on-chart while preserving full detail on hover
+  - **Exception — coincident subwave (last entry in sw_ts array, e.g. W3.sw5 = W3): do NOT draw a subwave label at all. The primary pivot label already occupies that point. Instead, pass the subwave info as the primary label's tooltip: `tooltip = sw_name + "\nFib: " + sw_fib`. Primary labels do not normally have a tooltip — add one only for this coincident case.**
