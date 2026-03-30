@@ -19,7 +19,8 @@ When editing a rule, update it **only in the authoritative file** listed above. 
 - Repo: https://github.com/fededamis/ElliotWavePineScriptGenerator
 
 ## Pending Tasks
-- Fix wave label/subwave label overlapping.
+- Fix wave label/subwave label overlapping. (keep testing)
+- Transparency input config: make default to 40.
 - Compress .pine files for token optimization.
 - Check improvement ideas.
 - Check: https://www.youtube.com/watch?v=aqtseECSdtY

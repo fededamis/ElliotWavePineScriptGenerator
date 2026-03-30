@@ -27,6 +27,7 @@ color AL_MOTIVE_DN  = input.color(color.rgb(170, 85, 170), "Alt Down (Motive)", 
 color AL_CORRECTIVE = input.color(color.rgb(170, 119, 51), "Alt Corrective",        group="Colors")
 color AL_INVAL_COL  = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",      group="Colors")
 color AL_TARGET_COL = input.color(color.rgb(68, 136, 68),  "Alt Target",            group="Colors")
+int swLabelTransp   = input.int(55, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
 
 // === ARRAYS FOR CLEANUP ===
 var array<line> allLines = array.new<line>()
@@ -525,12 +526,12 @@ if barstate.islast
 
     // === DRAW PRIMARY SUBWAVES ===
     if showSubwaves and drawPrimary
-        color sw1col = color.new(PR_MOTIVE_UP, 55)
-        color sw2col = color.new(PR_CORRECTIVE, 55)
-        color sw3col = color.new(PR_MOTIVE_UP, 55)
-        color sw4col = color.new(PR_CORRECTIVE, 55)
-        color sw5col = color.new(PR_MOTIVE_UP, 55)
-        color swAcol = color.new(PR_CORRECTIVE, 55)
+        color sw1col = color.new(PR_MOTIVE_UP, swLabelTransp)
+        color sw2col = color.new(PR_CORRECTIVE, swLabelTransp)
+        color sw3col = color.new(PR_MOTIVE_UP, swLabelTransp)
+        color sw4col = color.new(PR_CORRECTIVE, swLabelTransp)
+        color sw5col = color.new(PR_MOTIVE_UP, swLabelTransp)
+        color swAcol = color.new(PR_CORRECTIVE, swLabelTransp)
 
         // W1 subwaves
         array<int> sw1_ts = array.new<int>()
@@ -894,9 +895,8 @@ if barstate.islast
 
     // === DRAW ALTERNATE SUBWAVES ===
     if showSubwaves and drawAlternate
-        int alTranspSW = altOnly ? 55 : 70
-        color alswAcol = color.new(AL_MOTIVE_UP, alTranspSW)
-        color alswBcol = color.new(AL_CORRECTIVE, alTranspSW)
+        color alswAcol = color.new(AL_MOTIVE_UP, swLabelTransp)
+        color alswBcol = color.new(AL_CORRECTIVE, swLabelTransp)
 
         // Alt WA subwaves
         array<int> aswA_ts = array.new<int>()
@@ -941,10 +941,10 @@ if barstate.islast
                     string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
                     int aslts = array.get(aswA_ts, asli)
                     if aslohlc == "H"
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
+                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     else
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswAcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
+                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     asli += 1
 
@@ -991,10 +991,10 @@ if barstate.islast
                     string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
                     int aslts = array.get(aswB_ts, asli)
                     if aslohlc == "H"
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
+                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswBcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     else
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=color.new(alswBcol, 50), textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
+                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswBcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
                         array.push(allLabels, aslbl)
                     asli += 1
 

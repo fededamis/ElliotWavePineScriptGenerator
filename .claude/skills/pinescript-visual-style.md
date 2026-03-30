@@ -43,6 +43,7 @@ color AL_INVAL_COL  = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",  
 color AL_TARGET_COL = input.color(color.rgb(68, 136, 68),  "Alt Target",           group="Colors")
 color PR_CHANNEL_COL = input.color(color.aqua,              "Primary Channel",      group="Colors")
 color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",          group="Colors")
+int   swLabelTransp  = input.int(55, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
 ```
 
 #### LABEL BACKGROUND DISTINCTION
@@ -65,6 +66,7 @@ color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",      
 - **CRITICAL: All label.new() calls must set textalign=text.align_center — NEVER text.align_left**
 - **All pivot label.new() calls must set style to label.style_label_down (for highs) or label.style_label_up (for lows) so the label floats above/below the pin without obscuring price action**
 - **For labels at level lines (invalidation, targets): use style=label.style_label_down or label.style_label_up depending on chart position**
+- **Subwave label/line color uses `swLabelTransp` (user input, default 55) — always `color.new(wave_color, swLabelTransp)`. Never hardcode a transparency value for subwave colors.**
 - **Subwave labels are a special case — do NOT call `makePivotText()` for subwave labels:**
   - `text` = wave name only (e.g. `"W1.sw3"`, `"W2.swa"`) — no price, no fib in the label body
   - `tooltip` = `"$" + str.tostring(price, "#.##") + (fib != "--" ? "\nFib:" + fib : "")` — price and fib shown on hover only
