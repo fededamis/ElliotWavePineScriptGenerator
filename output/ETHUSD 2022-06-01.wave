@@ -1,64 +1,62 @@
-PRIMARY COUNT (60% confidence)
-| Wave | Date       | Price      | OHLC | Fib            | Type |
-|------|------------|------------|------|----------------|------|
-| W0   | 2022-06-13 | $896.11    | L    | --             | hist |
-| W1   | 2022-08-08 | $2,022.79  | H    | --             | hist |
-| W2   | 2022-11-21 | $1,081.14  | L    | 83.6% ret W1   | hist |
-| W3   | 2024-03-11 | $4,092.28  | H    | 2.67x W1 ext   | hist |
-| W4   | 2024-08-05 | $2,122.55  | L    | 65.4% ret W3   | hist |
-| W5   | 2024-12-16 | $4,106.96  | H    | 1.76x W1 ext   | hist |
-| WA   | 2025-03-10 | $1,760.94  | L    | 73.1% ret full | hist |
-| WB   | 2025-08-04 | $2,934.00  | H    | 50.0% ret WA   | proj |
-| WC   | 2026-02-02 | $1,484.00  | L    | 0.618x WA      | proj |
+// Wave data for ETHUSD starting 2022-06-01
+// Timeframe: weekly (1402 days from 2022-06-01 to 2026-04-03)
+// Data sourced from Yahoo Finance v8 API: ETH-USD, interval=1wk, period1=1654041600, period2=1775260800
+// Analysis date: 2026-04-03
+// Structure: Expanding Leading Diagonal (Primary Degree) — completed W5 at $4,953.73 (2025-08-11)
+//            Post-W5 ABC correction underway; WC candidate low $1,748.63 (2026-02-09)
+
+PRIMARY COUNT (65% confidence)
+| Wave | Date       | Price     | OHLC | Fib    | Type |
+|------|------------|-----------|------|--------|------|
+| W0   | 2022-06-13 | $896.11   | L    | --     | hist |
+| W1   | 2022-08-08 | $2022.79  | H    | --     | hist |
+| W2   | 2022-11-21 | $1081.14  | L    | 83.6%  | hist |
+| W3   | 2024-12-16 | $4106.96  | H    | 269.1% | hist |
+| W4   | 2025-04-07 | $1386.80  | L    | 89.9%  | hist |
+| W5   | 2025-08-11 | $4953.73  | H    | 357.1% | hist |
+| WA   | 2025-11-24 | $2626.87  | L    | --     | hist |
+| WB   | 2025-12-08 | $3446.62  | H    | 35.2%  | hist |
+| WC   | 2026-02-09 | $1748.63  | L    | 73.0%  | hist |
+| P1   | 2026-06-08 | $2972.50  | proj | 38.2%  | proj |
+| P2   | 2026-09-07 | $3350.00  | proj | 50.0%  | proj |
 
 SUBWAVES (Primary — confirmed waves only)
-| Wave     | Date       | Price      | OHLC | Fib            | Type |
-|----------|------------|------------|------|----------------|------|
-| W1.sw1   | 2022-06-13 | $896.11    | L    | --             | hist |
-| W1.sw2   | 2022-07-11 | $1,019.22  | L    | 66.4% ret sw1  | hist |
-| W1.sw3   | 2022-07-25 | $1,774.58  | H    | 2.06x sw1      | hist |
-| W1.sw4   | 2022-08-01 | $1,567.85  | L    | 27.4% ret sw3  | hist |
-| W1.sw5   | 2022-08-08 | $2,022.79  | H    | 1.24x sw1      | hist |
-| W2.swa   | 2022-10-10 | $1,209.28  | L    | --             | hist |
-| W2.swb   | 2022-10-31 | $1,661.33  | H    | 55.6% ret swa  | hist |
-| W2.swc   | 2022-11-21 | $1,081.14  | L    | 0.71x swa      | hist |
-| W3.sw1   | 2023-04-10 | $2,137.45  | H    | --             | hist |
-| W3.sw2   | 2023-10-08 | $1,523.24  | L    | 58.1% ret sw1  | hist |
-| W3.sw3   | 2024-02-26 | $3,518.97  | H    | 1.89x sw1      | hist |
-| W3.sw4   | 2024-03-04 | $3,224.12  | L    | 14.8% ret sw3  | hist |
-| W3.sw5   | 2024-03-11 | $4,092.28  | H    | 0.82x sw1      | hist |
-| W4.swa   | 2024-04-29 | $2,815.92  | L    | --             | hist |
-| W4.swb   | 2024-05-20 | $3,943.55  | H    | 88.3% ret swa  | hist |
-| W4.swc   | 2024-08-05 | $2,122.55  | L    | 1.43x swa      | hist |
-| W5.sw1   | 2024-08-19 | $2,820.02  | H    | --             | hist |
-| W5.sw2   | 2024-09-02 | $2,150.86  | L    | 95.9% ret sw1  | hist |
-| W5.sw3   | 2024-12-02 | $4,093.17  | H    | 2.78x sw1      | hist |
-| W5.sw4   | 2024-12-09 | $3,520.37  | L    | 29.5% ret sw3  | hist |
-| W5.sw5   | 2024-12-16 | $4,106.96  | H    | 0.84x sw1      | hist |
-| WA.swa   | 2025-01-27 | $2,755.47  | L    | --             | hist |
-| WA.swb   | 2025-02-17 | $2,850.61  | H    | 7.0% ret swa   | hist |
-| WA.swc   | 2025-03-10 | $1,760.94  | L    | 0.81x swa      | hist |
-
-ALTERNATE COUNT (30% confidence)
-| Wave | Date       | Price      | OHLC | Fib            | Type |
-|------|------------|------------|------|----------------|------|
-| WA   | 2022-06-13 | $896.11    | L    | --             | hist |
-| WA   | 2024-03-11 | $4,092.28  | H    | --             | hist |
-| WB   | 2025-03-10 | $1,760.94  | L    | 73.0% ret WA   | hist |
-| WC   | 2025-11-17 | $3,736.00  | H    | 0.618x WA ext  | proj |
-| WC.p | 2026-04-06 | $2,800.00  | L    | 38.2% ret WC   | proj |
-| WD   | 2026-09-07 | $4,957.00  | H    | 1.0x WA ext    | proj |
+| Wave      | Date       | Price     | OHLC | Fib    | Type |
+|-----------|------------|-----------|------|--------|------|
+| W1.swa    | 2022-07-25 | $1774.58  | H    | --     | hist |
+| W1.swb    | 2022-08-01 | $1567.85  | L    | 50.0%  | hist |
+| W1.swc    | 2022-08-08 | $2022.79  | H    | --     | hist |
+| W2.swa    | 2022-09-12 | $1778.16  | H    | --     | hist |
+| W2.swb    | 2022-11-07 | $1083.29  | L    | 80.1%  | hist |
+| W2.swc    | 2022-11-21 | $1081.14  | L    | 83.6%  | hist |
+| W3.sw1    | 2023-04-03 | $2137.45  | H    | --     | hist |
+| W3.sw2    | 2023-10-09 | $1523.24  | L    | 58.1%  | hist |
+| W3.sw3    | 2024-03-11 | $4092.28  | H    | 243.2% | hist |
+| W3.sw4    | 2024-04-29 | $2815.92  | L    | 49.7%  | hist |
+| W3.sw5    | 2024-12-16 | $4106.96  | H    | 122.2% | hist |
+| WA.swa    | 2025-10-06 | $3460.22  | L    | --     | hist |
+| WA.swb    | 2025-10-20 | $4250.67  | H    | 38.2%  | hist |
+| WA.swc    | 2025-11-24 | $2626.87  | L    | --     | hist |
 
 SUBWAVES (Alternate — confirmed waves only)
-| Wave     | Date       | Price      | OHLC | Fib            | Type |
-|----------|------------|------------|------|----------------|------|
-| WA.sw1   | 2022-08-08 | $2,022.79  | H    | --             | hist |
-| WA.sw2   | 2022-11-21 | $1,081.14  | L    | 83.6% ret sw1  | hist |
-| WA.sw3   | 2024-03-11 | $4,092.28  | H    | 2.67x sw1      | hist |
-| WB.swa   | 2024-08-05 | $2,122.55  | L    | --             | hist |
-| WB.swb   | 2024-12-16 | $4,106.96  | H    | 95.4% ret swa  | hist |
-| WB.swc   | 2025-03-10 | $1,760.94  | L    | 1.19x swa      | hist |
+| Wave         | Date       | Price     | OHLC | Fib    | Type |
+|--------------|------------|-----------|------|--------|------|
+| WA_alt.sw3   | 2024-03-11 | $4092.28  | H    | 261.6% | hist |
+| WB_alt.swb   | 2023-10-09 | $1523.24  | L    | 58.7%  | hist |
 
-Primary invalidation: $4,106.96  |  Primary target: $1,484.00 (Fib 61.8% WA)
-Alternate invalidation: $896.11   |  Alternate target: $3,736.00 (Fib 61.8% WA ext)
-Subwave confirmation: W1 ✓, W2 ✓, W3 ✓, W4 ✓, W5 ✓
+ALTERNATE COUNT (35% confidence)
+| Wave   | Date       | Price     | OHLC | Fib    | Type |
+|--------|------------|-----------|------|--------|------|
+| W0     | 2022-06-13 | $896.11   | L    | --     | hist |
+| WA     | 2023-04-03 | $2137.45  | H    | --     | hist |
+| WB     | 2023-10-09 | $1523.24  | L    | 58.7%  | hist |
+| WC=WW  | 2025-08-11 | $4953.73  | H    | 292.0% | hist |
+| WX.a   | 2025-11-24 | $2626.87  | L    | 46.9%  | hist |
+| WX.b   | 2025-12-08 | $3446.62  | H    | 35.2%  | hist |
+| WX.c   | 2026-02-09 | $1748.63  | L    | 61.8%  | hist |
+| WX_end | 2026-05-04 | $1523.24  | proj | 61.8%  | proj |
+| WY_1   | 2027-06-07 | $6505.00  | proj | 100.0% | proj |
+
+Primary invalidation: $4953.73  |  Primary target: $3350.00 (Fib 50.0%)
+Alternate invalidation: $896.11  |  Alternate target: $6505.00 (Fib 100.0% WY extension)
+Subwave confirmation: W1⚠(narrow internal bars) W2⚠(partial a-b-c) W3✓(sw1=$2137.45 sw2=58.1% sw3=243.2% sw4=$2815.92/49.7% sw5=$4107) W4✗(insuf — collapse from ATH, internal subs not validated) W5✗(insuf — same degree as ATH expansion) WA✓ → +6% confidence

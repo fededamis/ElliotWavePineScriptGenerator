@@ -26,6 +26,7 @@ do not generate code that violates any of these, so they require no fix cycle du
 - Use time (not timenow) as the "today" anchor timestamp
 - Keep inline comments minimal: one short comment per logical section only -- no explanatory prose, block headers, or section dividers
 - **Use str.tostring(value, "#.##") for float formatting, not str.format() which doesn't support standard format specifiers in Pine v6**
+- **CRITICAL: Pine Script v6 does NOT support semicolons (`;`) as statement separators. Every statement must be on its own line. Never write `a() ; b() ; c()` on one line — write each call on a separate line.**
 
 ### PROJECTED PIVOT SUBWAVE COUNTS
 When the .wave file contains projected pivots with subwave counts (e.g., "WA (3 sw)"), the Pine Script generation must:

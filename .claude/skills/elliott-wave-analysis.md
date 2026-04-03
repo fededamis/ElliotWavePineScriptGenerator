@@ -42,7 +42,9 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 Apply the PIVOT ACCEPTANCE GATE to all subwave pivots (same rules as primary pivots) using the already-fetched Yahoo Finance data — do not invent prices.
 
-**MANDATORY COVERAGE RULE: Attempt subwave identification for every primary wave (W1, W2, W3, W4, W5). The Subwave note at the bottom of the output must list every primary wave with a result symbol: ✓ (confirmed), ⚠ (partial), or ✗(reason) (skipped/insufficient). No prose justification — symbol and short reason only.**
+**LONG-WAVE FETCH RULE: If a motive wave spans more than 20 bars on the selected timeframe, the already-fetched data window may not cover its full interior. You MUST fetch the OHLC data for the date range [parent wave start → parent wave end] from Yahoo Finance before attempting subwave identification. "No clear pivot" is not a valid skip reason — if the data exists, a swing extreme exists. The only valid skip reason is `✗(insuf)` for waves with fewer bars than the minimum.**
+
+**MANDATORY COVERAGE RULE: Attempt subwave identification for every primary wave (W1, W2, W3, W4, W5). The Subwave note at the bottom of the output must list every primary wave with a result symbol: ✓ (confirmed), ⚠ (partial), or ✗(reason) (skipped/insufficient). No prose justification — symbol and short reason only. `✗` is only valid for waves below the bar minimum — it is NOT valid for long waves where data exists.**
 
 For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the selected timeframe:
 - Identify the 5 internal subwave pivots (sw1 through sw5) on the same timeframe

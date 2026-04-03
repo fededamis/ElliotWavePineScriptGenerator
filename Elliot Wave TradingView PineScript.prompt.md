@@ -14,7 +14,7 @@ Wait for the user to provide both before continuing. Do not assume or guess eith
 
 ### WAVE DATA CACHE CHECK
 
-Before performing any analysis, attempt to read the file `[TICKER] [START DATE].wave` from the current working directory using the Read tool (e.g. `SPY 2022-10-01.wave`).
+Before performing any analysis, attempt to read the file `output/[TICKER] [START DATE].wave` using the Read tool (e.g. `output/SPY 2022-10-01.wave`).
 
 - If the file EXISTS (Read succeeds):
   - Extract all pivot data, counts, Fibonacci levels, targets, invalidation levels, and projections from the file
@@ -26,7 +26,7 @@ Before performing any analysis, attempt to read the file `[TICKER] [START DATE].
 
 - If the file does NOT exist (Read returns an error):
   - Proceed normally through all methodology steps below
-  - After Step 8, write the compact pivot table to `[TICKER] [START DATE].wave` using the Write tool
+  - After Step 8, write the compact pivot table to `output/[TICKER] [START DATE].wave` using the Write tool
 
 ---
 
@@ -86,10 +86,10 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 After the Integrated Validation Scan is complete and all errors are resolved, write the final Pine Script v6 code to a new file. Do not output the script in the chat window. Do not attach it as a fenced code block or artifact.
 
 File naming rules:
-- File name format: `[TICKER] [START DATE].pine`
+- File name format: `output/[TICKER] [START DATE].pine`
 - Use the exact TICKER and START DATE values provided by the user at the beginning of the session
-- Example: if TICKER is `BTCUSD` and START DATE is `2023-01-01`, the file name is `BTCUSD 2023-01-01.pine`
-- Do not include any subdirectory path -- write the file to the current working directory
+- Example: if TICKER is `BTCUSD` and START DATE is `2023-01-01`, the file name is `output/BTCUSD 2023-01-01.pine`
+- Always write to the `output/` subfolder
 - Once the file is written, output the following on separate lines:
   `Done -- [TICKER] [START DATE].pine`
   `⏱ End: HH:MM:SS`

@@ -1,0 +1,9 @@
+{
+  "chat.tools.autoApprove": ["fetch_webpage"],
+  "chat.tools.terminal.autoApprove": {
+    "ls *": true,
+    "echo $TEMP": true,
+    "python3 /tmp/*.py": true,
+    "python3 **/ElliotWavePineScriptGenerator/**/*.py": true
+  }
+}

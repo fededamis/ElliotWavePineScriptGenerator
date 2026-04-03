@@ -1,61 +1,39 @@
+// Wave data loaded from cache file
+// ETHUSD 2022-06-01 | Weekly | Expanding Leading Diagonal (Primary) + ABC correction
 //@version=6
 indicator("ETHUSD Elliott Wave Count", overlay=true, max_lines_count=500, max_labels_count=500)
 
-// === INPUTS ===
-string showCount = input.string("Primary Only", "Show Count", options=["Primary Only", "Both", "Alternate Only"])
-bool showInval = input.bool(true, "Show Invalidation Levels")
-bool showTargets = input.bool(true, "Show Targets")
-bool showLegend = input.bool(true, "Show Legend")
-string legendPos = input.string("Bottom Right", "Legend Position", options=["Top Right", "Bottom Right", "Top Left", "Bottom Left"])
-bool showProj = input.bool(true, "Show Projections")
-bool showLabels = input.bool(true, "Show Labels")
-bool showSubwaves = input.bool(true, "Show Subwaves")
-
-// === STYLE CONSTANTS AS STRINGS ===
-string STYLE_SOLID = line.style_solid
-string STYLE_DASHED = line.style_dashed
-string STYLE_DOTTED = line.style_dotted
+string showCount   = input.string("Primary Only", "Show Count", options=["Primary Only", "Both", "Alternate Only"])
+bool showInval     = input.bool(true, "Show Invalidation Levels")
+bool showTargets   = input.bool(true, "Show Targets")
+bool showLegend    = input.bool(true, "Show Legend")
+string legendPos   = input.string("Bottom Right", "Legend Position", options=["Top Right", "Bottom Right", "Top Left", "Bottom Left"])
+bool showProj      = input.bool(true, "Show Projections")
+bool showLabels    = input.bool(true, "Show Labels")
+bool showSubwaves  = input.bool(true, "Show Subwaves")
+bool showChannel   = input.bool(true, "Show Channel")
 
 // === COLOR INPUTS ===
-color PR_MOTIVE_UP  = input.color(color.aqua,              "Primary Up (Motive)",   group="Colors")
-color PR_MOTIVE_DN  = input.color(color.fuchsia,           "Primary Down (Motive)", group="Colors")
-color PR_CORRECTIVE = input.color(color.orange,            "Primary Corrective",    group="Colors")
-color PR_INVAL_COL  = input.color(color.red,               "Invalidation Level",    group="Colors")
-color PR_TARGET_COL = input.color(color.lime,              "Target Level",          group="Colors")
-color AL_MOTIVE_UP  = input.color(color.rgb(85, 153, 170), "Alt Up (Motive)",       group="Colors")
-color AL_MOTIVE_DN  = input.color(color.rgb(170, 85, 170), "Alt Down (Motive)",     group="Colors")
-color AL_CORRECTIVE = input.color(color.rgb(170, 119, 51), "Alt Corrective",        group="Colors")
-color AL_INVAL_COL  = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",      group="Colors")
-color AL_TARGET_COL = input.color(color.rgb(68, 136, 68),  "Alt Target",            group="Colors")
-int swLabelTransp   = input.int(55, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
+color PR_MOTIVE_UP   = input.color(color.aqua,              "Primary Up (Motive)",   group="Colors")
+color PR_MOTIVE_DN   = input.color(color.fuchsia,           "Primary Down (Motive)", group="Colors")
+color PR_CORRECTIVE  = input.color(color.orange,            "Primary Corrective",    group="Colors")
+color PR_INVAL_COL   = input.color(color.red,               "Invalidation Level",    group="Colors")
+color PR_TARGET_COL  = input.color(color.lime,              "Target Level",          group="Colors")
+color AL_MOTIVE_UP   = input.color(color.rgb(85, 153, 170), "Alt Up (Motive)",       group="Colors")
+color AL_MOTIVE_DN   = input.color(color.rgb(170, 85, 170), "Alt Down (Motive)",     group="Colors")
+color AL_CORRECTIVE  = input.color(color.rgb(170, 119, 51), "Alt Corrective",        group="Colors")
+color AL_INVAL_COL   = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",      group="Colors")
+color AL_TARGET_COL  = input.color(color.rgb(68, 136, 68),  "Alt Target",            group="Colors")
+color PR_CHANNEL_COL = input.color(color.aqua,              "Primary Channel",       group="Colors")
+color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",           group="Colors")
+int   swLabelTransp  = input.int(55, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
 
-// === ARRAYS FOR CLEANUP ===
-var array<line> allLines = array.new<line>()
+string STYLE_SOLID   = line.style_solid
+string STYLE_DASHED  = line.style_dashed
+string STYLE_DOTTED  = line.style_dotted
+
+var array<line>  allLines  = array.new<line>()
 var array<label> allLabels = array.new<label>()
-
-// === HELPER FUNCTIONS (top-level, no type annotations on params) ===
-
-getSegColor(isUp, isPrimary) =>
-    color result = na
-    if isPrimary
-        result := isUp ? PR_MOTIVE_UP : PR_CORRECTIVE
-    else
-        result := isUp ? AL_MOTIVE_UP : AL_CORRECTIVE
-    result
-
-getPrLineStyle(isHist, isPrimary, isAlternateOnly) =>
-    string result = STYLE_SOLID
-    if not isHist
-        result := STYLE_DOTTED
-    else
-        if isPrimary
-            result := STYLE_SOLID
-        else
-            if isAlternateOnly
-                result := STYLE_SOLID
-            else
-                result := STYLE_DASHED
-    result
 
 makePivotText(waveName, price, fib, isAlt, isProj) =>
     string line1 = ""
@@ -73,145 +51,108 @@ makePivotText(waveName, price, fib, isAlt, isProj) =>
     result
 
 // === PRIMARY COUNT DATA ===
-int pr_w0_ts = timestamp(2022, 6, 13)
-float pr_w0_p = 896.11
-int pr_w1_ts = timestamp(2022, 8, 8)
-float pr_w1_p = 2022.79
-int pr_w2_ts = timestamp(2022, 11, 21)
-float pr_w2_p = 1081.14
-int pr_w3_ts = timestamp(2024, 3, 11)
-float pr_w3_p = 4092.28
-int pr_w4_ts = timestamp(2024, 8, 5)
-float pr_w4_p = 2122.55
-int pr_w5_ts = timestamp(2024, 12, 16)
-float pr_w5_p = 4106.96
-int pr_wa_ts = timestamp(2025, 3, 10)
-float pr_wa_p = 1760.94
-int pr_wb_ts = timestamp(2026, 5, 4)
-float pr_wb_p = 2934.00
-int pr_wc_ts = timestamp(2026, 8, 2)
-float pr_wc_p = 1484.00
+int   pr_w0_ts  = timestamp(2022, 6, 13)
+float pr_w0_p   = 896.11
+int   pr_w1_ts  = timestamp(2022, 8, 8)
+float pr_w1_p   = 2022.79
+int   pr_w2_ts  = timestamp(2022, 11, 21)
+float pr_w2_p   = 1081.14
+int   pr_w3_ts  = timestamp(2024, 12, 16)
+float pr_w3_p   = 4106.96
+int   pr_w4_ts  = timestamp(2025, 4, 7)
+float pr_w4_p   = 1386.80
+int   pr_w5_ts  = timestamp(2025, 8, 11)
+float pr_w5_p   = 4953.73
+int   pr_wa_ts  = timestamp(2025, 11, 24)
+float pr_wa_p   = 2626.87
+int   pr_wb_ts  = timestamp(2025, 12, 8)
+float pr_wb_p   = 3446.62
+int   pr_wc_ts  = timestamp(2026, 2, 9)
+float pr_wc_p   = 1748.63
+int   pr_p1_ts  = timestamp(2026, 6, 8)
+float pr_p1_p   = 2972.50
+int   pr_p2_ts  = timestamp(2026, 9, 7)
+float pr_p2_p   = 3350.00
 
-float pr_inval = 4106.96
-float pr_target = 1484.00
-string pr_target_fib = "61.8%"
+float pr_inval      = 4953.73
+float pr_target     = 3350.00
+string pr_target_fib = "50.0%"
 
 // === ALTERNATE COUNT DATA ===
-int al_wa_ts = timestamp(2022, 6, 13)
-float al_wa_p = 896.11
-int al_wa2_ts = timestamp(2024, 3, 11)
-float al_wa2_p = 4092.28
-int al_wb_ts = timestamp(2025, 3, 10)
-float al_wb_p = 1760.94
-int al_wcp_ts = timestamp(2026, 4, 6)
-float al_wcp_p = 2800.00
-int al_wc_ts = timestamp(2026, 6, 17)
-float al_wc_p = 3736.00
-int al_wd_ts = timestamp(2026, 9, 7)
-float al_wd_p = 4957.00
+int   al_w0_ts    = timestamp(2022, 6, 13)
+float al_w0_p     = 896.11
+int   al_wa_ts    = timestamp(2023, 4, 3)
+float al_wa_p     = 2137.45
+int   al_wb_ts    = timestamp(2023, 10, 9)
+float al_wb_p     = 1523.24
+int   al_wc_ts    = timestamp(2025, 8, 11)
+float al_wc_p     = 4953.73
+int   al_wxa_ts   = timestamp(2025, 11, 24)
+float al_wxa_p    = 2626.87
+int   al_wxb_ts   = timestamp(2025, 12, 8)
+float al_wxb_p    = 3446.62
+int   al_wxc_ts   = timestamp(2026, 2, 9)
+float al_wxc_p    = 1748.63
+int   al_wxend_ts = timestamp(2026, 5, 4)
+float al_wxend_p  = 1523.24
+int   al_wy1_ts   = timestamp(2027, 6, 7)
+float al_wy1_p    = 6505.00
 
-float al_inval = 896.11
-float al_target = 3736.00
-string al_target_fib = "61.8%"
+float al_inval      = 896.11
+float al_target     = 6505.00
+string al_target_fib = "100.0%"
 
 // === PRIMARY SUBWAVE DATA ===
-// W1 subwaves
-int pr_w1sw1_ts = timestamp(2022, 6, 13)
-float pr_w1sw1_p = 896.11
-int pr_w1sw2_ts = timestamp(2022, 7, 11)
-float pr_w1sw2_p = 1019.22
-int pr_w1sw3_ts = timestamp(2022, 7, 25)
-float pr_w1sw3_p = 1774.58
-int pr_w1sw4_ts = timestamp(2022, 8, 1)
-float pr_w1sw4_p = 1567.85
-int pr_w1sw5_ts = timestamp(2022, 8, 8)
-float pr_w1sw5_p = 2022.79
+int   pr_w1swa_ts = timestamp(2022, 7, 25)
+float pr_w1swa_p  = 1774.58
+int   pr_w1swb_ts = timestamp(2022, 8, 1)
+float pr_w1swb_p  = 1567.85
+int   pr_w1swc_ts = timestamp(2022, 8, 8)
+float pr_w1swc_p  = 2022.79
 
-// W2 subwaves
-int pr_w2swa_ts = timestamp(2022, 10, 10)
-float pr_w2swa_p = 1209.28
-int pr_w2swb_ts = timestamp(2022, 10, 31)
-float pr_w2swb_p = 1661.33
-int pr_w2swc_ts = timestamp(2022, 11, 21)
-float pr_w2swc_p = 1081.14
+int   pr_w2swa_ts = timestamp(2022, 9, 12)
+float pr_w2swa_p  = 1778.16
+int   pr_w2swb_ts = timestamp(2022, 11, 7)
+float pr_w2swb_p  = 1083.29
+int   pr_w2swc_ts = timestamp(2022, 11, 21)
+float pr_w2swc_p  = 1081.14
 
-// W3 subwaves
-int pr_w3sw1_ts = timestamp(2023, 4, 10)
-float pr_w3sw1_p = 2137.45
-int pr_w3sw2_ts = timestamp(2023, 10, 8)
-float pr_w3sw2_p = 1523.24
-int pr_w3sw3_ts = timestamp(2024, 2, 26)
-float pr_w3sw3_p = 3518.97
-int pr_w3sw4_ts = timestamp(2024, 3, 4)
-float pr_w3sw4_p = 3224.12
-int pr_w3sw5_ts = timestamp(2024, 3, 11)
-float pr_w3sw5_p = 4092.28
+int   pr_w3sw1_ts = timestamp(2023, 4, 3)
+float pr_w3sw1_p  = 2137.45
+int   pr_w3sw2_ts = timestamp(2023, 10, 9)
+float pr_w3sw2_p  = 1523.24
+int   pr_w3sw3_ts = timestamp(2024, 3, 11)
+float pr_w3sw3_p  = 4092.28
+int   pr_w3sw4_ts = timestamp(2024, 4, 29)
+float pr_w3sw4_p  = 2815.92
+int   pr_w3sw5_ts = timestamp(2024, 12, 16)
+float pr_w3sw5_p  = 4106.96
 
-// W4 subwaves
-int pr_w4swa_ts = timestamp(2024, 4, 29)
-float pr_w4swa_p = 2815.92
-int pr_w4swb_ts = timestamp(2024, 5, 20)
-float pr_w4swb_p = 3943.55
-int pr_w4swc_ts = timestamp(2024, 8, 5)
-float pr_w4swc_p = 2122.55
+int   pr_waswa_ts = timestamp(2025, 10, 6)
+float pr_waswa_p  = 3460.22
+int   pr_waswb_ts = timestamp(2025, 10, 20)
+float pr_waswb_p  = 4250.67
+int   pr_waswc_ts = timestamp(2025, 11, 24)
+float pr_waswc_p  = 2626.87
 
-// W5 subwaves
-int pr_w5sw1_ts = timestamp(2024, 8, 19)
-float pr_w5sw1_p = 2820.02
-int pr_w5sw2_ts = timestamp(2024, 9, 2)
-float pr_w5sw2_p = 2150.86
-int pr_w5sw3_ts = timestamp(2024, 12, 2)
-float pr_w5sw3_p = 4093.17
-int pr_w5sw4_ts = timestamp(2024, 12, 9)
-float pr_w5sw4_p = 3520.37
-int pr_w5sw5_ts = timestamp(2024, 12, 16)
-float pr_w5sw5_p = 4106.96
-
-// WA subwaves
-int pr_waswa_ts = timestamp(2025, 1, 27)
-float pr_waswa_p = 2755.47
-int pr_waswb_ts = timestamp(2025, 2, 17)
-float pr_waswb_p = 2850.61
-int pr_waswc_ts = timestamp(2025, 3, 10)
-float pr_waswc_p = 1760.94
-
-// === ALTERNATE SUBWAVE DATA ===
-// Alt WA subwaves (motive impulse)
-int al_wasw1_ts = timestamp(2022, 8, 8)
-float al_wasw1_p = 2022.79
-int al_wasw2_ts = timestamp(2022, 11, 21)
-float al_wasw2_p = 1081.14
-int al_wasw3_ts = timestamp(2024, 3, 11)
-float al_wasw3_p = 4092.28
-
-// Alt WB subwaves
-int al_wbswa_ts = timestamp(2024, 8, 5)
-float al_wbswa_p = 2122.55
-int al_wbswb_ts = timestamp(2024, 12, 16)
-float al_wbswb_p = 4106.96
-int al_wbswc_ts = timestamp(2025, 3, 10)
-float al_wbswc_p = 1760.94
-
-// All drawing objects use xloc.bar_time + fixed float prices for scale/zoom stability
 if barstate.islast
-    // Clean up old drawings
     while array.size(allLines) > 0
         line.delete(array.pop(allLines))
     while array.size(allLabels) > 0
         label.delete(array.pop(allLabels))
 
-    int todayTime = time
-    float priceHigh = 4957.00
-    float priceLow = 896.11
+    int   todayTime  = time
+    float priceHigh  = 6505.00
+    float priceLow   = 896.11
     float priceRange = priceHigh - priceLow
 
-    // === BUILD PRIMARY ARRAYS ===
-    array<int> pr_ts = array.new<int>()
-    array<float> pr_prices = array.new<float>()
-    array<string> pr_names = array.new<string>()
-    array<string> pr_ohlc = array.new<string>()
-    array<string> pr_fibs = array.new<string>()
-    array<string> pr_types = array.new<string>()
+    // === BUILD PRIMARY PIVOT ARRAYS ===
+    array<int>    pr_ts     = array.new<int>()
+    array<float>  pr_prices = array.new<float>()
+    array<string> pr_names  = array.new<string>()
+    array<string> pr_ohlc   = array.new<string>()
+    array<string> pr_fibs   = array.new<string>()
+    array<string> pr_types  = array.new<string>()
 
     array.push(pr_ts, pr_w0_ts)
     array.push(pr_prices, pr_w0_p)
@@ -219,131 +160,151 @@ if barstate.islast
     array.push(pr_ohlc, "L")
     array.push(pr_fibs, "--")
     array.push(pr_types, "hist")
-
     array.push(pr_ts, pr_w1_ts)
     array.push(pr_prices, pr_w1_p)
     array.push(pr_names, "W1")
     array.push(pr_ohlc, "H")
     array.push(pr_fibs, "--")
     array.push(pr_types, "hist")
-
     array.push(pr_ts, pr_w2_ts)
     array.push(pr_prices, pr_w2_p)
     array.push(pr_names, "W2")
     array.push(pr_ohlc, "L")
     array.push(pr_fibs, "83.6%")
     array.push(pr_types, "hist")
-
     array.push(pr_ts, pr_w3_ts)
     array.push(pr_prices, pr_w3_p)
     array.push(pr_names, "W3")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "2.67x")
+    array.push(pr_fibs, "269.1%")
     array.push(pr_types, "hist")
-
     array.push(pr_ts, pr_w4_ts)
     array.push(pr_prices, pr_w4_p)
     array.push(pr_names, "W4")
     array.push(pr_ohlc, "L")
-    array.push(pr_fibs, "65.4%")
+    array.push(pr_fibs, "89.9%")
     array.push(pr_types, "hist")
-
     array.push(pr_ts, pr_w5_ts)
     array.push(pr_prices, pr_w5_p)
     array.push(pr_names, "W5")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "1.76x")
+    array.push(pr_fibs, "357.1%")
     array.push(pr_types, "hist")
-
     array.push(pr_ts, pr_wa_ts)
     array.push(pr_prices, pr_wa_p)
     array.push(pr_names, "WA")
     array.push(pr_ohlc, "L")
-    array.push(pr_fibs, "73.1%")
+    array.push(pr_fibs, "--")
     array.push(pr_types, "hist")
-
     array.push(pr_ts, pr_wb_ts)
     array.push(pr_prices, pr_wb_p)
     array.push(pr_names, "WB")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "50.0%")
-    array.push(pr_types, "proj")
-
+    array.push(pr_fibs, "35.2%")
+    array.push(pr_types, "hist")
     array.push(pr_ts, pr_wc_ts)
     array.push(pr_prices, pr_wc_p)
     array.push(pr_names, "WC")
     array.push(pr_ohlc, "L")
-    array.push(pr_fibs, "61.8%")
+    array.push(pr_fibs, "73.0%")
+    array.push(pr_types, "hist")
+    array.push(pr_ts, pr_p1_ts)
+    array.push(pr_prices, pr_p1_p)
+    array.push(pr_names, "P1")
+    array.push(pr_ohlc, "H")
+    array.push(pr_fibs, "38.2%")
+    array.push(pr_types, "proj")
+    array.push(pr_ts, pr_p2_ts)
+    array.push(pr_prices, pr_p2_p)
+    array.push(pr_names, "P2")
+    array.push(pr_ohlc, "H")
+    array.push(pr_fibs, "50.0%")
     array.push(pr_types, "proj")
 
-    // Primary segment colors
     array<color> pr_segColors = array.new<color>()
-    array.push(pr_segColors, PR_MOTIVE_UP)    // W0->W1
-    array.push(pr_segColors, PR_CORRECTIVE)    // W1->W2
-    array.push(pr_segColors, PR_MOTIVE_UP)    // W2->W3
-    array.push(pr_segColors, PR_CORRECTIVE)    // W3->W4
-    array.push(pr_segColors, PR_MOTIVE_UP)    // W4->W5
-    array.push(pr_segColors, PR_CORRECTIVE)    // W5->WA
-    array.push(pr_segColors, PR_CORRECTIVE)    // WA->WB
-    array.push(pr_segColors, PR_CORRECTIVE)    // WB->WC
+    array.push(pr_segColors, PR_MOTIVE_UP)   // W0→W1
+    array.push(pr_segColors, PR_CORRECTIVE)  // W1→W2
+    array.push(pr_segColors, PR_MOTIVE_UP)   // W2→W3
+    array.push(pr_segColors, PR_CORRECTIVE)  // W3→W4
+    array.push(pr_segColors, PR_MOTIVE_UP)   // W4→W5
+    array.push(pr_segColors, PR_CORRECTIVE)  // W5→WA
+    array.push(pr_segColors, PR_CORRECTIVE)  // WA→WB
+    array.push(pr_segColors, PR_CORRECTIVE)  // WB→WC
+    array.push(pr_segColors, PR_MOTIVE_UP)   // WC→P1
+    array.push(pr_segColors, PR_MOTIVE_UP)   // P1→P2
 
-    // === BUILD ALTERNATE ARRAYS ===
-    array<int> al_ts = array.new<int>()
-    array<float> al_prices = array.new<float>()
-    array<string> al_names = array.new<string>()
-    array<string> al_ohlc = array.new<string>()
-    array<string> al_fibs = array.new<string>()
-    array<string> al_types = array.new<string>()
+    // === BUILD ALTERNATE PIVOT ARRAYS ===
+    array<int>    al_ts     = array.new<int>()
+    array<float>  al_prices = array.new<float>()
+    array<string> al_names  = array.new<string>()
+    array<string> al_ohlc   = array.new<string>()
+    array<string> al_fibs   = array.new<string>()
+    array<string> al_types  = array.new<string>()
 
-    array.push(al_ts, al_wa_ts)
-    array.push(al_prices, al_wa_p)
-    array.push(al_names, "WA")
+    array.push(al_ts, al_w0_ts)
+    array.push(al_prices, al_w0_p)
+    array.push(al_names, "W0")
     array.push(al_ohlc, "L")
     array.push(al_fibs, "--")
     array.push(al_types, "hist")
-
-    array.push(al_ts, al_wa2_ts)
-    array.push(al_prices, al_wa2_p)
+    array.push(al_ts, al_wa_ts)
+    array.push(al_prices, al_wa_p)
     array.push(al_names, "WA")
     array.push(al_ohlc, "H")
     array.push(al_fibs, "--")
     array.push(al_types, "hist")
-
     array.push(al_ts, al_wb_ts)
     array.push(al_prices, al_wb_p)
     array.push(al_names, "WB")
     array.push(al_ohlc, "L")
-    array.push(al_fibs, "73.0%")
+    array.push(al_fibs, "58.7%")
     array.push(al_types, "hist")
-
-    array.push(al_ts, al_wcp_ts)
-    array.push(al_prices, al_wcp_p)
-    array.push(al_names, "WC.p")
-    array.push(al_ohlc, "H")
-    array.push(al_fibs, "38.2%")
-    array.push(al_types, "proj")
-
     array.push(al_ts, al_wc_ts)
     array.push(al_prices, al_wc_p)
-    array.push(al_names, "WC")
+    array.push(al_names, "WC=WW")
+    array.push(al_ohlc, "H")
+    array.push(al_fibs, "292.0%")
+    array.push(al_types, "hist")
+    array.push(al_ts, al_wxa_ts)
+    array.push(al_prices, al_wxa_p)
+    array.push(al_names, "WX.a")
+    array.push(al_ohlc, "L")
+    array.push(al_fibs, "46.9%")
+    array.push(al_types, "hist")
+    array.push(al_ts, al_wxb_ts)
+    array.push(al_prices, al_wxb_p)
+    array.push(al_names, "WX.b")
+    array.push(al_ohlc, "H")
+    array.push(al_fibs, "35.2%")
+    array.push(al_types, "hist")
+    array.push(al_ts, al_wxc_ts)
+    array.push(al_prices, al_wxc_p)
+    array.push(al_names, "WX.c")
+    array.push(al_ohlc, "L")
+    array.push(al_fibs, "61.8%")
+    array.push(al_types, "hist")
+    array.push(al_ts, al_wxend_ts)
+    array.push(al_prices, al_wxend_p)
+    array.push(al_names, "WX_end")
     array.push(al_ohlc, "L")
     array.push(al_fibs, "61.8%")
     array.push(al_types, "proj")
-
-    array.push(al_ts, al_wd_ts)
-    array.push(al_prices, al_wd_p)
-    array.push(al_names, "WD")
+    array.push(al_ts, al_wy1_ts)
+    array.push(al_prices, al_wy1_p)
+    array.push(al_names, "WY_1")
     array.push(al_ohlc, "H")
-    array.push(al_fibs, "1.0x")
+    array.push(al_fibs, "100.0%")
     array.push(al_types, "proj")
 
-    // Alternate segment colors
     array<color> al_segColors = array.new<color>()
-    array.push(al_segColors, AL_MOTIVE_UP)     // WA(L)->WA(H)
-    array.push(al_segColors, AL_CORRECTIVE)     // WA(H)->WB
-    array.push(al_segColors, AL_MOTIVE_UP)     // WB->WC.p
-    array.push(al_segColors, AL_CORRECTIVE)     // WC.p->WC
-    array.push(al_segColors, AL_MOTIVE_UP)     // WC->WD
+    array.push(al_segColors, AL_MOTIVE_UP)   // W0→WA
+    array.push(al_segColors, AL_CORRECTIVE)  // WA→WB
+    array.push(al_segColors, AL_MOTIVE_UP)   // WB→WC=WW
+    array.push(al_segColors, AL_CORRECTIVE)  // WC→WX.a
+    array.push(al_segColors, AL_CORRECTIVE)  // WX.a→WX.b
+    array.push(al_segColors, AL_CORRECTIVE)  // WX.b→WX.c
+    array.push(al_segColors, AL_CORRECTIVE)  // WX.c→WX_end
+    array.push(al_segColors, AL_MOTIVE_UP)   // WX_end→WY_1
 
     // === Y-OFFSET COLLISION AVOIDANCE ===
     array<float> pr_yoffs = array.new<float>(array.size(pr_prices), 0.0)
@@ -354,15 +315,13 @@ if barstate.islast
     while idx1 < pr_sz
         int idx2 = idx1 + 1
         while idx2 < pr_sz
-            // array size checked before access
-            float p1 = array.size(pr_prices) > idx1 ? array.get(pr_prices, idx1) : 0.0
-            float p2 = array.size(pr_prices) > idx2 ? array.get(pr_prices, idx2) : 0.0
-            int t1 = array.size(pr_ts) > idx1 ? array.get(pr_ts, idx1) : 0
-            int t2 = array.size(pr_ts) > idx2 ? array.get(pr_ts, idx2) : 0
+            float p1 = array.get(pr_prices, idx1)
+            float p2 = array.get(pr_prices, idx2)
+            int t1   = array.get(pr_ts, idx1)
+            int t2   = array.get(pr_ts, idx2)
             if math.abs(p1 - p2) < priceRange * 0.05 and math.abs(t1 - t2) < 8 * 7 * 86400000
-                // array size checked before access
-                string ohlc2 = array.size(pr_ohlc) > idx2 ? array.get(pr_ohlc, idx2) : "H"
-                float offAmt = priceRange * 0.03
+                string ohlc2  = array.get(pr_ohlc, idx2)
+                float offAmt  = priceRange * 0.03
                 if ohlc2 == "H"
                     array.set(pr_yoffs, idx2, offAmt)
                 else
@@ -375,15 +334,13 @@ if barstate.islast
     while aidx1 < al_sz
         int aidx2 = aidx1 + 1
         while aidx2 < al_sz
-            // array size checked before access
-            float ap1 = array.size(al_prices) > aidx1 ? array.get(al_prices, aidx1) : 0.0
-            float ap2 = array.size(al_prices) > aidx2 ? array.get(al_prices, aidx2) : 0.0
-            int at1 = array.size(al_ts) > aidx1 ? array.get(al_ts, aidx1) : 0
-            int at2 = array.size(al_ts) > aidx2 ? array.get(al_ts, aidx2) : 0
+            float ap1 = array.get(al_prices, aidx1)
+            float ap2 = array.get(al_prices, aidx2)
+            int at1   = array.get(al_ts, aidx1)
+            int at2   = array.get(al_ts, aidx2)
             if math.abs(ap1 - ap2) < priceRange * 0.05 and math.abs(at1 - at2) < 8 * 7 * 86400000
-                // array size checked before access
-                string aohlc2 = array.size(al_ohlc) > aidx2 ? array.get(al_ohlc, aidx2) : "H"
-                float aoffAmt = priceRange * 0.03
+                string aohlc2  = array.get(al_ohlc, aidx2)
+                float aoffAmt  = priceRange * 0.03
                 if aohlc2 == "H"
                     array.set(al_yoffs, aidx2, aoffAmt)
                 else
@@ -391,274 +348,217 @@ if barstate.islast
             aidx2 += 1
         aidx1 += 1
 
-    // === DETERMINE RENDERING FLAGS ===
-    bool drawPrimary = showCount == "Primary Only" or showCount == "Both"
+    bool drawPrimary   = showCount == "Primary Only" or showCount == "Both"
     bool drawAlternate = showCount == "Alternate Only" or showCount == "Both"
-    bool altOnly = showCount == "Alternate Only"
+    bool altOnly       = showCount == "Alternate Only"
 
     // === DRAW PRIMARY COUNT ===
     if drawPrimary
         int i = 1
         while i < array.size(pr_ts)
-            // array size checked before access
-            int ts1 = array.size(pr_ts) > (i - 1) ? array.get(pr_ts, i - 1) : 0
-            int ts2 = array.size(pr_ts) > i ? array.get(pr_ts, i) : 0
-            float p1 = array.size(pr_prices) > (i - 1) ? array.get(pr_prices, i - 1) : 0.0
-            float p2 = array.size(pr_prices) > i ? array.get(pr_prices, i) : 0.0
-            string type1 = array.size(pr_types) > (i - 1) ? array.get(pr_types, i - 1) : "hist"
-            string type2 = array.size(pr_types) > i ? array.get(pr_types, i) : "hist"
-            color segCol = array.size(pr_segColors) > (i - 1) ? array.get(pr_segColors, i - 1) : PR_MOTIVE_UP
-
-            bool isHist = type1 == "hist" and type2 == "hist"
-            bool isProj = type1 == "proj" or type2 == "proj"
-
-            bool shouldDraw = true
-            if isProj and not showProj
-                shouldDraw := false
-
-            if shouldDraw
+            int ts1      = array.get(pr_ts, i - 1)
+            int ts2      = array.get(pr_ts, i)
+            float p1     = array.get(pr_prices, i - 1)
+            float p2     = array.get(pr_prices, i)
+            string type1 = array.get(pr_types, i - 1)
+            string type2 = array.get(pr_types, i)
+            color segCol = array.get(pr_segColors, i - 1)
+            bool isHist  = type1 == "hist" and type2 == "hist"
+            bool isProj  = type1 == "proj" or type2 == "proj"
+            if not isProj or showProj
                 string lstyle = isHist ? STYLE_SOLID : STYLE_DOTTED
-                line seg = line.new(ts1, p1, ts2, p2, xloc=xloc.bar_time, color=segCol, style=lstyle, width=2)
-                array.push(allLines, seg)
+                array.push(allLines, line.new(ts1, p1, ts2, p2, xloc=xloc.bar_time, color=segCol, style=lstyle, width=2))
             i += 1
 
-        // Primary labels
         if showLabels
             int li = 0
             while li < array.size(pr_ts)
-                // array size checked before access
-                string ltype = array.size(pr_types) > li ? array.get(pr_types, li) : "hist"
-                bool isProj2 = ltype == "proj"
+                string ltype  = array.get(pr_types, li)
+                bool isProj2  = ltype == "proj"
                 if isProj2 and not showProj
                     li += 1
                     continue
-
-                int lts = array.size(pr_ts) > li ? array.get(pr_ts, li) : 0
-                float lprice = array.size(pr_prices) > li ? array.get(pr_prices, li) : 0.0
-                string lname = array.size(pr_names) > li ? array.get(pr_names, li) : ""
-                string lohlc = array.size(pr_ohlc) > li ? array.get(pr_ohlc, li) : "H"
-                string lfib = array.size(pr_fibs) > li ? array.get(pr_fibs, li) : "--"
-                float lyoff = array.size(pr_yoffs) > li ? array.get(pr_yoffs, li) : 0.0
-
-                string ltxt = makePivotText(lname, lprice, lfib, false, isProj2)
-                float labelY = lprice + lyoff
-                string lswTooltip = lname == "W1" ? "W1.sw5\nFib:1.24x" : lname == "W2" ? "W2.swc\nFib:0.71x" : lname == "W3" ? "W3.sw5\nFib:0.82x" : lname == "W4" ? "W4.swc\nFib:1.43x" : lname == "W5" ? "W5.sw5\nFib:0.84x" : lname == "WA" ? "WA.swc\nFib:0.81x" : na
-
-                color lblCol = PR_MOTIVE_UP
+                int lts       = array.get(pr_ts, li)
+                float lprice  = array.get(pr_prices, li)
+                string lname  = array.get(pr_names, li)
+                string lohlc  = array.get(pr_ohlc, li)
+                string lfib   = array.get(pr_fibs, li)
+                float lyoff   = array.get(pr_yoffs, li)
+                string ltxt   = makePivotText(lname, lprice, lfib, false, isProj2)
+                float labelY  = lprice + lyoff
+                string lswTooltip = lname == "W3" ? "W3.sw5\nFib:122.2%" : lname == "WA" ? "WA.swc\nFib:73.0%" : na
+                color lblCol  = PR_MOTIVE_UP
                 if li > 0
-                    // array size checked before access
-                    lblCol := array.size(pr_segColors) > (li - 1) ? array.get(pr_segColors, li - 1) : PR_MOTIVE_UP
-
+                    lblCol := array.get(pr_segColors, li - 1)
                 if lohlc == "H"
-                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center, tooltip=lswTooltip)
-                    array.push(allLabels, lbl)
+                    array.push(allLabels, label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center, tooltip=lswTooltip))
                 else
-                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center, tooltip=lswTooltip)
-                    array.push(allLabels, lbl)
+                    array.push(allLabels, label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblCol, textcolor=color.white, size=size.small, textalign=text.align_center, tooltip=lswTooltip))
                 li += 1
 
     // === DRAW ALTERNATE COUNT ===
     if drawAlternate
         int i = 1
         while i < array.size(al_ts)
-            // array size checked before access
-            int ts1 = array.size(al_ts) > (i - 1) ? array.get(al_ts, i - 1) : 0
-            int ts2 = array.size(al_ts) > i ? array.get(al_ts, i) : 0
-            float p1 = array.size(al_prices) > (i - 1) ? array.get(al_prices, i - 1) : 0.0
-            float p2 = array.size(al_prices) > i ? array.get(al_prices, i) : 0.0
-            string type1 = array.size(al_types) > (i - 1) ? array.get(al_types, i - 1) : "hist"
-            string type2 = array.size(al_types) > i ? array.get(al_types, i) : "hist"
-            color segCol = array.size(al_segColors) > (i - 1) ? array.get(al_segColors, i - 1) : AL_MOTIVE_UP
-
-            bool isHist = type1 == "hist" and type2 == "hist"
-            bool isProj = type1 == "proj" or type2 == "proj"
-
-            bool shouldDraw = true
-            if isProj and not showProj
-                shouldDraw := false
-
-            if shouldDraw
+            int ts1      = array.get(al_ts, i - 1)
+            int ts2      = array.get(al_ts, i)
+            float p1     = array.get(al_prices, i - 1)
+            float p2     = array.get(al_prices, i)
+            string type1 = array.get(al_types, i - 1)
+            string type2 = array.get(al_types, i)
+            color segCol = array.get(al_segColors, i - 1)
+            bool isHist  = type1 == "hist" and type2 == "hist"
+            bool isProj  = type1 == "proj" or type2 == "proj"
+            if not isProj or showProj
                 string lstyle = STYLE_DASHED
                 if isProj
                     lstyle := STYLE_DOTTED
                 if altOnly and isHist
                     lstyle := STYLE_SOLID
                 int alTransp = altOnly ? 0 : 50
-                color alSegCol = color.new(segCol, alTransp)
-                line seg = line.new(ts1, p1, ts2, p2, xloc=xloc.bar_time, color=alSegCol, style=lstyle, width=2)
-                array.push(allLines, seg)
+                array.push(allLines, line.new(ts1, p1, ts2, p2, xloc=xloc.bar_time, color=color.new(segCol, alTransp), style=lstyle, width=2))
             i += 1
 
-        // Alternate labels
         if showLabels
             int li = 0
             while li < array.size(al_ts)
-                // array size checked before access
-                string ltype = array.size(al_types) > li ? array.get(al_types, li) : "hist"
-                bool isProj2 = ltype == "proj"
+                string ltype  = array.get(al_types, li)
+                bool isProj2  = ltype == "proj"
                 if isProj2 and not showProj
                     li += 1
                     continue
-
-                int lts = array.size(al_ts) > li ? array.get(al_ts, li) : 0
-                float lprice = array.size(al_prices) > li ? array.get(al_prices, li) : 0.0
-                string lname = array.size(al_names) > li ? array.get(al_names, li) : ""
-                string lohlc = array.size(al_ohlc) > li ? array.get(al_ohlc, li) : "H"
-                string lfib = array.size(al_fibs) > li ? array.get(al_fibs, li) : "--"
-                float lyoff = array.size(al_yoffs) > li ? array.get(al_yoffs, li) : 0.0
-
-                string ltxt = makePivotText(lname, lprice, lfib, true, isProj2)
-                float labelY = lprice + lyoff
-
-                color lblCol = AL_MOTIVE_UP
+                int lts       = array.get(al_ts, li)
+                float lprice  = array.get(al_prices, li)
+                string lname  = array.get(al_names, li)
+                string lohlc  = array.get(al_ohlc, li)
+                string lfib   = array.get(al_fibs, li)
+                float lyoff   = array.get(al_yoffs, li)
+                string ltxt   = makePivotText(lname, lprice, lfib, true, isProj2)
+                float labelY  = lprice + lyoff
+                color lblCol  = AL_MOTIVE_UP
                 if li > 0
-                    // array size checked before access
-                    lblCol := array.size(al_segColors) > (li - 1) ? array.get(al_segColors, li - 1) : AL_MOTIVE_UP
+                    lblCol := array.get(al_segColors, li - 1)
                 color lblColTransp = altOnly ? lblCol : color.new(lblCol, 50)
-
                 if lohlc == "H"
-                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblColTransp, textcolor=color.white, size=size.small, textalign=text.align_center)
-                    array.push(allLabels, lbl)
+                    array.push(allLabels, label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=lblColTransp, textcolor=color.white, size=size.small, textalign=text.align_center))
                 else
-                    label lbl = label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblColTransp, textcolor=color.white, size=size.small, textalign=text.align_center)
-                    array.push(allLabels, lbl)
+                    array.push(allLabels, label.new(lts, labelY, ltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=lblColTransp, textcolor=color.white, size=size.small, textalign=text.align_center))
                 li += 1
 
-    // === DRAW PRIMARY SUBWAVES ===
+    // === DRAW SUBWAVES (PRIMARY) ===
     if showSubwaves and drawPrimary
-        color sw1col = color.new(PR_MOTIVE_UP, swLabelTransp)
-        color sw2col = color.new(PR_CORRECTIVE, swLabelTransp)
-        color sw3col = color.new(PR_MOTIVE_UP, swLabelTransp)
-        color sw4col = color.new(PR_CORRECTIVE, swLabelTransp)
-        color sw5col = color.new(PR_MOTIVE_UP, swLabelTransp)
-        color swAcol = color.new(PR_CORRECTIVE, swLabelTransp)
+        color sw1col  = color.new(PR_MOTIVE_UP,  swLabelTransp)
+        color sw2col  = color.new(PR_CORRECTIVE, swLabelTransp)
+        color sw3col  = color.new(PR_MOTIVE_UP,  swLabelTransp)
+        color swAcol  = color.new(PR_CORRECTIVE, swLabelTransp)
 
-        // W1 subwaves
-        array<int> sw1_ts = array.new<int>()
-        array<float> sw1_p = array.new<float>()
+        // W1 subwaves (a-b-c)
+        array<int>    sw1_ts    = array.new<int>()
+        array<float>  sw1_p     = array.new<float>()
         array<string> sw1_names = array.new<string>()
-        array<string> sw1_ohlc = array.new<string>()
-        array<string> sw1_fibs = array.new<string>()
-        array.push(sw1_ts, pr_w1sw1_ts)
-        array.push(sw1_p, pr_w1sw1_p)
-        array.push(sw1_names, "W1.sw1")
+        array<string> sw1_ohlc  = array.new<string>()
+        array<string> sw1_fibs  = array.new<string>()
+        array.push(sw1_ts, pr_w0_ts)
+        array.push(sw1_p, pr_w0_p)
+        array.push(sw1_names, "W0")
         array.push(sw1_ohlc, "L")
         array.push(sw1_fibs, "--")
-        array.push(sw1_ts, pr_w1sw2_ts)
-        array.push(sw1_p, pr_w1sw2_p)
-        array.push(sw1_names, "W1.sw2")
-        array.push(sw1_ohlc, "L")
-        array.push(sw1_fibs, "66.4%")
-        array.push(sw1_ts, pr_w1sw3_ts)
-        array.push(sw1_p, pr_w1sw3_p)
-        array.push(sw1_names, "W1.sw3")
+        array.push(sw1_ts, pr_w1swa_ts)
+        array.push(sw1_p, pr_w1swa_p)
+        array.push(sw1_names, "W1.swa")
         array.push(sw1_ohlc, "H")
-        array.push(sw1_fibs, "2.06x")
-        array.push(sw1_ts, pr_w1sw4_ts)
-        array.push(sw1_p, pr_w1sw4_p)
-        array.push(sw1_names, "W1.sw4")
+        array.push(sw1_fibs, "--")
+        array.push(sw1_ts, pr_w1swb_ts)
+        array.push(sw1_p, pr_w1swb_p)
+        array.push(sw1_names, "W1.swb")
         array.push(sw1_ohlc, "L")
-        array.push(sw1_fibs, "27.4%")
-        array.push(sw1_ts, pr_w1sw5_ts)
-        array.push(sw1_p, pr_w1sw5_p)
-        array.push(sw1_names, "W1.sw5")
+        array.push(sw1_fibs, "50.0%")
+        array.push(sw1_ts, pr_w1swc_ts)
+        array.push(sw1_p, pr_w1swc_p)
+        array.push(sw1_names, "W1.swc")
         array.push(sw1_ohlc, "H")
-        array.push(sw1_fibs, "1.24x")
+        array.push(sw1_fibs, "--")
 
-        if array.size(sw1_ts) > 0
-            int si = 1
-            while si < array.size(sw1_ts)
-                // array size checked before access
-                int st1 = array.get(sw1_ts, si - 1)
-                int st2 = array.get(sw1_ts, si)
-                float sp1 = array.get(sw1_p, si - 1)
-                float sp2 = array.get(sw1_p, si)
-                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw1col, style=STYLE_DASHED, width=1)
-                array.push(allLines, swl)
-                si += 1
+        int s1i = 1
+        while s1i < array.size(sw1_ts)
+            array.push(allLines, line.new(array.get(sw1_ts, s1i - 1), array.get(sw1_p, s1i - 1), array.get(sw1_ts, s1i), array.get(sw1_p, s1i), xloc=xloc.bar_time, color=sw1col, style=STYLE_DASHED, width=1))
+            s1i += 1
 
         if showLabels
-            if array.size(sw1_ts) > 0
-                int sli = 0
-                while sli < array.size(sw1_ts)
-                    // array size checked before access
-                    int slts = array.get(sw1_ts, sli)
-                    float slp = array.get(sw1_p, sli)
-                    string sln = array.get(sw1_names, sli)
-                    string slohlc = array.get(sw1_ohlc, sli)
-                    string slf = array.get(sw1_fibs, sli)
-                    string sltxt = sln
+            int sli = 0
+            while sli < array.size(sw1_ts)
+                bool is_coincident = sli == array.size(sw1_ts) - 1
+                if not is_coincident
+                    string slohlc   = array.get(sw1_ohlc, sli)
+                    float slp       = array.get(sw1_p, sli)
+                    string slf      = array.get(sw1_fibs, sli)
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if sli < array.size(sw1_ts) - 1
-                        if slohlc == "H"
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                        else
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                    sli += 1
+                    float sw_yoff   = slohlc == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if slohlc == "H"
+                        array.push(allLabels, label.new(array.get(sw1_ts, sli), slp + sw_yoff, array.get(sw1_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
+                    else
+                        array.push(allLabels, label.new(array.get(sw1_ts, sli), slp + sw_yoff, array.get(sw1_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw1col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
+                sli += 1
 
-        // W2 subwaves
-        array<int> sw2_ts = array.new<int>()
-        array<float> sw2_p = array.new<float>()
+        // W2 subwaves (a-b-c)
+        array<int>    sw2_ts    = array.new<int>()
+        array<float>  sw2_p     = array.new<float>()
         array<string> sw2_names = array.new<string>()
-        array<string> sw2_ohlc = array.new<string>()
-        array<string> sw2_fibs = array.new<string>()
+        array<string> sw2_ohlc  = array.new<string>()
+        array<string> sw2_fibs  = array.new<string>()
+        array.push(sw2_ts, pr_w1_ts)
+        array.push(sw2_p, pr_w1_p)
+        array.push(sw2_names, "W1")
+        array.push(sw2_ohlc, "H")
+        array.push(sw2_fibs, "--")
         array.push(sw2_ts, pr_w2swa_ts)
         array.push(sw2_p, pr_w2swa_p)
         array.push(sw2_names, "W2.swa")
-        array.push(sw2_ohlc, "L")
+        array.push(sw2_ohlc, "H")
         array.push(sw2_fibs, "--")
         array.push(sw2_ts, pr_w2swb_ts)
         array.push(sw2_p, pr_w2swb_p)
         array.push(sw2_names, "W2.swb")
-        array.push(sw2_ohlc, "H")
-        array.push(sw2_fibs, "55.6%")
+        array.push(sw2_ohlc, "L")
+        array.push(sw2_fibs, "80.1%")
         array.push(sw2_ts, pr_w2swc_ts)
         array.push(sw2_p, pr_w2swc_p)
         array.push(sw2_names, "W2.swc")
         array.push(sw2_ohlc, "L")
-        array.push(sw2_fibs, "0.71x")
+        array.push(sw2_fibs, "83.6%")
 
-        if array.size(sw2_ts) > 0
-            int s2i = 1
-            while s2i < array.size(sw2_ts)
-                // array size checked before access
-                int st1 = array.get(sw2_ts, s2i - 1)
-                int st2 = array.get(sw2_ts, s2i)
-                float sp1 = array.get(sw2_p, s2i - 1)
-                float sp2 = array.get(sw2_p, s2i)
-                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw2col, style=STYLE_DASHED, width=1)
-                array.push(allLines, swl)
-                s2i += 1
+        int s2i = 1
+        while s2i < array.size(sw2_ts)
+            array.push(allLines, line.new(array.get(sw2_ts, s2i - 1), array.get(sw2_p, s2i - 1), array.get(sw2_ts, s2i), array.get(sw2_p, s2i), xloc=xloc.bar_time, color=sw2col, style=STYLE_DASHED, width=1))
+            s2i += 1
 
         if showLabels
-            if array.size(sw2_ts) > 0
-                int sli = 0
-                while sli < array.size(sw2_ts)
-                    // array size checked before access
-                    int slts = array.get(sw2_ts, sli)
-                    float slp = array.get(sw2_p, sli)
-                    string sln = array.get(sw2_names, sli)
-                    string slohlc = array.get(sw2_ohlc, sli)
-                    string slf = array.get(sw2_fibs, sli)
-                    string sltxt = sln
+            int sli = 0
+            while sli < array.size(sw2_ts)
+                bool is_coincident = sli == array.size(sw2_ts) - 1
+                if not is_coincident
+                    string slohlc   = array.get(sw2_ohlc, sli)
+                    float slp       = array.get(sw2_p, sli)
+                    string slf      = array.get(sw2_fibs, sli)
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if sli < array.size(sw2_ts) - 1
-                        if slohlc == "H"
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                        else
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                    sli += 1
+                    float sw_yoff   = slohlc == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if slohlc == "H"
+                        array.push(allLabels, label.new(array.get(sw2_ts, sli), slp + sw_yoff, array.get(sw2_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
+                    else
+                        array.push(allLabels, label.new(array.get(sw2_ts, sli), slp + sw_yoff, array.get(sw2_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw2col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
+                sli += 1
 
-        // W3 subwaves
-        array<int> sw3_ts = array.new<int>()
-        array<float> sw3_p = array.new<float>()
+        // W3 subwaves (sw1-sw5)
+        array<int>    sw3_ts    = array.new<int>()
+        array<float>  sw3_p     = array.new<float>()
         array<string> sw3_names = array.new<string>()
-        array<string> sw3_ohlc = array.new<string>()
-        array<string> sw3_fibs = array.new<string>()
+        array<string> sw3_ohlc  = array.new<string>()
+        array<string> sw3_fibs  = array.new<string>()
+        array.push(sw3_ts, pr_w2_ts)
+        array.push(sw3_p, pr_w2_p)
+        array.push(sw3_names, "W2")
+        array.push(sw3_ohlc, "L")
+        array.push(sw3_fibs, "--")
         array.push(sw3_ts, pr_w3sw1_ts)
         array.push(sw3_p, pr_w3sw1_p)
         array.push(sw3_names, "W3.sw1")
@@ -673,177 +573,50 @@ if barstate.islast
         array.push(sw3_p, pr_w3sw3_p)
         array.push(sw3_names, "W3.sw3")
         array.push(sw3_ohlc, "H")
-        array.push(sw3_fibs, "1.89x")
+        array.push(sw3_fibs, "243.2%")
         array.push(sw3_ts, pr_w3sw4_ts)
         array.push(sw3_p, pr_w3sw4_p)
         array.push(sw3_names, "W3.sw4")
         array.push(sw3_ohlc, "L")
-        array.push(sw3_fibs, "14.8%")
+        array.push(sw3_fibs, "49.7%")
         array.push(sw3_ts, pr_w3sw5_ts)
         array.push(sw3_p, pr_w3sw5_p)
         array.push(sw3_names, "W3.sw5")
         array.push(sw3_ohlc, "H")
-        array.push(sw3_fibs, "0.82x")
+        array.push(sw3_fibs, "122.2%")
 
-        if array.size(sw3_ts) > 0
-            int s3i = 1
-            while s3i < array.size(sw3_ts)
-                // array size checked before access
-                int st1 = array.get(sw3_ts, s3i - 1)
-                int st2 = array.get(sw3_ts, s3i)
-                float sp1 = array.get(sw3_p, s3i - 1)
-                float sp2 = array.get(sw3_p, s3i)
-                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw3col, style=STYLE_DASHED, width=1)
-                array.push(allLines, swl)
-                s3i += 1
+        int s3i = 1
+        while s3i < array.size(sw3_ts)
+            array.push(allLines, line.new(array.get(sw3_ts, s3i - 1), array.get(sw3_p, s3i - 1), array.get(sw3_ts, s3i), array.get(sw3_p, s3i), xloc=xloc.bar_time, color=sw3col, style=STYLE_DASHED, width=1))
+            s3i += 1
 
         if showLabels
-            if array.size(sw3_ts) > 0
-                int sli = 0
-                while sli < array.size(sw3_ts)
-                    // array size checked before access
-                    int slts = array.get(sw3_ts, sli)
-                    float slp = array.get(sw3_p, sli)
-                    string sln = array.get(sw3_names, sli)
-                    string slohlc = array.get(sw3_ohlc, sli)
-                    string slf = array.get(sw3_fibs, sli)
-                    string sltxt = sln
+            int sli = 0
+            while sli < array.size(sw3_ts)
+                bool is_coincident = sli == array.size(sw3_ts) - 1
+                if not is_coincident
+                    string slohlc   = array.get(sw3_ohlc, sli)
+                    float slp       = array.get(sw3_p, sli)
+                    string slf      = array.get(sw3_fibs, sli)
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if sli < array.size(sw3_ts) - 1
-                        if slohlc == "H"
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                        else
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                    sli += 1
+                    float sw_yoff   = slohlc == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if slohlc == "H"
+                        array.push(allLabels, label.new(array.get(sw3_ts, sli), slp + sw_yoff, array.get(sw3_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
+                    else
+                        array.push(allLabels, label.new(array.get(sw3_ts, sli), slp + sw_yoff, array.get(sw3_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw3col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
+                sli += 1
 
-        // W4 subwaves
-        array<int> sw4_ts = array.new<int>()
-        array<float> sw4_p = array.new<float>()
-        array<string> sw4_names = array.new<string>()
-        array<string> sw4_ohlc = array.new<string>()
-        array<string> sw4_fibs = array.new<string>()
-        array.push(sw4_ts, pr_w4swa_ts)
-        array.push(sw4_p, pr_w4swa_p)
-        array.push(sw4_names, "W4.swa")
-        array.push(sw4_ohlc, "L")
-        array.push(sw4_fibs, "--")
-        array.push(sw4_ts, pr_w4swb_ts)
-        array.push(sw4_p, pr_w4swb_p)
-        array.push(sw4_names, "W4.swb")
-        array.push(sw4_ohlc, "H")
-        array.push(sw4_fibs, "88.3%")
-        array.push(sw4_ts, pr_w4swc_ts)
-        array.push(sw4_p, pr_w4swc_p)
-        array.push(sw4_names, "W4.swc")
-        array.push(sw4_ohlc, "L")
-        array.push(sw4_fibs, "1.43x")
-
-        if array.size(sw4_ts) > 0
-            int s4i = 1
-            while s4i < array.size(sw4_ts)
-                // array size checked before access
-                int st1 = array.get(sw4_ts, s4i - 1)
-                int st2 = array.get(sw4_ts, s4i)
-                float sp1 = array.get(sw4_p, s4i - 1)
-                float sp2 = array.get(sw4_p, s4i)
-                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw4col, style=STYLE_DASHED, width=1)
-                array.push(allLines, swl)
-                s4i += 1
-
-        if showLabels
-            if array.size(sw4_ts) > 0
-                int sli = 0
-                while sli < array.size(sw4_ts)
-                    // array size checked before access
-                    int slts = array.get(sw4_ts, sli)
-                    float slp = array.get(sw4_p, sli)
-                    string sln = array.get(sw4_names, sli)
-                    string slohlc = array.get(sw4_ohlc, sli)
-                    string slf = array.get(sw4_fibs, sli)
-                    string sltxt = sln
-                    string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if sli < array.size(sw4_ts) - 1
-                        if slohlc == "H"
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                        else
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw4col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                    sli += 1
-
-        // W5 subwaves
-        array<int> sw5_ts = array.new<int>()
-        array<float> sw5_p = array.new<float>()
-        array<string> sw5_names = array.new<string>()
-        array<string> sw5_ohlc = array.new<string>()
-        array<string> sw5_fibs = array.new<string>()
-        array.push(sw5_ts, pr_w5sw1_ts)
-        array.push(sw5_p, pr_w5sw1_p)
-        array.push(sw5_names, "W5.sw1")
-        array.push(sw5_ohlc, "H")
-        array.push(sw5_fibs, "--")
-        array.push(sw5_ts, pr_w5sw2_ts)
-        array.push(sw5_p, pr_w5sw2_p)
-        array.push(sw5_names, "W5.sw2")
-        array.push(sw5_ohlc, "L")
-        array.push(sw5_fibs, "95.9%")
-        array.push(sw5_ts, pr_w5sw3_ts)
-        array.push(sw5_p, pr_w5sw3_p)
-        array.push(sw5_names, "W5.sw3")
-        array.push(sw5_ohlc, "H")
-        array.push(sw5_fibs, "2.78x")
-        array.push(sw5_ts, pr_w5sw4_ts)
-        array.push(sw5_p, pr_w5sw4_p)
-        array.push(sw5_names, "W5.sw4")
-        array.push(sw5_ohlc, "L")
-        array.push(sw5_fibs, "29.5%")
-        array.push(sw5_ts, pr_w5sw5_ts)
-        array.push(sw5_p, pr_w5sw5_p)
-        array.push(sw5_names, "W5.sw5")
-        array.push(sw5_ohlc, "H")
-        array.push(sw5_fibs, "0.84x")
-
-        if array.size(sw5_ts) > 0
-            int s5i = 1
-            while s5i < array.size(sw5_ts)
-                // array size checked before access
-                int st1 = array.get(sw5_ts, s5i - 1)
-                int st2 = array.get(sw5_ts, s5i)
-                float sp1 = array.get(sw5_p, s5i - 1)
-                float sp2 = array.get(sw5_p, s5i)
-                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=sw5col, style=STYLE_DASHED, width=1)
-                array.push(allLines, swl)
-                s5i += 1
-
-        if showLabels
-            if array.size(sw5_ts) > 0
-                int sli = 0
-                while sli < array.size(sw5_ts)
-                    // array size checked before access
-                    int slts = array.get(sw5_ts, sli)
-                    float slp = array.get(sw5_p, sli)
-                    string sln = array.get(sw5_names, sli)
-                    string slohlc = array.get(sw5_ohlc, sli)
-                    string slf = array.get(sw5_fibs, sli)
-                    string sltxt = sln
-                    string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if sli < array.size(sw5_ts) - 1
-                        if slohlc == "H"
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                        else
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=sw5col, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                    sli += 1
-
-        // WA subwaves
-        array<int> swA_ts = array.new<int>()
-        array<float> swA_p = array.new<float>()
+        // WA subwaves (swa/swb/swc)
+        array<int>    swA_ts    = array.new<int>()
+        array<float>  swA_p     = array.new<float>()
         array<string> swA_names = array.new<string>()
-        array<string> swA_ohlc = array.new<string>()
-        array<string> swA_fibs = array.new<string>()
+        array<string> swA_ohlc  = array.new<string>()
+        array<string> swA_fibs  = array.new<string>()
+        array.push(swA_ts, pr_w5_ts)
+        array.push(swA_p, pr_w5_p)
+        array.push(swA_names, "W5")
+        array.push(swA_ohlc, "H")
+        array.push(swA_fibs, "--")
         array.push(swA_ts, pr_waswa_ts)
         array.push(swA_p, pr_waswa_p)
         array.push(swA_names, "WA.swa")
@@ -853,217 +626,86 @@ if barstate.islast
         array.push(swA_p, pr_waswb_p)
         array.push(swA_names, "WA.swb")
         array.push(swA_ohlc, "H")
-        array.push(swA_fibs, "7.0%")
+        array.push(swA_fibs, "38.2%")
         array.push(swA_ts, pr_waswc_ts)
         array.push(swA_p, pr_waswc_p)
         array.push(swA_names, "WA.swc")
         array.push(swA_ohlc, "L")
-        array.push(swA_fibs, "0.81x")
+        array.push(swA_fibs, "73.0%")
 
-        if array.size(swA_ts) > 0
-            int sAi = 1
-            while sAi < array.size(swA_ts)
-                // array size checked before access
-                int st1 = array.get(swA_ts, sAi - 1)
-                int st2 = array.get(swA_ts, sAi)
-                float sp1 = array.get(swA_p, sAi - 1)
-                float sp2 = array.get(swA_p, sAi)
-                line swl = line.new(st1, sp1, st2, sp2, xloc=xloc.bar_time, color=swAcol, style=STYLE_DASHED, width=1)
-                array.push(allLines, swl)
-                sAi += 1
+        int sAi = 1
+        while sAi < array.size(swA_ts)
+            array.push(allLines, line.new(array.get(swA_ts, sAi - 1), array.get(swA_p, sAi - 1), array.get(swA_ts, sAi), array.get(swA_p, sAi), xloc=xloc.bar_time, color=swAcol, style=STYLE_DASHED, width=1))
+            sAi += 1
 
         if showLabels
-            if array.size(swA_ts) > 0
-                int sli = 0
-                while sli < array.size(swA_ts)
-                    // array size checked before access
-                    int slts = array.get(swA_ts, sli)
-                    float slp = array.get(swA_p, sli)
-                    string sln = array.get(swA_names, sli)
-                    string slohlc = array.get(swA_ohlc, sli)
-                    string slf = array.get(swA_fibs, sli)
-                    string sltxt = sln
+            int sli = 0
+            while sli < array.size(swA_ts)
+                bool is_coincident = sli == array.size(swA_ts) - 1
+                if not is_coincident
+                    string slohlc   = array.get(swA_ohlc, sli)
+                    float slp       = array.get(swA_p, sli)
+                    string slf      = array.get(swA_fibs, sli)
                     string sltooltip = "$" + str.tostring(slp, "#.##") + (slf != "--" ? "\nFib:" + slf : "")
-                    if sli < array.size(swA_ts) - 1
-                        if slohlc == "H"
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                        else
-                            label slbl = label.new(slts, slp, sltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip)
-                            array.push(allLabels, slbl)
-                    sli += 1
-
-    // === DRAW ALTERNATE SUBWAVES ===
-    if showSubwaves and drawAlternate
-        color alswAcol = color.new(AL_MOTIVE_UP, swLabelTransp)
-        color alswBcol = color.new(AL_CORRECTIVE, swLabelTransp)
-
-        // Alt WA subwaves
-        array<int> aswA_ts = array.new<int>()
-        array<float> aswA_p = array.new<float>()
-        array<string> aswA_names = array.new<string>()
-        array<string> aswA_ohlc = array.new<string>()
-        array<string> aswA_fibs = array.new<string>()
-        array.push(aswA_ts, al_wasw1_ts)
-        array.push(aswA_p, al_wasw1_p)
-        array.push(aswA_names, "WA.sw1")
-        array.push(aswA_ohlc, "H")
-        array.push(aswA_fibs, "--")
-        array.push(aswA_ts, al_wasw2_ts)
-        array.push(aswA_p, al_wasw2_p)
-        array.push(aswA_names, "WA.sw2")
-        array.push(aswA_ohlc, "L")
-        array.push(aswA_fibs, "83.6%")
-        array.push(aswA_ts, al_wasw3_ts)
-        array.push(aswA_p, al_wasw3_p)
-        array.push(aswA_names, "WA.sw3")
-        array.push(aswA_ohlc, "H")
-        array.push(aswA_fibs, "2.67x")
-
-        if array.size(aswA_ts) > 0
-            int asAi = 1
-            while asAi < array.size(aswA_ts)
-                // array size checked before access
-                line aswl = line.new(array.get(aswA_ts, asAi - 1), array.get(aswA_p, asAi - 1), array.get(aswA_ts, asAi), array.get(aswA_p, asAi), xloc=xloc.bar_time, color=alswAcol, style=STYLE_DASHED, width=1)
-                array.push(allLines, aswl)
-                asAi += 1
-
-        if showLabels
-            if array.size(aswA_ts) > 0
-                int asli = 0
-                while asli < array.size(aswA_ts)
-                    // array size checked before access
-                    string aslohlc = array.get(aswA_ohlc, asli)
-                    string asln = array.get(aswA_names, asli)
-                    float aslp = array.get(aswA_p, asli)
-                    string aslf = array.get(aswA_fibs, asli)
-                    string asltxt = asln
-                    string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
-                    int aslts = array.get(aswA_ts, asli)
-                    if aslohlc == "H"
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
-                        array.push(allLabels, aslbl)
+                    float sw_yoff   = slohlc == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if slohlc == "H"
+                        array.push(allLabels, label.new(array.get(swA_ts, sli), slp + sw_yoff, array.get(swA_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
                     else
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
-                        array.push(allLabels, aslbl)
-                    asli += 1
-
-        // Alt WB subwaves
-        array<int> aswB_ts = array.new<int>()
-        array<float> aswB_p = array.new<float>()
-        array<string> aswB_names = array.new<string>()
-        array<string> aswB_ohlc = array.new<string>()
-        array<string> aswB_fibs = array.new<string>()
-        array.push(aswB_ts, al_wbswa_ts)
-        array.push(aswB_p, al_wbswa_p)
-        array.push(aswB_names, "WB.swa")
-        array.push(aswB_ohlc, "L")
-        array.push(aswB_fibs, "--")
-        array.push(aswB_ts, al_wbswb_ts)
-        array.push(aswB_p, al_wbswb_p)
-        array.push(aswB_names, "WB.swb")
-        array.push(aswB_ohlc, "H")
-        array.push(aswB_fibs, "95.4%")
-        array.push(aswB_ts, al_wbswc_ts)
-        array.push(aswB_p, al_wbswc_p)
-        array.push(aswB_names, "WB.swc")
-        array.push(aswB_ohlc, "L")
-        array.push(aswB_fibs, "1.19x")
-
-        if array.size(aswB_ts) > 0
-            int asBi = 1
-            while asBi < array.size(aswB_ts)
-                // array size checked before access
-                line aswl = line.new(array.get(aswB_ts, asBi - 1), array.get(aswB_p, asBi - 1), array.get(aswB_ts, asBi), array.get(aswB_p, asBi), xloc=xloc.bar_time, color=alswBcol, style=STYLE_DASHED, width=1)
-                array.push(allLines, aswl)
-                asBi += 1
-
-        if showLabels
-            if array.size(aswB_ts) > 0
-                int asli = 0
-                while asli < array.size(aswB_ts)
-                    // array size checked before access
-                    string aslohlc = array.get(aswB_ohlc, asli)
-                    string asln = array.get(aswB_names, asli)
-                    float aslp = array.get(aswB_p, asli)
-                    string aslf = array.get(aswB_fibs, asli)
-                    string asltxt = asln
-                    string asltooltip = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
-                    int aslts = array.get(aswB_ts, asli)
-                    if aslohlc == "H"
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswBcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
-                        array.push(allLabels, aslbl)
-                    else
-                        label aslbl = label.new(aslts, aslp, asltxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswBcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltooltip)
-                        array.push(allLabels, aslbl)
-                    asli += 1
+                        array.push(allLabels, label.new(array.get(swA_ts, sli), slp + sw_yoff, array.get(swA_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=swAcol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
+                sli += 1
 
     // === INVALIDATION LEVELS ===
     if showInval
         if drawPrimary
-            line prInvalLine = line.new(pr_w5_ts, pr_inval, pr_wc_ts, pr_inval, xloc=xloc.bar_time, color=PR_INVAL_COL, style=STYLE_DASHED, width=1)
-            array.push(allLines, prInvalLine)
+            array.push(allLines, line.new(pr_w5_ts, pr_inval, pr_p2_ts, pr_inval, xloc=xloc.bar_time, color=PR_INVAL_COL, style=STYLE_DASHED, width=1))
             if showLabels
-                string prInvalTxt = "Primary Inval\n$" + str.tostring(pr_inval, "#.##")
-                label prInvalLbl = label.new(pr_w5_ts, pr_inval, prInvalTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=PR_INVAL_COL, textcolor=color.white, size=size.small, textalign=text.align_center)
-                array.push(allLabels, prInvalLbl)
-
+                array.push(allLabels, label.new(pr_w5_ts, pr_inval, "Primary Inval\n$" + str.tostring(pr_inval, "#.##"), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=PR_INVAL_COL, textcolor=color.white, size=size.small, textalign=text.align_center))
         if drawAlternate
-            line alInvalLine = line.new(al_wa_ts, al_inval, al_wd_ts, al_inval, xloc=xloc.bar_time, color=AL_INVAL_COL, style=STYLE_DASHED, width=1)
-            array.push(allLines, alInvalLine)
+            array.push(allLines, line.new(al_w0_ts, al_inval, al_wy1_ts, al_inval, xloc=xloc.bar_time, color=AL_INVAL_COL, style=STYLE_DASHED, width=1))
             if showLabels
-                string alInvalTxt = "Alt Inval\n$" + str.tostring(al_inval, "#.##")
-                label alInvalLbl = label.new(al_wa_ts, al_inval, alInvalTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=AL_INVAL_COL, textcolor=color.white, size=size.small, textalign=text.align_center)
-                array.push(allLabels, alInvalLbl)
+                array.push(allLabels, label.new(al_w0_ts, al_inval, "Alt Inval\n$" + str.tostring(al_inval, "#.##"), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=AL_INVAL_COL, textcolor=color.white, size=size.small, textalign=text.align_center))
 
     // === TARGET LEVELS ===
     if showTargets
         if drawPrimary
-            line prTargetLine = line.new(pr_wa_ts, pr_target, pr_wc_ts, pr_target, xloc=xloc.bar_time, color=PR_TARGET_COL, style=STYLE_DOTTED, width=1)
-            array.push(allLines, prTargetLine)
+            array.push(allLines, line.new(pr_wc_ts, pr_target, pr_p2_ts, pr_target, xloc=xloc.bar_time, color=PR_TARGET_COL, style=STYLE_DOTTED, width=1))
             if showLabels
-                string prTargetTxt = "Primary Target\n$" + str.tostring(pr_target, "#.##") + "\nFib " + pr_target_fib
-                label prTargetLbl = label.new(pr_wc_ts, pr_target, prTargetTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=PR_TARGET_COL, textcolor=color.black, size=size.small, textalign=text.align_center)
-                array.push(allLabels, prTargetLbl)
-
+                array.push(allLabels, label.new(pr_p2_ts, pr_target, "Primary Target\n$" + str.tostring(pr_target, "#.##") + "\nFib " + pr_target_fib, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=PR_TARGET_COL, textcolor=color.black, size=size.small, textalign=text.align_center))
         if drawAlternate
-            line alTargetLine = line.new(al_wb_ts, al_target, al_wc_ts, al_target, xloc=xloc.bar_time, color=AL_TARGET_COL, style=STYLE_DOTTED, width=1)
-            array.push(allLines, alTargetLine)
+            array.push(allLines, line.new(al_wxend_ts, al_target, al_wy1_ts, al_target, xloc=xloc.bar_time, color=AL_TARGET_COL, style=STYLE_DOTTED, width=1))
             if showLabels
-                string alTargetTxt = "Alt Target\n$" + str.tostring(al_target, "#.##") + "\nFib " + al_target_fib
-                label alTargetLbl = label.new(al_wc_ts, al_target, alTargetTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=AL_TARGET_COL, textcolor=color.white, size=size.small, textalign=text.align_center)
-                array.push(allLabels, alTargetLbl)
+                array.push(allLabels, label.new(al_wy1_ts, al_target, "Alt Target\n$" + str.tostring(al_target, "#.##") + "\nFib " + al_target_fib, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=AL_TARGET_COL, textcolor=color.white, size=size.small, textalign=text.align_center))
+
+    // === CHANNEL (Primary impulse W0→W5) ===
+    if showChannel and drawPrimary
+        float ch_slope      = (pr_w3_p - pr_w1_p) / float(pr_w3_ts - pr_w1_ts)
+        int   ch_start_ts   = pr_w0_ts
+        int   ch_end_ts     = pr_p2_ts
+        float mot_y_start   = pr_w1_p + ch_slope * float(ch_start_ts - pr_w1_ts)
+        float mot_y_end     = pr_w1_p + ch_slope * float(ch_end_ts   - pr_w1_ts)
+        float base_y_start  = pr_w2_p + ch_slope * float(ch_start_ts - pr_w2_ts)
+        float base_y_end    = pr_w2_p + ch_slope * float(ch_end_ts   - pr_w2_ts)
+        array.push(allLines, line.new(ch_start_ts, mot_y_start,  ch_end_ts, mot_y_end,  xloc=xloc.bar_time, color=color.new(PR_CHANNEL_COL, 50), style=STYLE_DASHED, width=1))
+        array.push(allLines, line.new(ch_start_ts, base_y_start, ch_end_ts, base_y_end, xloc=xloc.bar_time, color=color.new(PR_CHANNEL_COL, 50), style=STYLE_DASHED, width=1))
 
     // === LEGEND ===
     if showLegend
-        int firstPivotTs = pr_w0_ts
-        float highestPrice = priceHigh
-        float lowestPrice = priceLow
         float legendStep = priceRange * 0.04
-
-        int leg_x = todayTime + 86400000 * 7
-        float leg_base = lowestPrice
-
+        int   leg_x      = 0
+        float leg_base   = 0.0
         if legendPos == "Top Right"
-            leg_x := todayTime + 86400000 * 7
-            leg_base := highestPrice
-        else if legendPos == "Bottom Right"
-            leg_x := todayTime + 86400000 * 7
-            leg_base := lowestPrice
+            leg_x    := todayTime + 86400000 * 7
+            leg_base := priceHigh
         else if legendPos == "Top Left"
-            leg_x := firstPivotTs - 86400000 * 30
-            leg_base := highestPrice
+            leg_x    := pr_w0_ts - 86400000 * 30
+            leg_base := priceHigh
         else if legendPos == "Bottom Left"
-            leg_x := firstPivotTs - 86400000 * 30
-            leg_base := lowestPrice
-
+            leg_x    := pr_w0_ts - 86400000 * 30
+            leg_base := priceLow
+        else
+            leg_x    := todayTime + 86400000 * 7
+            leg_base := priceLow
         if drawPrimary
-            string prLegTxt = "Primary Count (60%)"
-            label prLegLbl = label.new(leg_x, leg_base, prLegTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=PR_MOTIVE_UP, textcolor=color.white, size=size.small, textalign=text.align_center)
-            array.push(allLabels, prLegLbl)
-
+            array.push(allLabels, label.new(leg_x, leg_base, "Primary Count (65%)", xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=PR_MOTIVE_UP, textcolor=color.white, size=size.small, textalign=text.align_center))
         if drawAlternate
-            float altLegY = leg_base - legendStep
-            string alLegTxt = "Alternate Count (30%)"
-            label alLegLbl = label.new(leg_x, altLegY, alLegTxt, xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=AL_MOTIVE_UP, textcolor=color.white, size=size.small, textalign=text.align_center)
-            array.push(allLabels, alLegLbl)
+            array.push(allLabels, label.new(leg_x, leg_base - legendStep, "Alternate Count (35%)", xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=AL_MOTIVE_UP, textcolor=color.white, size=size.small, textalign=text.align_center))
