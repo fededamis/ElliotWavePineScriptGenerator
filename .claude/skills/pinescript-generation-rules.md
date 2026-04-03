@@ -27,6 +27,13 @@ do not generate code that violates any of these, so they require no fix cycle du
 - Keep inline comments minimal: one short comment per logical section only -- no explanatory prose, block headers, or section dividers
 - **Use str.tostring(value, "#.##") for float formatting, not str.format() which doesn't support standard format specifiers in Pine v6**
 
+### PROJECTED PIVOT SUBWAVE COUNTS
+When the .wave file contains projected pivots with subwave counts (e.g., "WA (3 sw)"), the Pine Script generation must:
+1. Parse the subwave count from the wave name — extract the number in parentheses (e.g., "3" from "WA (3 sw)")
+2. Declare a parallel array `pr_swCounts` (primary) and `al_swCounts` (alternate) to store subwave counts (int, default 0)
+3. In `makePivotText()` for projected pivots: if the subwave count > 0, append " (N sw)" to the wave name in line 1
+4. Pass the subwave count as a parameter to `makePivotText()` so it can format the label correctly
+
 ---
 
 ### DISPLAY INPUTS
