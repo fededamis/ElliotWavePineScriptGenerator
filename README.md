@@ -22,5 +22,7 @@ When editing a rule, update it **only in the authoritative file** listed above. 
 - Fix wave label/subwave label overlapping. (keep testing)
 - Transparency input config: make default to 40.
 - Compress .pine files for token optimization.
+- Check degree labeling issues.
+- Fix 'The subagent hit the length limit.'
 - Check improvement ideas.
 - Check: https://www.youtube.com/watch?v=aqtseECSdtY

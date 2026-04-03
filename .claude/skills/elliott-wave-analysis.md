@@ -18,6 +18,33 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 - Identify the dominant trend direction from the START DATE
 - Mark the most obvious swing highs and swing lows as candidate wave pivots
 
+**Step 1.5 — Declare and Lock Wave Degree**
+
+Before labeling any pivots, determine the working degree using this calibration table:
+
+| Degree        | Duration              | Typical Price Range |
+|---------------|-----------------------|---------------------|
+| Supercycle    | 8–40 years            | 100–1000%+          |
+| Cycle         | 1–8 years             | 20–200%             |
+| Primary       | 3 months–2 years      | 10–60%              |
+| Intermediate  | 2 weeks–9 months      | 5–25%               |
+| Minor         | 1 week–8 weeks        | 2–12%               |
+
+**Degree Selection Algorithm (apply in order):**
+1. Measure total span: START DATE → today in calendar days.
+2. Compute price range: `(highest High − lowest Low) ÷ lowest Low × 100%`.
+3. Select the degree whose duration AND price range both fit the table.
+4. When duration and price range disagree, **prefer the price range** — it is the more reliable degree indicator.
+5. When two adjacent degrees are equally plausible, build provisional pivot sets for both and count Fibonacci confluences at each. Select the degree with the higher confluence score. If still tied, prefer the higher (larger) degree.
+6. **LOCK the degree.** All pivots in both the primary and alternate count must be labeled at this degree. A pivot that fits only a different degree is a mislabeling — revise the surrounding pivots. Degree changes mid-count are forbidden.
+
+Output before Step 2: `Degree: [Name] ([N]-day span, [X]% price range)`
+
+**Degree Proportion Rules (absolute — same force as the three EW rules):**
+- Each wave in a count must span between 5% and 85% of the total sequence duration. A wave at ≤4% or ≥86% of total sequence time belongs to a different degree — revise the surrounding pivots.
+- No wave may be more than 10× the duration of any sibling wave in the same count.
+- The alternate count must use the same locked degree. Pivots may be re-labeled under different wave names but the degree itself cannot change.
+
 **Step 2 — Apply Elliott Wave Rules (these are absolute and cannot be violated)**
 - Wave 2 never retraces more than 100% of Wave 1
 - Wave 3 is never the shortest among Waves 1, 3, and 5
@@ -42,7 +69,7 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 Apply the PIVOT ACCEPTANCE GATE to all subwave pivots (same rules as primary pivots) using the already-fetched Yahoo Finance data — do not invent prices.
 
-**LONG-WAVE FETCH RULE: If a motive wave spans more than 20 bars on the selected timeframe, the already-fetched data window may not cover its full interior. You MUST fetch the OHLC data for the date range [parent wave start → parent wave end] from Yahoo Finance before attempting subwave identification. "No clear pivot" is not a valid skip reason — if the data exists, a swing extreme exists. The only valid skip reason is `✗(insuf)` for waves with fewer bars than the minimum.**
+**LONG-WAVE FETCH RULE: The compact table built in the DATA SOURCING step covers the full analysis range (START DATE → today). Use it for all subwave identification — do not issue additional Yahoo Finance fetches for individual wave interiors. "No clear pivot" is not a valid skip reason — if the data exists, a swing extreme exists. The only valid skip reason is `✗(insuf)` for waves with fewer bars than the minimum.**
 
 **MANDATORY COVERAGE RULE: Attempt subwave identification for every primary wave (W1, W2, W3, W4, W5). The Subwave note at the bottom of the output must list every primary wave with a result symbol: ✓ (confirmed), ⚠ (partial), or ✗(reason) (skipped/insufficient). No prose justification — symbol and short reason only. `✗` is only valid for waves below the bar minimum — it is NOT valid for long waves where data exists.**
 
@@ -76,6 +103,7 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 - Prefer the count where Wave 3 is the longest and most impulsive
 - Prefer the count that aligns with the broader higher-timeframe trend
 - Assign a confidence level (%) based on how cleanly the rules and guidelines are met
+- Verify the selected count satisfies all Degree Proportion Rules from Step 1.5. A count that violates any proportion rule is invalid regardless of Fibonacci confluence — select a different pivot set.
 
 **Step 6 — Select the ALTERNATE Count**
 - Identify the next most valid wave count that also satisfies all three Elliott Wave rules
@@ -84,6 +112,7 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 - Identify the specific price level or bar pattern that would cause you to abandon the primary and adopt the alternate
 - Assign a confidence level (%) reflecting how probable this scenario is relative to the primary
 - **ALTERNATE PIVOT ANCHOR RULE: Every historical pivot in the alternate count MUST be anchored to an actual swing high or swing low that price physically printed on the chart. Re-labeling the same candles under a different wave name is allowed; inventing new price levels that were never traded is not. If no real swing fits a required alternate pivot, the alternate count is invalid — choose a different alternate structure instead.**
+- **ALTERNATE DEGREE RULE: The alternate count must use the same degree locked in Step 1.5. Interpreting the same pivots as a different wave structure is allowed; introducing pivots from a different wave degree is not. An alternate count that requires a degree change to be internally valid must be discarded — choose a different alternate interpretation at the same locked degree.**
 
 **Step 7 — Define Key Levels**
 - Invalidation level for primary: the price at which the primary count is definitively wrong
@@ -95,7 +124,7 @@ If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars),
 - **ANCHOR RULE: Before projecting, walk the historical count all the way forward to today. Identify every confirmed swing high and swing low between the last labeled pivot and today's date on the selected timeframe. Each one that fits the wave structure must be added as a historical pivot (type: hist). Do NOT leave a gap of more than one timeframe period between the last historical pivot and today.**
 - **LAST-PIVOT EXTENSION CHECK: After labeling the last hist pivot, confirm price has not since traded beyond it in the same direction. If it has, the pivot is mislabeled — re-identify the true terminal extreme, relabel it, and anchor projections from there.**
 - **PROXIMITY CHECK: The last historical pivot must be within 8 weekly bars (or 8 daily bars on a daily chart) of today's date. If the most recently labeled hist pivot is older than that, the count is incomplete — continue identifying pivots until the last hist pivot is within that window.**
-- **SUBWAVE DETECTION IN PROJECTION TRAJECTORY: For each projected pivot, analyze the trajectory from the last historical pivot to the projected pivot. Fetch OHLC data for that date range and identify real swing highs/lows that occurred within that trajectory. If actual market swings exist between the anchor point and the projected pivot, count them and include the count in the pivot's output (e.g., "WA (3 sw)" indicating 3 subwaves were identified in the trajectory). Apply the same PIVOT ACCEPTANCE GATE rules to these trajectory subwaves. If no real swings exist between the anchor and projection, output the projected pivot without a subwave count.**
+- **SUBWAVE DETECTION IN PROJECTION TRAJECTORY: For each projected pivot, use the already-built compact table (START DATE → today) to identify real swing highs/lows that occurred between the last historical pivot and today's date. Do NOT issue additional Yahoo Finance fetches. If actual market swings exist in the compact table between the anchor point and the projected pivot date, count them and include the count in the pivot's output (e.g., "WA (3 sw)" indicating 3 subwaves were identified in the trajectory). Apply the same PIVOT ACCEPTANCE GATE rules to these trajectory subwaves. If no real swings exist, output the projected pivot without a subwave count.**
 - From that final confirmed pivot (now close to today), project the most probable future path for each count
 - For the PRIMARY count: project at least 2 future pivots showing the expected next wave sequence
 - For the ALTERNATE count: project at least 2 future pivots showing the expected next wave sequence under that scenario
@@ -127,6 +156,7 @@ Use the WebFetch tool to call the Yahoo Finance v8 chart endpoint. Construct the
   - Daily chart → `interval=1d`
   - 4H chart → `interval=1h` (use with `range=60d` or explicit `period1`/`period2`)
 - **Date range:** Always supply `period1` (Unix timestamp of start date) and `period2` (Unix timestamp of end date + 1 day) to cover the full analysis window.
+- **BAR CAP:** If the computed window exceeds 300 bars on the selected timeframe (≈300 weeks or ≈300 trading days), advance `period1` so that exactly the most recent 300 bars are fetched. Older bars are outside the analysis scope and must not be fetched.
 - **Example (weekly SPY from 2020-01-01 to 2024-12-31):**
   `https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1wk&period1=1577836800&period2=1735689600&events=history`
 
@@ -155,14 +185,15 @@ For every candidate historical pivot (primary and alternate):
 4. **Trading day check**: The date must be a confirmed trading day for the asset. If not, shift to the nearest valid trading day and re-run checks 1–3 on that bar.
 5. **Alternate-count real-swing check**: If the pivot belongs to the alternate count, it must correspond to a bar that also qualifies as a swing extreme under checks 1–2 independently — not merely a bar that was relabeled to fit the alternate structure at a theoretical price.
 6. **Source verification check**: The price must have been retrieved from an external data source in the DATA SOURCING step above — not recalled from model memory. A price that passed checks 1–5 against a fabricated or remembered value is still INVALID. If no external retrieval was performed for this pivot, it is REJECTED.
+7. **Degree coherence check**: The wave's duration is consistent with the degree locked in Step 1.5. If this wave is more than 10× longer or shorter in duration than the median of its sibling waves in the same count, it is at the wrong degree — revise the surrounding pivot set before proceeding.
 
-If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real swing extreme that passes all 6 checks.
+If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real swing extreme that passes all 7 checks.
 
 **VALIDATION AT TWO STAGES:**
 
 **Stage 1 — Historical Pivot Identification:** Apply the full PIVOT ACCEPTANCE GATE (defined above) to every pivot before accepting it. A pivot that fails any check is REJECTED at this stage — do not carry it forward.
 
-**Stage 2 — Final Cross-Check (Before Output Only):** Re-apply checks 1, 3, and 6 of the PIVOT ACCEPTANCE GATE to every accepted historical pivot. For projected pivots, apply the PRICE BOUNDS CHECK FOR PROJECTIONS (defined in Step 8). Checks 2, 4, and 5 were enforced at Stage 1 and do not require re-verification.
+**Stage 2 — Final Cross-Check (Before Output Only):** Re-apply checks 1, 3, 6, and 7 of the PIVOT ACCEPTANCE GATE to every accepted historical pivot. For projected pivots, apply the PRICE BOUNDS CHECK FOR PROJECTIONS (defined in Step 8). Checks 2, 4, and 5 were enforced at Stage 1 and do not require re-verification.
 
 ---
 
@@ -173,6 +204,7 @@ After completing Step 8, output exactly this structure and nothing else.
 **Header format note (consumed by `pinescript-generation-rules.md`):** The first line of the primary count block — `PRIMARY COUNT (X% confidence)` — is parsed by the generation rules' legend rule. The integer `X` is extracted as the confidence percentage displayed in the script legend. Do not alter this line's format.
 
 ```
+Degree: [Name]
 PRIMARY COUNT (X% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
 |------|------------|----------|------|--------|------|
