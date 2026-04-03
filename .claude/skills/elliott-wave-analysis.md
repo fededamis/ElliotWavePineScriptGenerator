@@ -174,6 +174,8 @@ If a pivot fails any gate, it is INVALID. Do not use it. Find the nearest real s
 
 ### COMPACT OUTPUT FORMAT
 
+**SPLIT-CALL MODE:** When invoked by the main prompt as "Call A" (primary-only), output only: `Degree:` line, `PRIMARY COUNT` table, `SUBWAVES (Primary)` table, `Primary invalidation:` / `Primary target:` values, and `Subwave confirmation:` line — then stop. When invoked as "Call B" (alternate-only), output only: `ALTERNATE COUNT` table, `SUBWAVES (Alternate)` table (omit if <2 qualify), and `Alternate invalidation:` / `Alternate target:` values — then stop. When invoked without a split-call designation, output the full structure below.
+
 After completing Step 8, output exactly this structure and nothing else.
 
 **Header format note (consumed by `pinescript-generation-rules.md`):** The first line of the primary count block — `PRIMARY COUNT (X% confidence)` — is parsed by the generation rules' legend rule. The integer `X` is extracted as the confidence percentage displayed in the script legend. Do not alter this line's format.

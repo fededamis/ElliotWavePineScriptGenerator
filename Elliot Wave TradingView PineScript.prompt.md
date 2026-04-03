@@ -48,14 +48,23 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 ---
 
-> **SUBAGENT DELEGATION — WAVE METHODOLOGY:**
-> **IMPORTANT: Always use Opus models for this subagent section.**
-> Delegate the entire Elliott Wave analysis to a subagent using the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`).
-> The subagent must:
-> 1. Execute the `/elliott-wave-analysis` skill in full
-> 2. Return ONLY the compact pivot summary table (primary count, alternate count, invalidation levels, targets) — no reasoning, no narration, no step-by-step output
+> **SUBAGENT DELEGATION — WAVE METHODOLOGY (split into two calls to avoid response length limits):**
 >
-> The main agent receives only the compact pivot table from the subagent. Do not re-run or re-derive any part of the analysis in the main context.
+> **Call A — Primary Count subagent:**
+> The subagent must execute the `/elliott-wave-analysis` skill (`.claude/skills/elliott-wave-analysis.md`) in full, but return ONLY the following sections of the compact output — no reasoning, no narration, no step-by-step output:
+> - `Degree:` line
+> - `PRIMARY COUNT (X% confidence)` table (all hist + proj rows)
+> - `SUBWAVES (Primary — confirmed waves only)` table
+> - `Primary invalidation:` and `Primary target:` values (first half of that line only)
+> - `Subwave confirmation:` line
+>
+> **Call B — Alternate Count subagent:**
+> Pass the primary count table from Call A to this subagent. The subagent must execute the `/elliott-wave-analysis` skill using the same already-fetched price data and locked degree, and return ONLY:
+> - `ALTERNATE COUNT (X% confidence)` table (all hist + proj rows)
+> - `SUBWAVES (Alternate — confirmed waves only)` table (omit if fewer than 2 alternate waves qualify)
+> - `Alternate invalidation:` and `Alternate target:` values (second half of that line only)
+>
+> The main agent merges the two responses into the full compact pivot table format (Degree → Primary → Subwaves Primary → Subwaves Alternate → Alternate → invalidation/target line → subwave confirmation) before passing it to the Pine Script generation subagent. Do not re-run or re-derive any part of the analysis in the main context.
 
 > **SUBAGENT DELEGATION — PINE SCRIPT GENERATION:**
 > Delegate Pine Script generation to a subagent.
