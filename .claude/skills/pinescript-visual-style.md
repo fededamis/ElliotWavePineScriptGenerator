@@ -72,3 +72,10 @@ int   swLabelTransp  = input.int(55, "Subwave Label Transparency", minval=0, max
   - `tooltip` = `"$" + str.tostring(price, "#.##") + (fib != "--" ? "\nFib:" + fib : "")` — price and fib shown on hover only
   - This keeps subwave labels compact on-chart while preserving full detail on hover
   - **Exception — coincident subwave (last entry in sw_ts array, e.g. W3.sw5 = W3): do NOT draw a subwave label at all. The primary pivot label already occupies that point. Instead, pass the subwave info as the primary label's tooltip: `tooltip = sw_name + "\nFib: " + sw_fib`. Primary labels do not normally have a tooltip — add one only for this coincident case.**
+
+### PROJECTED PIVOT SUBWAVE COUNTS
+- When a projected pivot has trajectory subwaves (e.g., "WA (3 sw)"), append the count in the label display:
+  - Line 1 of projected pivot label: `waveName + " (" + swCount + " sw)"` (e.g., "WA (3 sw)", "WB (2 sw)")
+  - If no subwaves detected in trajectory, show just the wave name without parentheses
+- The subwave count comes from the .wave file — the analysis phase detects real market swings between the anchor point and the projected pivot
+- This applies to both primary and alternate counts' projected pivots
