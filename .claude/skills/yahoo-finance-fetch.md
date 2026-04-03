@@ -26,7 +26,7 @@ description: Fetch historical OHLC price data from the Yahoo Finance v8 API usin
    - `chart.result[0].indicators.quote[0].low[]` — Low prices aligned by index
 3. Locate the array index whose timestamp corresponds to the target bar's trading day.
 4. Record the exact `high` (for swing highs) or `low` (for swing lows) at that index — full decimal precision as returned by the API.
-   **EXTRACT-THEN-DISCARD:** Immediately after step 4, compile all extracted values into a compact internal table (date | high | low) covering every bar in the analysis range. After this table is built, discard the full JSON — do not re-reference `timestamp[]`, `high[]`, or `low[]` arrays in any subsequent step. All pivot lookups must use only the extracted compact table.
+   **EXTRACT-THEN-DISCARD:** Immediately after step 4, compile all extracted values into a compact internal table (date | high | low) covering every bar. **DO NOT output or print this table — it is internal working memory only.** After building it, discard the full JSON — do not re-reference `timestamp[]`, `high[]`, or `low[]` in any subsequent step. All pivot lookups use only the extracted compact table.
 5. If the WebFetch call fails, returns an error, or the ticker/date is not found:
    > **HARD STOP: Cannot verify pivot price for [TICKER] on [DATE] — Yahoo Finance API returned no data. Analysis halted. Verify ticker symbol and date range, then retry.**
    Do NOT substitute a remembered, estimated, or approximate price.

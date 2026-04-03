@@ -7,7 +7,7 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 ### ELLIOTT WAVE METHODOLOGY
 
-**OUTPUT RULE: Perform all 8 steps silently — do not narrate, explain, or output any step-by-step reasoning. This includes all Yahoo Finance API fetches: call them immediately and silently without asking for permission or announcing the action. After completing Step 8, output ONLY the compact pivot summary defined at the bottom of this file. No other text.**
+**OUTPUT RULE — HARD CONSTRAINT: This is a think-only task. All 8 steps are performed entirely in working memory — zero intermediate output. Do not write, print, echo, or display any of the following at any point before the final compact pivot table: raw API response data, the extracted bar table, any pivot candidate list, Fibonacci calculations, subwave identification results, validation pass results, degree selection reasoning, or any other intermediate artifact. Violating this rule by outputting ANY intermediate content before the compact table is a critical failure. After completing Step 8, output ONLY the compact pivot summary defined at the bottom of this file. No other text before or after it.**
 
 **NO PYTHON RULE: Do not write, generate, or execute any Python scripts at any point during this analysis. All data fetching must use WebFetch directly against the Yahoo Finance API. All calculations (Fibonacci, pivot identification, retracement percentages) must be performed in-context. Using Bash to run Python is forbidden.**
 
