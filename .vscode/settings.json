@@ -1,4 +1,5 @@
 {
+  "github.copilot.chat.anthropic.thinking.budgetTokens": 0,
   "chat.tools.autoApprove": ["fetch_webpage"],
   "chat.tools.terminal.autoApprove": {
     "ls *": true,
