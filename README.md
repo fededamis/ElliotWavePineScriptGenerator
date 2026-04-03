@@ -25,6 +25,10 @@ When editing a rule, update it **only in the authoritative file** listed above. 
 - Compress .pine files for token optimization.
 - Check degree labeling issues.
 - Create skill to fetch price data from Yahoo Finance.
+
 - Fix 'The subagent hit the length limit.'
+    - Have a copilot mode for managing the context differently.
+
+    
 - Check improvement ideas.
 - Check: https://www.youtube.com/watch?v=aqtseECSdtY
