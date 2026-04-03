@@ -148,32 +148,7 @@ These three checks are not optional. An output written before all three pass is 
 
 **DATA SOURCING — HARD STOP:** Before recording any pivot, confirm the Yahoo Finance API response is non-null and covers the full date range. All pivot prices MUST be retrieved from the API — do not use memory or training data.
 
-Use the WebFetch tool to call the Yahoo Finance v8 chart endpoint. Construct the URL as follows:
-
-- **Base URL:** `https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}`
-- **Interval mapping:**
-  - Weekly chart → `interval=1wk`
-  - Daily chart → `interval=1d`
-  - 4H chart → `interval=1h` (use with `range=60d` or explicit `period1`/`period2`)
-- **Date range:** Always supply `period1` (Unix timestamp of start date) and `period2` (Unix timestamp of end date + 1 day) to cover the full analysis window.
-- **BAR CAP:** If the computed window exceeds 300 bars on the selected timeframe (≈300 weeks or ≈300 trading days), advance `period1` so that exactly the most recent 300 bars are fetched. Older bars are outside the analysis scope and must not be fetched.
-- **Example (weekly SPY from 2020-01-01 to 2024-12-31):**
-  `https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1wk&period1=1577836800&period2=1735689600&events=history`
-
-**Fetching procedure for each candidate pivot date:**
-1. Determine the Unix timestamps for `period1` (start of analysis range) and `period2` (today or end of analysis range).
-2. Call WebFetch with the constructed URL. Parse the JSON response:
-   - `chart.result[0].timestamp[]` — array of bar open timestamps (Unix seconds)
-   - `chart.result[0].indicators.quote[0].high[]` — High prices aligned by index
-   - `chart.result[0].indicators.quote[0].low[]` — Low prices aligned by index
-3. Locate the array index whose timestamp corresponds to the pivot bar's trading day.
-4. Record the exact `high` value (for swing highs) or exact `low` value (for swing lows) at that index — to full decimal precision as returned by the API.
-   **EXTRACT-THEN-DISCARD:** Immediately after step 4, compile all extracted values into a compact internal table (date | high | low) covering every bar in the analysis range. After this table is built, treat the full JSON structure as discarded — do not re-reference `timestamp[]`, `high[]`, or `low[]` arrays in any subsequent step. All pivot lookups must use only the extracted compact table.
-5. If the WebFetch call fails, returns an error, or the ticker/date is not found in the response, output a HARD STOP:
-   > **HARD STOP: Cannot verify pivot price for [TICKER] on [DATE] — Yahoo Finance API returned no data. Analysis halted. Verify ticker symbol and date range, then retry.**
-   Do NOT substitute a remembered, estimated, or approximate price. Do NOT continue the analysis with unverified pivots.
-
-**Fallback (if Yahoo Finance API is unreachable):** Use WebFetch to retrieve historical OHLC data from `https://finance.yahoo.com/quote/{TICKER}/history/` or WebSearch for `{TICKER} OHLC {DATE} site:finance.yahoo.com`. If both fail, issue the HARD STOP above.
+Follow the `yahoo-finance-fetch` skill (`.claude/skills/yahoo-finance-fetch.md`) for URL construction, interval mapping, BAR CAP, fetching procedure, EXTRACT-THEN-DISCARD, and error handling.
 
 **HARD STOP — PIVOT ACCEPTANCE GATE:**
 Before any pivot may be recorded in the output table, it MUST pass ALL of the following checks. A pivot that fails any check is REJECTED and must be replaced with the correct real market swing. Do NOT proceed to the next step until every pivot in the current count passes all gates.
