@@ -6,12 +6,18 @@
     "echo $TEMP": true,
     "python3 /tmp/*.py": true,
     "python3 **/ElliotWavePineScriptGenerator/**/*.py": true,
-    "Get-Item": true,
+    "Get-Item *": true,
     "Invoke-WebRequest *finance.yahoo.com*": true,
-    "/^powershell -File .*[\\\\\\/]tmp[\\\\\\/][^\\\\\\/]+\\.ps1/i": true,
-    "/^(\\$\\w+ = )?(Get-Content|ConvertFrom-Json|ConvertTo-Json|Out-File|Write-Host)/i": true,
-    "ForEach-Object": true,
+    "powershell -NoProfile -File *tmp*.ps1": true,
+    "powershell -NoProfile -File *\\tmp\\*.ps1": true,
+    "Get-Content *": true,
+    "ConvertFrom-Json*": true,
+    "ConvertTo-Json*": true,
+    "Out-File *": true,
+    "Write-Host *": true,
+    "ForEach-Object *": true,
     "EOF": true,
-    "/^cd \"c:\\\\Users\\\\Administrator\\\\Desktop\\\\Copilot Workspace\\\\ElliotWavePineScriptGenerator\" ; powershell -NoProfile -Command /i": true
+    "cd *ElliotWavePineScriptGenerator* ; powershell -NoProfile -Command *": true,
+    "cd *ElliotWavePineScriptGenerator* ; powershell -NoProfile -File *": true
   }
 }
