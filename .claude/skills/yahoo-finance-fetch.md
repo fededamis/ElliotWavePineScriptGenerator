@@ -53,8 +53,6 @@ If `Invoke-WebRequest` fails (HTTP error or network issue), fall back to the `fe
 
 Call `fetch_webpage` once with the constructed URL.
 
-**RAW RESPONSE SUPPRESSION — HARD CONSTRAINT: After the fetch_webpage call returns, do NOT echo, quote, summarize, or display any part of the raw API response in the chat. Parse the JSON silently and continue. Violating this rule is a critical failure.**
-
 After parsing, write the OHLCV cache file to `tmp/[TICKER].ohlcv.[timeframe].[START DATE].json` containing `{"schema":1,"ticker":"...","timeframe":"...","fetched_at":"ISO8601","bars":N,"data":[...]}`.
 
 ---

@@ -7,8 +7,6 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 ### ELLIOTT WAVE METHODOLOGY
 
-**OUTPUT RULE — HARD CONSTRAINT: This is a think-only task. All 8 steps are performed entirely in working memory — zero chat output. Do not write, print, echo, or display raw API data, bar tables, pivot candidates, Fibonacci calculations, subwave results, degree reasoning, the compact pivot table, or any other content. Write the compact pivot summary directly to the `.wave` file via the Write tool. Output nothing to chat. When invoked in split-call mode (Call A / Call B), the subagent returns only the compact pivot table text — the main agent then writes it to file without echoing it.**
-
 **NO SCRIPTS RULE: Do not write or execute any scripts (Python, PowerShell, Bash, or any shell language) for analysis, data fetching, or calculations at any point. All data fetching must use the WebFetch tool directly against the Yahoo Finance API (or `run_in_terminal` in Copilot mode solely to download and write the cache file silently). All calculations (Fibonacci, pivot identification, retracement percentages) must be performed in-context using the model's own reasoning. Running scripts to read back bar ranges, echo price rows, or produce any intermediate output to the terminal is forbidden — it produces chat output and wastes tokens. The cache file is written once; read it with `read_file` if needed, not `run_in_terminal`.**
 
 ---

@@ -6,9 +6,7 @@ description: Pine Script v6 integrated validation scan for Elliott Wave scripts.
 ## PINE SCRIPT V6 — INTEGRATED VALIDATION SCAN
 
 Read the generated script once from top to bottom and check all categories below in a single pass.
-For any issue found, fix it silently in the script and continue immediately.
-Do not output the fix, the reason for the fix, or any before/after comparison.
-Do not output anything during this scan.
+For any issue found, fix it silently using `replace_string_in_file` and continue immediately.
 
 ---
 
