@@ -94,7 +94,7 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 ### STEP A — ELLIOTT WAVE ANALYSIS
 
-**OUTPUT RULE — HARD CONSTRAINT: Perform all analysis entirely in working memory — zero intermediate output. Do not print raw API data, bar tables, pivot candidates, Fibonacci calculations, degree reasoning, or any intermediate artifact. After completing the analysis, output ONLY the compact pivot table defined in the elliott-wave-analysis skill. No other text before or after it.**
+**OUTPUT RULE — HARD CONSTRAINT: Perform all analysis entirely in working memory — zero chat output. Do not print raw API data, bar tables, pivot candidates, Fibonacci calculations, degree reasoning, the compact pivot table, or any other intermediate artifact. Write results directly to files. Output only the one-line status below.**
 
 Execute the elliott-wave-analysis skill (`.claude/skills/elliott-wave-analysis.md`) in full — all 8 steps including subwave identification, primary count, alternate count, and projections.
 

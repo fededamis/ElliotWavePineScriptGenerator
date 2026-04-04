@@ -7,7 +7,7 @@ Perform a complete Elliott Wave analysis using the methodology below. The user w
 
 ### ELLIOTT WAVE METHODOLOGY
 
-**OUTPUT RULE — HARD CONSTRAINT: This is a think-only task. All 8 steps are performed entirely in working memory — zero intermediate output. Do not write, print, echo, or display any of the following at any point before the final compact pivot table: raw API response data, the extracted bar table, any pivot candidate list, Fibonacci calculations, subwave identification results, validation pass results, degree selection reasoning, or any other intermediate artifact. Violating this rule by outputting ANY intermediate content before the compact table is a critical failure. After completing Step 8, output ONLY the compact pivot summary defined at the bottom of this file. No other text before or after it.**
+**OUTPUT RULE — HARD CONSTRAINT: This is a think-only task. All 8 steps are performed entirely in working memory — zero chat output. Do not write, print, echo, or display raw API data, bar tables, pivot candidates, Fibonacci calculations, subwave results, degree reasoning, the compact pivot table, or any other content. Write the compact pivot summary directly to the `.wave` file via the Write tool. Output nothing to chat. When invoked in split-call mode (Call A / Call B), the subagent returns only the compact pivot table text — the main agent then writes it to file without echoing it.**
 
 **NO PYTHON RULE: Do not write, generate, or execute any Python scripts at any point during this analysis. All data fetching must use WebFetch directly against the Yahoo Finance API. All calculations (Fibonacci, pivot identification, retracement percentages) must be performed in-context. Using Bash to run Python is forbidden.**
 
