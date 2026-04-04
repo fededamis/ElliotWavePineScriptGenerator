@@ -78,6 +78,46 @@ After writing the `.pine` file, also write a `[TICKER] [START DATE].md` analysis
 **5.2. JSON Export**
 Write a `[TICKER] [START DATE].json` file with the pivot table in structured format — useful for programmatic use, backtesting pipelines, or feeding into other tools.
 
+---
+
+## 6. `tmp/` Folder — Intermediate & Cache State
+
+A `tmp/` folder (git-ignored) holds all ephemeral data the prompt machinery needs to avoid redundant work. `output/` stays clean (user-facing `.wave` and `.pine` files only).
+
+**6.1. Raw Pivot Cache**
+`tmp/[TICKER] [START DATE].pivots.json` — unfiltered pivot candidates before EW rule application. Enables "recount from W3" (see 3.3) without re-fetching price data. Schema:
+```json
+{ "schema": 1, "generated_at": "ISO8601", "timeframe": "daily", "ticker": "SPY",
+  "pivots": [{ "date": "2022-10-10", "price": 348.11, "type": "L", "bar_index": 0 }] }
+```
+
+**6.2. OHLCV Bar Cache**
+`tmp/[TICKER].ohlcv.[timeframe].[START DATE].json` — raw price bars fetched from the data API. Re-used on recounts, visual-only regenerations, and alternate count reruns. Includes a `fetched_at` timestamp; expired if older than 24 hours (re-fetched and overwritten). Schema:
+```json
+{ "schema": 1, "fetched_at": "ISO8601", "ticker": "SPY", "timeframe": "daily",
+  "start_date": "2022-10-01", "end_date": "2026-04-04",
+  "bars": [{ "date": "2022-10-03", "open": 357.12, "high": 361.50, "low": 355.80, "close": 358.44, "volume": 82341200 }] }
+```
+
+**6.3. Intermediate Analysis State**
+`tmp/[TICKER] [START DATE].analysis.json` — saves the merged primary + alternate count data written after Call A returns, before Call B runs. If Call B fails, only the alternate count subagent needs to be re-run (not the full methodology). Schema:
+```json
+{ "schema": 1, "generated_at": "ISO8601", "degree": "Primary",
+  "primary": { "confidence": 55, "waves": [] },
+  "alternate": null }
+```
+
+**6.4. API Fetch Audit Log**
+`tmp/api-fetch-log.jsonl` — newline-delimited log of every API call (ticker, timeframe, date range, bar count, source, cache hit/miss). Useful for debugging repeated fetches and auditing data sources:
+```jsonl
+{"ts":"ISO8601","ticker":"SPY","timeframe":"daily","start":"2022-10-01","end":"2026-04-04","bars":874,"source":"polygon","cache":"miss"}
+```
+
+**6.5. Schema Version Guard**
+All `tmp/` files include a `"schema": N` integer field. When the methodology is updated, bump the schema version in the prompt and treat any `tmp/` file with a lower schema version as stale (re-derive and overwrite). This directly addresses cache staleness (see 3.4).
+
+> **Recommended `.gitignore` entry:** `tmp/`
+
 **5.3. Changelog on Recount**
 When the user triggers a recount ("redo"), diff the new wave count against the cached one and append a `// CHANGES:` block to the `.pine` file noting which pivots shifted and by how much.
 

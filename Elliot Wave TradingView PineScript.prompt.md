@@ -12,9 +12,33 @@ Wait for the user to provide both before continuing. Do not assume or guess eith
 
 ---
 
+### TMP FOLDER
+
+The `tmp/` folder holds ephemeral intermediate and cache files. It is git-ignored. All `tmp/` files include a `"schema"` integer field — treat any file with a schema version lower than the current prompt schema as stale and re-derive it.
+
+**Current schema version: 1**
+
+---
+
+### OHLCV BAR CACHE CHECK
+
+Before performing any analysis, attempt to read `tmp/[TICKER].ohlcv.[timeframe].[START DATE].json` (e.g. `tmp/SPY.ohlcv.daily.2022-10-01.json`).
+
+- If the file EXISTS and `fetched_at` is less than 24 hours old and `schema` matches the current version:
+  - Use the cached bars directly — do NOT re-fetch from the API
+  - Note: `Cache: OHLCV hit ([N] bars)`
+- Otherwise (missing, expired, or wrong schema):
+  - Fetch fresh OHLCV bars from the data API
+  - Write the result to `tmp/[TICKER].ohlcv.[timeframe].[START DATE].json`
+  - Note: `Cache: OHLCV miss — fetched [N] bars`
+
+Log the fetch to `tmp/api-fetch-log.jsonl` (append one JSONL line: `{"ts":"ISO8601","ticker":"...","timeframe":"...","start":"...","end":"...","bars":N,"source":"...","cache":"hit|miss"}`).
+
+---
+
 ### WAVE DATA CACHE CHECK
 
-Before performing any analysis, attempt to read the file `output/[TICKER] [START DATE].wave` using the Read tool (e.g. `output/SPY 2022-10-01.wave`).
+After the OHLCV cache check, attempt to read the file `output/[TICKER] [START DATE].wave` using the Read tool (e.g. `output/SPY 2022-10-01.wave`).
 
 - If the file EXISTS (Read succeeds):
   - Extract all pivot data, counts, Fibonacci levels, targets, invalidation levels, and projections from the file
@@ -25,7 +49,9 @@ Before performing any analysis, attempt to read the file `output/[TICKER] [START
   - If the user explicitly requests a fresh analysis using words like "redo", "recount", or "start over", bypass the file cache, perform a full re-analysis, and overwrite the `.wave` file with the new results
 
 - If the file does NOT exist (Read returns an error):
+  - Check for `tmp/[TICKER] [START DATE].pivots.json` — if it exists and schema matches, use the cached raw pivot candidates directly and skip re-detecting pivots from bars
   - Proceed normally through all methodology steps below
+  - After the pivot detection step, write raw pivot candidates to `tmp/[TICKER] [START DATE].pivots.json` (schema 1, `timeframe`, `ticker`, `pivots` array with date/price/type/bar_index)
   - After Step 8, write the compact pivot table to `output/[TICKER] [START DATE].wave` using the Write tool
 
 ---
@@ -66,8 +92,13 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 >
 > The main agent merges the two responses into the full compact pivot table format (Degree → Primary → Subwaves Primary → Subwaves Alternate → Alternate → invalidation/target line → subwave confirmation).
 >
+> **After Call A returns, before launching Call B, the main agent must:**
+> - Write the Call A result to `tmp/[TICKER] [START DATE].analysis.json` (schema 1, `degree` + `primary` fields, `alternate: null`)
+> - This allows Call B to be re-run independently if it fails, without redoing Call A
+>
 > **After merging, the main agent must:**
 > - Write the merged pivot table to `output/[TICKER] [START DATE].wave` using the Write tool
+> - Overwrite `tmp/[TICKER] [START DATE].analysis.json` with the fully merged result (both `primary` and `alternate` populated)
 > - Return only: `Wrote output/[TICKER] [START DATE].wave — OK`
 > - Do NOT pass the full pivot table text back to the main conversation — pass only the file path
 >
