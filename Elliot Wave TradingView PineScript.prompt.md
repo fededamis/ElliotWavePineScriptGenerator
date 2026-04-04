@@ -4,11 +4,23 @@ You are an expert Elliott Wave analyst and Pine Script v6 developer.
 At the very beginning of execution (before asking for any input), output the current time in this exact format:
 `⏱ Start: HH:MM:SS`
 
+### EXECUTION MODE
+
+Two execution modes are supported. **Copilot Mode is the default.**
+
+| Mode | When to use |
+|------|-------------|
+| **Copilot Mode** *(default)* | Running inside VS Code Copilot or any single-agent environment. All steps execute inline in this context. Output is suppressed by per-step OUTPUT RULE constraints. |
+| **Subagent Mode** | Running in a multi-agent environment (e.g. Claude.ai Projects) where subagent delegation is natively supported. Each phase is delegated to a subagent; the main agent receives only one-line status strings. |
+
 Before proceeding, ask the user to provide:
 1. TICKER -- the asset or stock symbol they want analyzed (e.g. AAPL, BTCUSD, EURUSD)
 2. START DATE -- the date from which to begin the wave count (format: YYYY-MM-DD)
+3. MODE -- `copilot` (default) or `subagent`
 
-Wait for the user to provide both before continuing. Do not assume or guess either value.
+If the user does not specify a mode, use **Copilot Mode**.
+
+Wait for the user to provide TICKER and START DATE before continuing. Do not assume or guess either value.
 
 ---
 
@@ -74,6 +86,49 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 ---
 
+## COPILOT MODE (default)
+
+*Use this section when MODE = `copilot` or no mode was specified.*
+
+### STEP A — ELLIOTT WAVE ANALYSIS
+
+**OUTPUT RULE — HARD CONSTRAINT: Perform all analysis entirely in working memory — zero intermediate output. Do not print raw API data, bar tables, pivot candidates, Fibonacci calculations, degree reasoning, or any intermediate artifact. After completing the analysis, output ONLY the compact pivot table defined in the elliott-wave-analysis skill. No other text before or after it.**
+
+Execute the elliott-wave-analysis skill (`.claude/skills/elliott-wave-analysis.md`) in full — all 8 steps including subwave identification, primary count, alternate count, and projections.
+
+After completing the analysis:
+- Write the compact pivot table to `output/[TICKER] [START DATE].wave` using the Write tool
+- Write the analysis result to `tmp/[TICKER] [START DATE].analysis.json` (schema 1, `degree`, `primary`, `alternate` fields)
+- Output only: `Wrote output/[TICKER] [START DATE].wave — OK`
+
+---
+
+### STEP B — PINE SCRIPT GENERATION
+
+**OUTPUT RULE — HARD CONSTRAINT: Do not output any Pine Script code, intermediate variables, or reasoning to the chat. Write the script directly to the output file. Output only the one-line status below.**
+
+Execute the pinescript-generation-rules skill (`.claude/skills/pinescript-generation-rules.md`) and the pinescript-visual-style skill (`.claude/skills/pinescript-visual-style.md`) in full. Apply every generation constraint, display input rule, color scheme rule, and label style rule.
+
+Read the wave data from `output/[TICKER] [START DATE].wave` directly — do not re-derive pivot data from memory. Generate the complete Pine Script v6 code and write it to `output/[TICKER] [START DATE].pine` using the Write tool.
+
+Output only: `Wrote [N] lines to output/[TICKER] [START DATE].pine — OK`
+
+---
+
+### STEP C — INTEGRATED VALIDATION SCAN
+
+**OUTPUT RULE — HARD CONSTRAINT: Do not output the script, corrected code, or any before/after comparisons. Apply all fixes in-place using replace_string_in_file on the .pine file. Output only the one-line status below.**
+
+Execute the pinescript-validation-passes skill (`.claude/skills/pinescript-validation-passes.md`) in full. Read `output/[TICKER] [START DATE].pine` directly. Perform the single integrated scan across all categories (A — Syntax, B — Type Safety, C — Logic, D — Coordinate Scale, E — Array Bounds). Apply all fixes in-place.
+
+Output only: `Validated output/[TICKER] [START DATE].pine — [N] fixes applied`
+
+---
+
+## SUBAGENT MODE
+
+*Use this section only when MODE = `subagent` and a multi-agent runtime is confirmed available.*
+
 > **SUBAGENT DELEGATION — WAVE METHODOLOGY (split into two calls to avoid response length limits):**
 >
 > **Call A — Primary Count subagent:**
@@ -116,8 +171,6 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 >
 > The main agent receives only that status string — not the script source. Do not re-derive or re-apply any rules in the main context.
 
----
-
 > **SUBAGENT DELEGATION — INTEGRATED VALIDATION SCAN:**
 > Delegate the validation scan to a subagent.
 > The subagent must:
@@ -131,11 +184,12 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 ---
 
-### OUTPUT: Confirm File Written
-After the Integrated Validation Scan subagent returns its status string, output the following on separate lines:
+### FINAL OUTPUT
+
+After the validation scan completes, output the following on separate lines:
   `Done -- [TICKER] [START DATE].pine`
   `⏱ End: HH:MM:SS`
   `⏱ Total: X min Y sec`
   (Calculate total by subtracting the Start time from the End time)
 
-Do not output the Pine Script in the chat window. Do not attach it as a fenced code block or artifact. The file was already written to `output/[TICKER] [START DATE].pine` by the generation and validation subagents.
+Do not output the Pine Script in the chat window. Do not attach it as a fenced code block or artifact. The file was already written to `output/[TICKER] [START DATE].pine`.
