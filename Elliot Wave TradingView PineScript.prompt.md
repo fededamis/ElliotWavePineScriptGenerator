@@ -40,11 +40,11 @@ Before performing any analysis, attempt to read `tmp/[TICKER].ohlcv.[timeframe].
   - Use the cached bars directly — do NOT re-fetch from the API
   - Note: `Cache: OHLCV hit ([N] bars)`
 - Otherwise (missing, expired, or wrong schema):
-  - Fetch fresh OHLCV bars from the data API
+  - Fetch fresh OHLCV bars using the method specified in the `yahoo-finance-fetch` skill — **in Copilot mode, use `run_in_terminal` (PowerShell `Invoke-WebRequest`) so the raw response never appears in the chat**
   - Write the result to `tmp/[TICKER].ohlcv.[timeframe].[START DATE].json`
   - Note: `Cache: OHLCV miss — fetched [N] bars`
 
-**RAW FETCH SUPPRESSION — HARD CONSTRAINT: After any WebFetch/fetch_webpage call, the raw API response MUST NOT appear in the chat under any circumstances. Do not echo, quote, summarize, or display any part of it. The only permitted post-fetch action is writing the OHLCV cache file and then continuing silently. Violating this rule by printing raw response data is a critical failure.**
+**RAW FETCH SUPPRESSION — HARD CONSTRAINT: The raw API response MUST NOT appear in the chat under any circumstances. In Copilot mode this is achieved by using `run_in_terminal` instead of `fetch_webpage`. In Subagent/Claude.ai mode, do not echo, quote, summarize, or display any part of the fetch_webpage response. Violating this rule by printing raw response data is a critical failure.**
 
 Log the fetch to `tmp/api-fetch-log.jsonl` (append one JSONL line: `{"ts":"ISO8601","ticker":"...","timeframe":"...","start":"...","end":"...","bars":N,"source":"...","cache":"hit|miss"}`).
 
