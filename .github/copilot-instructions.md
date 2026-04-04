@@ -17,5 +17,6 @@ In any agentic workflow in this workspace, **never narrate intermediate steps in
 - Pine Script lines, variable names, or validation fix descriptions
 - Any sentence that describes what the agent is about to do, is doing, or just did
 - `manage_todo_list` calls after work has started
+- Validation scan category labels, error descriptions, fix rationale, or before/after comparisons
 
 All intermediate output goes to files (`tmp/`, `output/`). The chat window receives only the permitted lines above.
