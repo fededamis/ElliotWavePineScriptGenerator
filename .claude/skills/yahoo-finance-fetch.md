@@ -27,6 +27,11 @@ Always fetch at the **subwave timeframe** (daily for Cycle/Primary degree, weekl
    - `chart.result[0].timestamp[]` — array of bar open timestamps (Unix seconds)
    - `chart.result[0].indicators.quote[0].high[]` — High prices aligned by index
    - `chart.result[0].indicators.quote[0].low[]` — Low prices aligned by index
+
+   **RAW RESPONSE SUPPRESSION — HARD CONSTRAINT: After the WebFetch call returns, do NOT echo, quote, summarize, or display any part of the raw API response in the chat. The raw JSON must never appear in the assistant turn. The only permitted action immediately after the fetch is to write the OHLCV cache file (step 2a) and then continue silently.**
+
+2a. Immediately write the OHLCV cache file to `tmp/[TICKER].ohlcv.[timeframe].[START DATE].json` containing `{"schema":1,"ticker":"...","timeframe":"...","fetched_at":"ISO8601","bars":N,"data":[...]}`. This is the ONLY output action permitted after the fetch — no chat output.
+
 3. Compile all extracted values into a **persistent compact internal table** (date | high | low) covering every bar from `period1` to `period2`. **DO NOT output or print this table.** This table remains in working memory for the entire analysis — all primary pivot lookups and all subwave pivot lookups use it. Do not re-reference the raw JSON after this step.
 4. Record the exact `high` (for swing highs) or `low` (for swing lows) at the target index — full decimal precision as returned by the API.
 5. If the WebFetch call fails, returns an error, or the ticker/date is not found:

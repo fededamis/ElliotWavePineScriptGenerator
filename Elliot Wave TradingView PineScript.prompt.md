@@ -44,6 +44,8 @@ Before performing any analysis, attempt to read `tmp/[TICKER].ohlcv.[timeframe].
   - Write the result to `tmp/[TICKER].ohlcv.[timeframe].[START DATE].json`
   - Note: `Cache: OHLCV miss — fetched [N] bars`
 
+**RAW FETCH SUPPRESSION — HARD CONSTRAINT: After any WebFetch/fetch_webpage call, the raw API response MUST NOT appear in the chat under any circumstances. Do not echo, quote, summarize, or display any part of it. The only permitted post-fetch action is writing the OHLCV cache file and then continuing silently. Violating this rule by printing raw response data is a critical failure.**
+
 Log the fetch to `tmp/api-fetch-log.jsonl` (append one JSONL line: `{"ts":"ISO8601","ticker":"...","timeframe":"...","start":"...","end":"...","bars":N,"source":"...","cache":"hit|miss"}`).
 
 ---
