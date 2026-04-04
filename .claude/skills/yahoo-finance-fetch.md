@@ -26,7 +26,26 @@ Invoke-WebRequest -Uri "https://query1.finance.yahoo.com/v8/finance/chart/{TICKE
 - `{TIMEFRAME}` — `daily` or `weekly` (used only in the filename, not the URL)
 - `{START_DATE}` — ISO date string (e.g. `2022-06-01`)
 
-After the command completes, read the saved file immediately with the `read_file` tool, parse the JSON in working memory, and continue. The file on disk IS the cache — do NOT rewrite it (it is already in the correct location).
+After the command completes, immediately run a **second single `run_in_terminal` command** that:
+1. Reads the raw cache file
+2. Detects swing highs and swing lows in-process (a bar is a swing high if its High > the High of both neighboring bars; a swing low if its Low < the Low of both neighboring bars — use a ±2 bar window)
+3. Converts timestamps to ISO dates
+4. Writes the result to `tmp/[TICKER].swings.[TIMEFRAME].[START_DATE].json` as `{"schema":1,"ticker":"...","timeframe":"...","swH":[{"date":"YYYY-MM-DD","high":X,"bar":N},...], "swL":[{"date":"YYYY-MM-DD","low":X,"bar":N},...]}` 
+
+Use this PowerShell template (substitute values):
+```powershell
+$c = Get-Content "tmp/{TICKER}.ohlcv.{TIMEFRAME}.{START_DATE}.json" -Raw | ConvertFrom-Json
+$d = $c.data; $n = $d.Count
+$swH = @(); $swL = @()
+for ($i = 2; $i -lt $n-2; $i++) {
+  if ($d[$i].high -gt $d[$i-1].high -and $d[$i].high -gt $d[$i-2].high -and $d[$i].high -gt $d[$i+1].high -and $d[$i].high -gt $d[$i+2].high) { $swH += @{date=$d[$i].date;high=$d[$i].high;bar=$i} }
+  if ($d[$i].low -lt $d[$i-1].low -and $d[$i].low -lt $d[$i-2].low -and $d[$i].low -lt $d[$i+1].low -and $d[$i].low -lt $d[$i+2].low) { $swL += @{date=$d[$i].date;low=$d[$i].low;bar=$i} }
+}
+@{schema=1;ticker="{TICKER}";timeframe="{TIMEFRAME}";swH=$swH;swL=$swL} | ConvertTo-Json -Depth 4 | Set-Content "tmp/{TICKER}.swings.{TIMEFRAME}.{START_DATE}.json"
+Write-Host "swH=$($swH.Count) swL=$($swL.Count)"
+```
+
+Then read `tmp/[TICKER].swings.[TIMEFRAME].[START_DATE].json` with `read_file` to load all swing pivots into working memory. **Do not read the full bar cache file at all** — use only the swings file for all pivot identification and analysis. This reduces tool calls to 3 total (fetch → swing-extract → read swings) regardless of dataset size.
 
 If `Invoke-WebRequest` fails (HTTP error or network issue), fall back to the `fetch_webpage` method below and prepend a note: `⚠ Terminal fetch failed — falling back to fetch_webpage (raw response will appear in chat).`
 

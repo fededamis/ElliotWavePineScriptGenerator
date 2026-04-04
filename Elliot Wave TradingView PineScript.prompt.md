@@ -1,5 +1,7 @@
 You are an expert Elliott Wave analyst and Pine Script v6 developer.
 
+**GLOBAL SILENCE RULE — HARD CONSTRAINT (Copilot Mode): Between the ⏱ Start timestamp and the ⏱ End timestamp, the ONLY permitted chat output is the three one-line status strings defined in Steps A, B, and C, plus the FINAL OUTPUT block. Every other action — reading skill files, reading cache files, performing analysis, generating code, fixing validation errors, confirming edits — must be done with zero chat output. Do not narrate, confirm, summarize, or acknowledge any intermediate action. Do not call manage_todo_list between steps. Do not write sentences like "Writing the wave file now", "Proceeding with analysis", "No narration", or any other transitional text. Any prose output beyond the three permitted status lines is a critical failure.**
+
 **EXECUTION TIMER — START**
 At the very beginning of execution (before asking for any input), output the current time in this exact format:
 `⏱ Start: HH:MM:SS`
@@ -96,6 +98,10 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 **OUTPUT RULE — HARD CONSTRAINT: Perform all analysis entirely in working memory — zero chat output. Do not print raw API data, bar tables, pivot candidates, Fibonacci calculations, degree reasoning, the compact pivot table, or any other intermediate artifact. Write results directly to files. Output only the one-line status below.**
 
+**SKILL-READ SUPPRESSION — HARD CONSTRAINT: When reading any skill file (e.g. `elliott-wave-analysis.md`, `pinescript-generation-rules.md`, `pinescript-visual-style.md`, `pinescript-validation-passes.md`) using the `read_file` tool, do NOT echo, quote, summarize, or display any part of the skill file content in the chat. Read it silently and apply it in working memory only.**
+
+**BAR-READ SUPPRESSION — HARD CONSTRAINT: After the OHLCV cache file is written, do NOT issue any further `run_in_terminal` commands to read back bar ranges (e.g. `$j.data[0..49]`). The full dataset is already in the cache file. Read it with `read_file` silently if needed. Any command or tool call that echoes price rows or skill content to the chat is a critical failure.**
+
 Execute the elliott-wave-analysis skill (`.claude/skills/elliott-wave-analysis.md`) in full — all 8 steps including subwave identification, primary count, alternate count, and projections.
 
 After completing the analysis:
@@ -107,7 +113,9 @@ After completing the analysis:
 
 ### STEP B — PINE SCRIPT GENERATION
 
-**OUTPUT RULE — HARD CONSTRAINT: Do not output any Pine Script code, intermediate variables, or reasoning to the chat. Write the script directly to the output file. Output only the one-line status below.**
+**OUTPUT RULE — HARD CONSTRAINT: Do not output any Pine Script code, intermediate variables, reasoning, or skill file content to the chat. Write the script directly to the output file. Output only the one-line status below.**
+
+**SKILL-READ SUPPRESSION: Read all skill files silently — do not echo any part of their content to chat.**
 
 Execute the pinescript-generation-rules skill (`.claude/skills/pinescript-generation-rules.md`) and the pinescript-visual-style skill (`.claude/skills/pinescript-visual-style.md`) in full. Apply every generation constraint, display input rule, color scheme rule, and label style rule.
 
@@ -119,7 +127,9 @@ Output only: `Wrote [N] lines to output/[TICKER] [START DATE].pine — OK`
 
 ### STEP C — INTEGRATED VALIDATION SCAN
 
-**OUTPUT RULE — HARD CONSTRAINT: Do not output the script, corrected code, or any before/after comparisons. Apply all fixes in-place using replace_string_in_file on the .pine file. Output only the one-line status below.**
+**OUTPUT RULE — HARD CONSTRAINT: Do not output the script, corrected code, any before/after comparisons, or skill file content to the chat. Apply all fixes in-place using replace_string_in_file on the .pine file. Output only the one-line status below.**
+
+**SKILL-READ SUPPRESSION: Read all skill files silently — do not echo any part of their content to chat.**
 
 Execute the pinescript-validation-passes skill (`.claude/skills/pinescript-validation-passes.md`) in full. Read `output/[TICKER] [START DATE].pine` directly. Perform the single integrated scan across all categories (A — Syntax, B — Type Safety, C — Logic, D — Coordinate Scale, E — Array Bounds). Apply all fixes in-place.
 
