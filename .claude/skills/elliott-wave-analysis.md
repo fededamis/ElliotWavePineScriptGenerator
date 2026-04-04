@@ -73,15 +73,15 @@ Apply the PIVOT ACCEPTANCE GATE to all subwave pivots (same rules as primary piv
 
 **MANDATORY COVERAGE RULE: Attempt subwave identification for every primary wave (W1, W2, W3, W4, W5). The Subwave note at the bottom of the output must list every primary wave with a result symbol: ✓ (confirmed), ⚠ (partial), or ✗(reason) (skipped/insufficient). No prose justification — symbol and short reason only. `✗` is only valid for waves below the bar minimum — it is NOT valid for long waves where data exists.**
 
-**SUBWAVE TIMEFRAME — DEGREE-TIMEFRAME HIERARCHY: All subwave identification must use the subwave chart corresponding to the locked degree, not the primary chart. Determine the subwave chart before fetching any subwave data:**
-| Degree | Primary chart | Subwave chart |
+**SUBWAVE TIMEFRAME — DEGREE-TIMEFRAME HIERARCHY: All subwave identification uses the single persistent compact table already built in the DATA SOURCING step — no additional fetches are issued. The table was fetched at the subwave chart interval for the locked degree:**
+| Degree | Primary chart | Subwave chart (fetch interval) |
 |---|---|---|
-| Grand Supercycle | Monthly | Weekly |
-| Supercycle | Weekly | Daily |
-| Cycle | Weekly | Daily |
-| Primary | Daily | 4H |
+| Grand Supercycle | Monthly | Weekly (`1wk`) |
+| Supercycle | Weekly | Daily (`1d`) |
+| Cycle | Weekly | Daily (`1d`) |
+| Primary | Daily | 4H (`1h`) |
 
-Fetch bars at the subwave chart interval for each wave's interior. The bar minimum thresholds below (motive ≥ 5 bars, corrective ≥ 3 bars) apply to the subwave chart, not the primary chart.
+The bar minimum thresholds below (motive ≥ 5 bars, corrective ≥ 3 bars) apply to the subwave chart interval reflected in the compact table.
 
 For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the subwave chart:
 - Identify the 5 internal subwave pivots (sw1 through sw5) on the subwave chart
@@ -160,7 +160,7 @@ These three checks are not optional. An output written before all three pass is 
 
 **DATA SOURCING — HARD STOP:** Before recording any pivot, confirm the Yahoo Finance API response is non-null and covers the full date range. All pivot prices MUST be retrieved from the API — do not use memory or training data.
 
-Follow the `yahoo-finance-fetch` skill (`.claude/skills/yahoo-finance-fetch.md`) for URL construction, interval mapping, BAR CAP, fetching procedure, EXTRACT-THEN-DISCARD, and error handling.
+Follow the `yahoo-finance-fetch` skill (`.claude/skills/yahoo-finance-fetch.md`) for URL construction, interval mapping, BAR CAP, single-fetch strategy, persistent compact table, and error handling.
 
 **HARD STOP — PIVOT ACCEPTANCE GATE:**
 Before any pivot may be recorded in the output table, it MUST pass ALL of the following checks. A pivot that fails any check is REJECTED and must be replaced with the correct real market swing. Do NOT proceed to the next step until every pivot in the current count passes all gates.
