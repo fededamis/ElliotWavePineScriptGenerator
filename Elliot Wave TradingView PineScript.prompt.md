@@ -38,11 +38,11 @@ Before performing any analysis, attempt to read `tmp/[TICKER].ohlcv.[timeframe].
 
 - If the file EXISTS and `fetched_at` is less than 24 hours old and `schema` matches the current version:
   - Use the cached bars directly — do NOT re-fetch from the API
-  - Note: `Cache: OHLCV hit ([N] bars)`
+  - **Copilot mode: do not output anything — record cache status in working memory only**
 - Otherwise (missing, expired, or wrong schema):
   - Fetch fresh OHLCV bars using the method specified in the `yahoo-finance-fetch` skill — **in Copilot mode, use `run_in_terminal` (PowerShell `Invoke-WebRequest`) so the raw response never appears in the chat**
   - Write the result to `tmp/[TICKER].ohlcv.[timeframe].[START DATE].json`
-  - Note: `Cache: OHLCV miss — fetched [N] bars`
+  - **Copilot mode: do not output anything — record cache status in working memory only**
 
 **RAW FETCH SUPPRESSION — HARD CONSTRAINT: The raw API response MUST NOT appear in the chat under any circumstances. In Copilot mode this is achieved by using `run_in_terminal` instead of `fetch_webpage`. In Subagent/Claude.ai mode, do not echo, quote, summarize, or display any part of the fetch_webpage response. Violating this rule by printing raw response data is a critical failure.**
 
@@ -77,8 +77,8 @@ Before starting the analysis, calculate the number of calendar days between STAR
 - If the range is **2 years or less (<= 730 days)**: use the **daily chart**
 - If the range is **more than 2 years (> 730 days)**: use the **weekly chart**
 
-Output the selected timeframe before proceeding:
-`  Timeframe: [daily | weekly] ([N] days from [START DATE] to today)`
+**Copilot mode: do not output the timeframe line — record it in working memory only.**
+Subagent mode only: output `  Timeframe: [daily | weekly] ([N] days from [START DATE] to today)`
 
 Use the selected timeframe consistently throughout the entire analysis. All pivot dates, wave durations, and projected future pivot intervals must reflect the selected timeframe's bar cadence.
 

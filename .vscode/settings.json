@@ -7,11 +7,8 @@
     "python3 /tmp/*.py": true,
     "python3 **/ElliotWavePineScriptGenerator/**/*.py": true,
     "Get-Item": true,
-    "Invoke-WebRequest *": true,
-    "ConvertFrom-Json": true,
-    "powershell -File **/ElliotWavePineScriptGenerator/tmp/*.ps1": true,
-    "powershell -File \"**/ElliotWavePineScriptGenerator/tmp/*.ps1\"": true,
-    "/^powershell -File .*[\\\\\\/]tmp[\\\\\\/][^\\\\\\/]+\\.ps1\"/i": true,
-    "/^powershell -File .*[\\\\\\/]tmp[\\\\\\/][^\\\\\\/]+\\.ps1$/i": true
+    "Invoke-WebRequest *finance.yahoo.com*": true,
+    "/^powershell -File .*[\\\\\\/]tmp[\\\\\\/][^\\\\\\/]+\\.ps1/i": true,
+    "/^(\\$\\w+ = )?(Get-Content|ConvertFrom-Json|ConvertTo-Json|Out-File|Write-Host)/i": true
   }
 }

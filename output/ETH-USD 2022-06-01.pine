@@ -1,0 +1,375 @@
+// Wave data loaded from cache file
+//@version=6
+indicator("ETH-USD Elliott Wave Count", overlay=true, max_lines_count=600, max_labels_count=600)
+
+// === DISPLAY INPUTS ===
+string showCount  = input.string("Primary Only", "Show Count", options=["Primary Only", "Both", "Alternate Only"])
+bool showInval    = input.bool(true, "Show Invalidation Levels")
+bool showTargets  = input.bool(true, "Show Targets")
+bool showLegend   = input.bool(true, "Show Legend")
+string legendPos  = input.string("Bottom Right", "Legend Position", options=["Top Right", "Bottom Right", "Top Left", "Bottom Left"])
+bool showProj     = input.bool(true, "Show Projections")
+bool showLabels   = input.bool(true, "Show Labels")
+bool showSubwaves = input.bool(true, "Show Subwaves")
+bool showChannel  = input.bool(false, "Show Channel")
+
+// === COLOR INPUTS ===
+color PR_MOTIVE_UP   = input.color(color.aqua,              "Primary Up (Motive)",   group="Colors")
+color PR_MOTIVE_DN   = input.color(color.fuchsia,           "Primary Down (Motive)", group="Colors")
+color PR_CORRECTIVE  = input.color(color.orange,            "Primary Corrective",    group="Colors")
+color PR_INVAL_COL   = input.color(color.red,               "Invalidation Level",    group="Colors")
+color PR_TARGET_COL  = input.color(color.lime,              "Target Level",          group="Colors")
+color AL_MOTIVE_UP   = input.color(color.rgb(85, 153, 170), "Alt Up (Motive)",       group="Colors")
+color AL_MOTIVE_DN   = input.color(color.rgb(170, 85, 170), "Alt Down (Motive)",     group="Colors")
+color AL_CORRECTIVE  = input.color(color.rgb(170, 119, 51), "Alt Corrective",        group="Colors")
+color AL_INVAL_COL   = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",      group="Colors")
+color AL_TARGET_COL  = input.color(color.rgb(68, 136, 68),  "Alt Target",            group="Colors")
+color PR_CHANNEL_COL = input.color(color.aqua,              "Primary Channel",       group="Colors")
+color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",           group="Colors")
+int   swLabelTransp  = input.int(55, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
+
+// === STYLE CONSTANTS ===
+string STYLE_SOLID  = line.style_solid
+string STYLE_DASHED = line.style_dashed
+string STYLE_DOTTED = line.style_dotted
+
+// === OBJECT ARRAYS ===
+var array<line>  allLines  = array.new<line>()
+var array<label> allLabels = array.new<label>()
+
+// === HELPER FUNCTIONS ===
+makePivotText(waveName, price, fib, isAlt, isProj) =>
+    string pfx = ""
+    if isAlt and isProj
+        pfx := "(A)(proj) "
+    else if isAlt
+        pfx := "(A) "
+    else if isProj
+        pfx := "(proj) "
+    string l1 = pfx + waveName
+    string l2 = "$" + str.tostring(price, "#.##")
+    string l3 = fib != "--" ? "Fib:" + fib : ""
+    l3 != "" ? l1 + "\n" + l2 + "\n" + l3 : l1 + "\n" + l2
+
+// === PRIMARY COUNT PIVOTS ===
+// Degree: Cycle | W0→W5 impulse complete, now ABC correction
+int   pr_w0_ts = timestamp(2022, 6, 13)
+float pr_w0_p  = 896.11
+int   pr_w1_ts = timestamp(2022, 8, 8)
+float pr_w1_p  = 2022.79
+int   pr_w2_ts = timestamp(2022, 11, 21)
+float pr_w2_p  = 1081.14
+int   pr_w3_ts = timestamp(2024, 3, 11)
+float pr_w3_p  = 4092.28
+int   pr_w4_ts = timestamp(2025, 4, 7)
+float pr_w4_p  = 1386.80
+int   pr_w5_ts = timestamp(2025, 8, 18)
+float pr_w5_p  = 4953.73
+int   pr_wa_ts = timestamp(2026, 2, 2)
+float pr_wa_p  = 1748.63
+int   pr_wb_ts = timestamp(2026, 3, 16)
+float pr_wb_p  = 2384.47
+int   pr_wc_ts = timestamp(2026, 8, 10)
+float pr_wc_p  = 1160.12
+
+// Primary y-offsets for label separation
+float pr_range = pr_w5_p - pr_w0_p
+float pr_w0_yo = 0.0
+float pr_w1_yo = 0.0
+float pr_w2_yo = 0.0
+float pr_w3_yo = 0.0
+float pr_w4_yo = 0.0
+float pr_w5_yo = 0.0
+float pr_wa_yo = 0.0
+float pr_wb_yo = 0.0
+float pr_wc_yo = 0.0
+
+// === PRIMARY SUBWAVE PIVOTS ===
+// W1 subwaves
+int   pr_w1sw1_ts = timestamp(2022, 6, 27)
+float pr_w1sw1_p  = 1272.13
+int   pr_w1sw2_ts = timestamp(2022, 7, 18)
+float pr_w1sw2_p  = 1019.22
+int   pr_w1sw3_ts = timestamp(2022, 8, 1)
+float pr_w1sw3_p  = 2007.21
+int   pr_w1sw4_ts = timestamp(2022, 8, 8)
+float pr_w1sw4_p  = 1665.09
+// W1.sw5 coincides with W1 — suppressed label, fib injected into W1 label
+string pr_w1sw5_fib = "100.0%"
+
+// W2 subwaves
+int   pr_w2swa_ts = timestamp(2022, 9, 5)
+float pr_w2swa_p  = 1784.50
+int   pr_w2swb_ts = timestamp(2022, 10, 31)
+float pr_w2swb_p  = 1661.33
+int   pr_w2swc_ts = timestamp(2022, 11, 21)
+float pr_w2swc_p  = 1081.14
+// W2.swc coincides with W2 — suppressed
+string pr_w2swc_fib = "100.0%"
+
+// W3 subwaves
+int   pr_w3sw1_ts = timestamp(2023, 4, 10)
+float pr_w3sw1_p  = 2137.45
+int   pr_w3sw2_ts = timestamp(2023, 8, 14)
+float pr_w3sw2_p  = 1551.71
+int   pr_w3sw3_ts = timestamp(2024, 3, 11)
+float pr_w3sw3_p  = 4092.28
+// W3.sw3 coincides with W3 — suppressed
+string pr_w3sw3_fib = "261.8%"
+int   pr_w3sw4_ts = timestamp(2024, 8, 5)
+float pr_w3sw4_p  = 2122.55
+int   pr_w3sw5_ts = timestamp(2024, 12, 16)
+float pr_w3sw5_p  = 4106.96
+
+// W4 subwaves
+int   pr_w4swa_ts = timestamp(2025, 1, 6)
+float pr_w4swa_p  = 3743.94
+int   pr_w4swb_ts = timestamp(2025, 3, 10)
+float pr_w4swb_p  = 1760.94
+int   pr_w4swc_ts = timestamp(2025, 4, 7)
+float pr_w4swc_p  = 1386.80
+// W4.swc coincides with W4 — suppressed
+string pr_w4swc_fib = "138.2%"
+
+// W5 subwaves
+int   pr_w5sw1_ts = timestamp(2025, 10, 6)
+float pr_w5sw1_p  = 4755.22
+int   pr_w5sw2_ts = timestamp(2025, 11, 17)
+float pr_w5sw2_p  = 2626.87
+int   pr_w5sw3_ts = timestamp(2025, 12, 8)
+float pr_w5sw3_p  = 3446.62
+int   pr_w5sw4_ts = timestamp(2026, 1, 12)
+float pr_w5sw4_p  = 3068.07
+// W5.sw5 coincides with W5 — suppressed
+string pr_w5sw5_fib = "100.0%"
+
+// === ALTERNATE COUNT PIVOTS ===
+int   al_w0_ts = timestamp(2022, 6, 13)
+float al_w0_p  = 896.11
+int   al_w1_ts = timestamp(2022, 8, 8)
+float al_w1_p  = 2022.79
+int   al_w2_ts = timestamp(2022, 11, 21)
+float al_w2_p  = 1081.14
+int   al_w3_ts = timestamp(2024, 3, 11)
+float al_w3_p  = 4092.28
+int   al_w4_ts = timestamp(2025, 4, 7)
+float al_w4_p  = 1386.80
+int   al_w5_ts = timestamp(2025, 8, 18)
+float al_w5_p  = 4953.73
+int   al_wa_ts = timestamp(2026, 2, 2)
+float al_wa_p  = 1748.63
+int   al_wb_ts = timestamp(2026, 7, 14)
+float al_wb_p  = 3726.00
+int   al_wc_ts = timestamp(2026, 12, 7)
+float al_wc_p  = 1241.00
+
+// Alternate y-offsets
+float al_range = al_w5_p - al_w0_p
+float al_w0_yo = 0.0
+float al_w1_yo = 0.0
+float al_w2_yo = 0.0
+float al_w3_yo = 0.0
+float al_w4_yo = 0.0
+float al_w5_yo = 0.0
+float al_wa_yo = 0.0
+float al_wb_yo = 0.0
+float al_wc_yo = 0.0
+
+// === KEY LEVELS ===
+float pr_inval  = 1386.80
+float pr_target = 1160.12
+float al_inval  = 896.11
+float al_target = 1241.00
+int   today     = time
+
+// === RENDERING FLAGS ===
+bool drawPrimary = showCount == "Primary Only" or showCount == "Both"
+bool drawAlternate = showCount == "Alternate Only" or showCount == "Both"
+bool altSolid = showCount == "Alternate Only"
+
+// All drawing objects use xloc.bar_time + fixed float prices for scale/zoom stability
+if barstate.islast
+    // cleanup
+    while array.size(allLines) > 0
+        line.delete(array.pop(allLines))
+    while array.size(allLabels) > 0
+        label.delete(array.pop(allLabels))
+
+    // === PRIMARY COUNT ===
+    if drawPrimary
+        // W0→W1 (motive up)
+        array.push(allLines, line.new(x1=pr_w0_ts, y1=pr_w0_p + pr_w0_yo, x2=pr_w1_ts, y2=pr_w1_p + pr_w1_yo, xloc=xloc.bar_time, color=PR_MOTIVE_UP, style=STYLE_SOLID, width=2))
+        // W1→W2 (corrective)
+        array.push(allLines, line.new(x1=pr_w1_ts, y1=pr_w1_p + pr_w1_yo, x2=pr_w2_ts, y2=pr_w2_p + pr_w2_yo, xloc=xloc.bar_time, color=PR_CORRECTIVE, style=STYLE_SOLID, width=2))
+        // W2→W3 (motive up)
+        array.push(allLines, line.new(x1=pr_w2_ts, y1=pr_w2_p + pr_w2_yo, x2=pr_w3_ts, y2=pr_w3_p + pr_w3_yo, xloc=xloc.bar_time, color=PR_MOTIVE_UP, style=STYLE_SOLID, width=2))
+        // W3→W4 (corrective)
+        array.push(allLines, line.new(x1=pr_w3_ts, y1=pr_w3_p + pr_w3_yo, x2=pr_w4_ts, y2=pr_w4_p + pr_w4_yo, xloc=xloc.bar_time, color=PR_CORRECTIVE, style=STYLE_SOLID, width=2))
+        // W4→W5 (motive up)
+        array.push(allLines, line.new(x1=pr_w4_ts, y1=pr_w4_p + pr_w4_yo, x2=pr_w5_ts, y2=pr_w5_p + pr_w5_yo, xloc=xloc.bar_time, color=PR_MOTIVE_UP, style=STYLE_SOLID, width=2))
+        // W5→WA (corrective)
+        array.push(allLines, line.new(x1=pr_w5_ts, y1=pr_w5_p + pr_w5_yo, x2=pr_wa_ts, y2=pr_wa_p + pr_wa_yo, xloc=xloc.bar_time, color=PR_CORRECTIVE, style=STYLE_SOLID, width=2))
+        // WA→WB (corrective)
+        array.push(allLines, line.new(x1=pr_wa_ts, y1=pr_wa_p + pr_wa_yo, x2=pr_wb_ts, y2=pr_wb_p + pr_wb_yo, xloc=xloc.bar_time, color=PR_CORRECTIVE, style=STYLE_SOLID, width=2))
+        // WB→WC projected
+        if showProj
+            array.push(allLines, line.new(x1=pr_wb_ts, y1=pr_wb_p + pr_wb_yo, x2=pr_wc_ts, y2=pr_wc_p + pr_wc_yo, xloc=xloc.bar_time, color=PR_CORRECTIVE, style=STYLE_DOTTED, width=2))
+
+        // Primary labels
+        if showLabels
+            array.push(allLabels, label.new(x=pr_w0_ts, y=pr_w0_p + pr_w0_yo, text=makePivotText("W0", pr_w0_p, "--", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_CORRECTIVE, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center, tooltip="W1.sw5\nFib: " + pr_w1sw5_fib))
+            array.push(allLabels, label.new(x=pr_w1_ts, y=pr_w1_p + pr_w1_yo, text=makePivotText("W1", pr_w1_p, "--", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_MOTIVE_UP, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=pr_w2_ts, y=pr_w2_p + pr_w2_yo, text=makePivotText("W2", pr_w2_p, "83.6%", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_CORRECTIVE, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center, tooltip="W2.swc\nFib: " + pr_w2swc_fib))
+            array.push(allLabels, label.new(x=pr_w3_ts, y=pr_w3_p + pr_w3_yo, text=makePivotText("W3", pr_w3_p, "267.3%", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_MOTIVE_UP, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center, tooltip="W3.sw3\nFib: " + pr_w3sw3_fib))
+            array.push(allLabels, label.new(x=pr_w4_ts, y=pr_w4_p + pr_w4_yo, text=makePivotText("W4", pr_w4_p, "89.8%", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_CORRECTIVE, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center, tooltip="W4.swc\nFib: " + pr_w4swc_fib))
+            array.push(allLabels, label.new(x=pr_w5_ts, y=pr_w5_p + pr_w5_yo, text=makePivotText("W5", pr_w5_p, "316.9%", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_MOTIVE_UP, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center, tooltip="W5.sw5\nFib: " + pr_w5sw5_fib))
+            array.push(allLabels, label.new(x=pr_wa_ts, y=pr_wa_p + pr_wa_yo, text=makePivotText("WA", pr_wa_p, "64.7%", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_CORRECTIVE, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=pr_wb_ts, y=pr_wb_p + pr_wb_yo, text=makePivotText("WB", pr_wb_p, "19.8%", false, false), xloc=xloc.bar_time, yloc=yloc.price, color=PR_CORRECTIVE, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center))
+            if showProj
+                array.push(allLabels, label.new(x=pr_wc_ts, y=pr_wc_p + pr_wc_yo, text=makePivotText("WC", pr_wc_p, "38.2%", false, true), xloc=xloc.bar_time, yloc=yloc.price, color=PR_CORRECTIVE, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center))
+
+        // Primary subwaves
+        if showSubwaves
+            color sw_pr_col = color.new(PR_MOTIVE_UP, swLabelTransp)
+            color sw_pr_cor = color.new(PR_CORRECTIVE, swLabelTransp)
+            // W1 subwaves
+            array.push(allLines, line.new(x1=pr_w0_ts,    y1=pr_w0_p,    x2=pr_w1sw1_ts, y2=pr_w1sw1_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w1sw1_ts, y1=pr_w1sw1_p, x2=pr_w1sw2_ts, y2=pr_w1sw2_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w1sw2_ts, y1=pr_w1sw2_p, x2=pr_w1sw3_ts, y2=pr_w1sw3_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w1sw3_ts, y1=pr_w1sw3_p, x2=pr_w1sw4_ts, y2=pr_w1sw4_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            // W1.sw5 coincident with W1 — line suppressed
+            array.push(allLabels, label.new(x=pr_w1sw1_ts, y=pr_w1sw1_p, text="W1.sw1", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w1sw1_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w1sw2_ts, y=pr_w1sw2_p, text="W1.sw2", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w1sw2_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w1sw3_ts, y=pr_w1sw3_p, text="W1.sw3", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w1sw3_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w1sw4_ts, y=pr_w1sw4_p, text="W1.sw4", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w1sw4_p, "#.##")))
+            // W2 subwaves
+            array.push(allLines, line.new(x1=pr_w1_ts,    y1=pr_w1_p,    x2=pr_w2swa_ts, y2=pr_w2swa_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w2swa_ts, y1=pr_w2swa_p, x2=pr_w2swb_ts, y2=pr_w2swb_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            // W2.swc coincident with W2 — line suppressed
+            array.push(allLabels, label.new(x=pr_w2swa_ts, y=pr_w2swa_p, text="W2.swa", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w2swa_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w2swb_ts, y=pr_w2swb_p, text="W2.swb", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w2swb_p, "#.##")))
+            // W3 subwaves
+            array.push(allLines, line.new(x1=pr_w2_ts,    y1=pr_w2_p,    x2=pr_w3sw1_ts, y2=pr_w3sw1_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w3sw1_ts, y1=pr_w3sw1_p, x2=pr_w3sw2_ts, y2=pr_w3sw2_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            // W3.sw3 coincident with W3 — line suppressed
+            array.push(allLines, line.new(x1=pr_w3sw2_ts, y1=pr_w3sw2_p, x2=pr_w3sw4_ts, y2=pr_w3sw4_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w3sw4_ts, y1=pr_w3sw4_p, x2=pr_w3sw5_ts, y2=pr_w3sw5_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLabels, label.new(x=pr_w3sw1_ts, y=pr_w3sw1_p, text="W3.sw1", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w3sw1_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w3sw2_ts, y=pr_w3sw2_p, text="W3.sw2", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w3sw2_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w3sw4_ts, y=pr_w3sw4_p, text="W3.sw4", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w3sw4_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w3sw5_ts, y=pr_w3sw5_p, text="W3.sw5", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w3sw5_p, "#.##")))
+            // W4 subwaves
+            array.push(allLines, line.new(x1=pr_w3_ts,    y1=pr_w3_p,    x2=pr_w4swa_ts, y2=pr_w4swa_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w4swa_ts, y1=pr_w4swa_p, x2=pr_w4swb_ts, y2=pr_w4swb_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            // W4.swc coincident with W4 — line suppressed
+            array.push(allLabels, label.new(x=pr_w4swa_ts, y=pr_w4swa_p, text="W4.swa", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w4swa_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w4swb_ts, y=pr_w4swb_p, text="W4.swb", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w4swb_p, "#.##")))
+            // W5 subwaves
+            array.push(allLines, line.new(x1=pr_w4_ts,    y1=pr_w4_p,    x2=pr_w5sw1_ts, y2=pr_w5sw1_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w5sw1_ts, y1=pr_w5sw1_p, x2=pr_w5sw2_ts, y2=pr_w5sw2_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w5sw2_ts, y1=pr_w5sw2_p, x2=pr_w5sw3_ts, y2=pr_w5sw3_p, xloc=xloc.bar_time, color=sw_pr_col, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w5sw3_ts, y1=pr_w5sw3_p, x2=pr_w5sw4_ts, y2=pr_w5sw4_p, xloc=xloc.bar_time, color=sw_pr_cor, style=STYLE_DASHED, width=1))
+            // W5.sw5 coincident with W5 — suppressed
+            array.push(allLabels, label.new(x=pr_w5sw1_ts, y=pr_w5sw1_p, text="W5.sw1", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w5sw1_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w5sw2_ts, y=pr_w5sw2_p, text="W5.sw2", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w5sw2_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w5sw3_ts, y=pr_w5sw3_p, text="W5.sw3", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_col, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w5sw3_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w5sw4_ts, y=pr_w5sw4_p, text="W5.sw4", xloc=xloc.bar_time, yloc=yloc.price, color=sw_pr_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w5sw4_p, "#.##")))
+
+        // Primary invalidation & target
+        if showInval
+            array.push(allLines, line.new(x1=pr_w0_ts, y1=pr_inval, x2=pr_wc_ts, y2=pr_inval, xloc=xloc.bar_time, color=PR_INVAL_COL, style=STYLE_DASHED, width=1))
+            array.push(allLabels, label.new(x=pr_wc_ts, y=pr_inval, text="Primary Inval", xloc=xloc.bar_time, yloc=yloc.price, color=PR_INVAL_COL, textcolor=color.white, style=label.style_label_left, size=size.small, textalign=text.align_center))
+        if showTargets
+            array.push(allLines, line.new(x1=pr_w0_ts, y1=pr_target, x2=pr_wc_ts, y2=pr_target, xloc=xloc.bar_time, color=PR_TARGET_COL, style=STYLE_DASHED, width=1))
+            array.push(allLabels, label.new(x=pr_wc_ts, y=pr_target, text="Primary Target", xloc=xloc.bar_time, yloc=yloc.price, color=PR_TARGET_COL, textcolor=color.black, style=label.style_label_left, size=size.small, textalign=text.align_center))
+
+        // Primary channel
+        if showChannel
+            float ch_slope = (pr_w3_p - pr_w1_p) / float(pr_w3_ts - pr_w1_ts)
+            int ch_start_ts = pr_w0_ts
+            int ch_end_ts   = pr_wc_ts
+            float mot_y_start  = pr_w1_p + ch_slope * float(ch_start_ts - pr_w1_ts)
+            float mot_y_end    = pr_w1_p + ch_slope * float(ch_end_ts   - pr_w1_ts)
+            float base_y_start = pr_w2_p + ch_slope * float(ch_start_ts - pr_w2_ts)
+            float base_y_end   = pr_w2_p + ch_slope * float(ch_end_ts   - pr_w2_ts)
+            array.push(allLines, line.new(x1=ch_start_ts, y1=mot_y_start,  x2=ch_end_ts, y2=mot_y_end,  xloc=xloc.bar_time, color=color.new(PR_CHANNEL_COL, 50), style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=ch_start_ts, y1=base_y_start, x2=ch_end_ts, y2=base_y_end, xloc=xloc.bar_time, color=color.new(PR_CHANNEL_COL, 50), style=STYLE_DASHED, width=1))
+
+    // === ALTERNATE COUNT ===
+    if drawAlternate
+        string al_line_style = altSolid ? STYLE_SOLID : STYLE_DASHED
+        // W0→W1
+        array.push(allLines, line.new(x1=al_w0_ts, y1=al_w0_p, x2=al_w1_ts, y2=al_w1_p, xloc=xloc.bar_time, color=AL_MOTIVE_UP, style=al_line_style, width=2))
+        // W1→W2
+        array.push(allLines, line.new(x1=al_w1_ts, y1=al_w1_p, x2=al_w2_ts, y2=al_w2_p, xloc=xloc.bar_time, color=AL_CORRECTIVE, style=al_line_style, width=2))
+        // W2→W3
+        array.push(allLines, line.new(x1=al_w2_ts, y1=al_w2_p, x2=al_w3_ts, y2=al_w3_p, xloc=xloc.bar_time, color=AL_MOTIVE_UP, style=al_line_style, width=2))
+        // W3→W4
+        array.push(allLines, line.new(x1=al_w3_ts, y1=al_w3_p, x2=al_w4_ts, y2=al_w4_p, xloc=xloc.bar_time, color=AL_CORRECTIVE, style=al_line_style, width=2))
+        // W4→W5
+        array.push(allLines, line.new(x1=al_w4_ts, y1=al_w4_p, x2=al_w5_ts, y2=al_w5_p, xloc=xloc.bar_time, color=AL_MOTIVE_UP, style=al_line_style, width=2))
+        // W5→WA
+        array.push(allLines, line.new(x1=al_w5_ts, y1=al_w5_p, x2=al_wa_ts, y2=al_wa_p, xloc=xloc.bar_time, color=AL_CORRECTIVE, style=al_line_style, width=2))
+        // WA→WB projected
+        if showProj
+            array.push(allLines, line.new(x1=al_wa_ts, y1=al_wa_p, x2=al_wb_ts, y2=al_wb_p, xloc=xloc.bar_time, color=AL_CORRECTIVE, style=STYLE_DOTTED, width=2))
+            // WB→WC projected
+            array.push(allLines, line.new(x1=al_wb_ts, y1=al_wb_p, x2=al_wc_ts, y2=al_wc_p, xloc=xloc.bar_time, color=AL_CORRECTIVE, style=STYLE_DOTTED, width=2))
+
+        // Alternate labels
+        if showLabels
+            int al_bg_transp = altSolid ? 0 : 50
+            color al_bg_up  = color.new(AL_MOTIVE_UP,  al_bg_transp)
+            color al_bg_cor = color.new(AL_CORRECTIVE, al_bg_transp)
+            array.push(allLabels, label.new(x=al_w0_ts, y=al_w0_p + al_w0_yo, text=makePivotText("W0", al_w0_p, "--", true, false), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_cor, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=al_w1_ts, y=al_w1_p + al_w1_yo, text=makePivotText("W1", al_w1_p, "--", true, false), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_up, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=al_w2_ts, y=al_w2_p + al_w2_yo, text=makePivotText("W2", al_w2_p, "83.6%", true, false), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_cor, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=al_w3_ts, y=al_w3_p + al_w3_yo, text=makePivotText("W3", al_w3_p, "267.3%", true, false), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_up, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=al_w4_ts, y=al_w4_p + al_w4_yo, text=makePivotText("W4", al_w4_p, "89.8%", true, false), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_cor, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=al_w5_ts, y=al_w5_p + al_w5_yo, text=makePivotText("W5", al_w5_p, "316.9%", true, false), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_up, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center))
+            array.push(allLabels, label.new(x=al_wa_ts, y=al_wa_p + al_wa_yo, text=makePivotText("WA", al_wa_p, "64.7%", true, false), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_cor, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center))
+            if showProj
+                array.push(allLabels, label.new(x=al_wb_ts, y=al_wb_p + al_wb_yo, text=makePivotText("WB", al_wb_p, "61.8%", true, true), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_cor, textcolor=color.black, style=label.style_label_down, size=size.small, textalign=text.align_center))
+                array.push(allLabels, label.new(x=al_wc_ts, y=al_wc_p + al_wc_yo, text=makePivotText("WC", al_wc_p, "100.0%", true, true), xloc=xloc.bar_time, yloc=yloc.price, color=al_bg_cor, textcolor=color.black, style=label.style_label_up, size=size.small, textalign=text.align_center))
+
+        // Alternate subwaves (WA a-b-c confirmed)
+        if showSubwaves
+            color sw_al_cor = color.new(AL_CORRECTIVE, swLabelTransp)
+            array.push(allLines, line.new(x1=al_w5_ts,    y1=al_w5_p,    x2=pr_w5sw1_ts, y2=pr_w5sw1_p, xloc=xloc.bar_time, color=sw_al_cor, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w5sw1_ts, y1=pr_w5sw1_p, x2=pr_w5sw2_ts, y2=pr_w5sw2_p, xloc=xloc.bar_time, color=sw_al_cor, style=STYLE_DASHED, width=1))
+            array.push(allLines, line.new(x1=pr_w5sw2_ts, y1=pr_w5sw2_p, x2=al_wa_ts,    y2=al_wa_p,    xloc=xloc.bar_time, color=sw_al_cor, style=STYLE_DASHED, width=1))
+            array.push(allLabels, label.new(x=pr_w5sw1_ts, y=pr_w5sw1_p, text="WA.swa", xloc=xloc.bar_time, yloc=yloc.price, color=sw_al_cor, textcolor=color.black, style=label.style_label_down, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w5sw1_p, "#.##")))
+            array.push(allLabels, label.new(x=pr_w5sw2_ts, y=pr_w5sw2_p, text="WA.swb", xloc=xloc.bar_time, yloc=yloc.price, color=sw_al_cor, textcolor=color.black, style=label.style_label_up, size=size.tiny, textalign=text.align_center, tooltip="$" + str.tostring(pr_w5sw2_p, "#.##")))
+
+        // Alternate invalidation & target
+        if showInval
+            array.push(allLines, line.new(x1=al_w0_ts, y1=al_inval, x2=al_wc_ts, y2=al_inval, xloc=xloc.bar_time, color=AL_INVAL_COL, style=STYLE_DASHED, width=1))
+            array.push(allLabels, label.new(x=al_wc_ts, y=al_inval, text="Alt Inval", xloc=xloc.bar_time, yloc=yloc.price, color=AL_INVAL_COL, textcolor=color.white, style=label.style_label_left, size=size.small, textalign=text.align_center))
+        if showTargets
+            array.push(allLines, line.new(x1=al_w0_ts, y1=al_target, x2=al_wc_ts, y2=al_target, xloc=xloc.bar_time, color=AL_TARGET_COL, style=STYLE_DASHED, width=1))
+            array.push(allLabels, label.new(x=al_wc_ts, y=al_target, text="Alt Target", xloc=xloc.bar_time, yloc=yloc.price, color=AL_TARGET_COL, textcolor=color.black, style=label.style_label_left, size=size.small, textalign=text.align_center))
+
+    // === LEGEND ===
+    if showLegend
+        float highest_p = math.max(pr_w5_p, al_w5_p)
+        float lowest_p  = math.min(pr_w0_p, al_w0_p)
+        float step = (highest_p - lowest_p) * 0.05
+        int leg_x = 0
+        float leg_base = 0.0
+        if legendPos == "Top Right"
+            leg_x    := today + 86400000 * 7
+            leg_base := highest_p
+        else if legendPos == "Bottom Right"
+            leg_x    := today + 86400000 * 7
+            leg_base := lowest_p + step * 3
+        else if legendPos == "Top Left"
+            leg_x    := pr_w0_ts - 86400000 * 30
+            leg_base := highest_p
+        else
+            leg_x    := pr_w0_ts - 86400000 * 30
+            leg_base := lowest_p + step * 3
+        array.push(allLabels, label.new(x=leg_x, y=leg_base,          text="ETH-USD Elliott Wave", xloc=xloc.bar_time, yloc=yloc.price, color=color.gray, textcolor=color.white, style=label.style_label_left, size=size.small, textalign=text.align_center))
+        array.push(allLabels, label.new(x=leg_x, y=leg_base - step,   text="Primary Count (68%)",  xloc=xloc.bar_time, yloc=yloc.price, color=PR_MOTIVE_UP, textcolor=color.black, style=label.style_label_left, size=size.small, textalign=text.align_center))
+        array.push(allLabels, label.new(x=leg_x, y=leg_base - step*2, text="Alternate Count (32%)", xloc=xloc.bar_time, yloc=yloc.price, color=AL_MOTIVE_UP, textcolor=color.black, style=label.style_label_left, size=size.small, textalign=text.align_center))
+        if showSubwaves
+            array.push(allLabels, label.new(x=leg_x, y=leg_base - step*3, text="Subwaves (dashed)", xloc=xloc.bar_time, yloc=yloc.price, color=color.new(PR_MOTIVE_UP, swLabelTransp), textcolor=color.black, style=label.style_label_left, size=size.small, textalign=text.align_center))
