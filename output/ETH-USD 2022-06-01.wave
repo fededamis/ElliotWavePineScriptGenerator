@@ -1,0 +1,59 @@
+Degree: Cycle (1403-day span, 452.8% price range)
+PRIMARY COUNT (70% confidence)
+| Wave | Date       | Price      | OHLC | Fib          | Type |
+|------|------------|------------|------|--------------|------|
+| W0   | 2022-06-13 | $896.11    | L    | --           | hist |
+| W1   | 2022-08-08 | $2022.79   | H    | --           | hist |
+| W2   | 2022-11-21 | $1081.14   | L    | 83.6%ret     | hist |
+| W3   | 2024-03-11 | $4092.28   | H    | 261.8%ext    | hist |
+| W4   | 2024-08-05 | $2122.55   | L    | 61.8%ret     | hist |
+| W5   | 2025-08-18 | $4953.73   | H    | 161.8%ext    | hist |
+| WA   | 2025-11-17 | $2626.87   | L    | 47.0%ret     | hist |
+| WB   | 2025-12-08 | $3446.62   | H    | 35.2%retWA   | hist |
+| WC   | 2026-02-02 | $1748.63   | L    | 78.6%ret     | hist |
+| WX   | 2026-03-16 | $2384.47   | H    | 36.4%bounce  | hist |
+| WY   | 2026-04-20 | $1991.47   | L    | 61.8%retWX   | proj |
+| W3n  | 2026-07-05 | $3655.00   | H    | 2.618%extW1  | proj |
+
+SUBWAVES (Primary — confirmed waves only)
+| Wave    | Date       | Price      | OHLC | Fib       | Type |
+|---------|------------|------------|------|-----------|------|
+| W1.sw1  | 2022-06-27 | $1234.18   | H    | --        | hist |
+| W1.sw2  | 2022-07-04 | $1048.40   | L    | 61.8%ret  | hist |
+| W1.sw3  | 2022-08-08 | $2022.79   | H    | 161.8%ext | hist |
+| W3.sw1  | 2023-04-17 | $2121.53   | H    | --        | hist |
+| W3.sw2  | 2023-05-08 | $1742.40   | L    | 38.2%ret  | hist |
+| W3.sw3  | 2024-01-08 | $2710.42   | H    | 161.8%ext | hist |
+| W3.sw4  | 2024-01-22 | $2167.28   | L    | 38.2%ret  | hist |
+| W3.sw5  | 2024-03-11 | $4092.28   | H    | 100%ext   | hist |
+| W2.swa  | 2022-09-12 | $1331.49   | L    | --        | hist |
+| W2.swb  | 2022-10-24 | $1652.38   | H    | 38.2%ret  | hist |
+| W2.swc  | 2022-11-21 | $1081.14   | L    | 100%ext   | hist |
+| W4.swa  | 2024-04-22 | $2868.80   | L    | --        | hist |
+| W4.swb  | 2024-05-20 | $3943.55   | H    | 61.8%ret  | hist |
+| W4.swc  | 2024-08-05 | $2122.55   | L    | 100%ext   | hist |
+| W5.sw1  | 2024-10-14 | $2756.44   | H    | --        | hist |
+| W5.sw2  | 2024-11-04 | $2359.58   | L    | 38.2%ret  | hist |
+| W5.sw3  | 2024-12-16 | $4106.96   | H    | 161.8%ext | hist |
+| W5.sw4  | 2025-03-10 | $1760.94   | L    | 78.6%ret  | hist |
+| W5.sw5  | 2025-08-18 | $4953.73   | H    | 100%ext   | hist |
+
+ALTERNATE COUNT (30% confidence)
+| Wave | Date       | Price      | OHLC | Fib          | Type |
+|------|------------|------------|------|--------------|------|
+| W0   | 2022-06-13 | $896.11    | L    | --           | hist |
+| W1   | 2022-08-08 | $2022.79   | H    | --           | hist |
+| W2   | 2022-11-21 | $1081.14   | L    | 83.6%ret     | hist |
+| W3   | 2024-03-11 | $4092.28   | H    | 261.8%ext    | hist |
+| W4   | 2024-08-05 | $2122.55   | L    | 61.8%ret     | hist |
+| W5   | 2025-08-18 | $4953.73   | H    | 161.8%ext    | hist |
+| WA   | 2025-11-17 | $2626.87   | L    | 47.0%ret     | hist |
+| WB   | 2025-12-08 | $3446.62   | H    | 35.2%retWA   | hist |
+| WC   | 2026-02-02 | $1748.63   | L    | 78.6%ret     | hist |
+| WX   | 2026-03-16 | $2384.47   | H    | 36.4%bounce  | hist |
+| WX2  | 2026-04-20 | $1950.00   | L    | 61.8%retWX   | proj |
+| WXt  | 2026-07-07 | $3200.00   | H    | 61.8%retABC  | proj |
+| WY   | 2026-10-13 | $1200.00   | L    | 100%extWA    | proj |
+
+Primary invalidation: $1748.63 | Alternate invalidation: $4953.73 | Primary target: $3655.00 | Alternate target: $1200.00
+Subwave confirmation: W1 ⚠(sw1/sw2/sw3 confirmed; sw4/sw5 insufficient bars — absorbed into parent), W2 ✓, W3 ✓, W4 ✓, W5 ✓
