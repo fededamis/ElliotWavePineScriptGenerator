@@ -36,7 +36,7 @@ For any issue found, fix it silently using `replace_string_in_file` and continue
   - input() calls must come before any variable uses them
   - All identifiers referenced in code must have explicit declarations in scope
   - Check that all function calls reference declared functions, not undefined ones
-- **NO SEMICOLON STATEMENT CHAINING**: Pine Script v6 does not support `;` as a statement separator. Each statement must be on its own line. Scan every line for ` ; ` and split at each occurrence into separate indented lines. This includes — but is not limited to — patterns like `array.push(...) ; array.push(...)` which produce CE10005 at runtime.
+- **NO SEMICOLON STATEMENT CHAINING**: Pine Script v6 does not support `;` as a statement separator. Each statement must be on its own line. Scan every line for any `;` followed by a statement and split each at the semicolon into separate lines, preserving the original line's leading indentation on every continuation line. Patterns like `array.push(...); array.push(...)` or `array.push(...) ; array.push(...)` both produce CE10005. Never use `\n    ` (fixed 4-space) as the split replacement — always inherit the leading whitespace of the original line.
 - **NO POSTFIX IF STATEMENTS**: No statements ending with `if condition` (e.g., `array.push(arr, label.new(...)) if showLabels` is FORBIDDEN). All conditional logic must use proper nested `if` blocks:
   ```
   if condition
