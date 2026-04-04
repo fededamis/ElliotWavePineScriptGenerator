@@ -18,6 +18,8 @@
     "ForEach-Object *": true,
     "EOF": true,
     "cd *ElliotWavePineScriptGenerator* ; powershell -NoProfile -Command *": true,
-    "cd *ElliotWavePineScriptGenerator* ; powershell -NoProfile -File *": true
+    "cd *ElliotWavePineScriptGenerator* ; powershell -NoProfile -File *": true,
+    "ConvertFrom-Json": true,
+    "ConvertTo-Json": true
   }
 }
