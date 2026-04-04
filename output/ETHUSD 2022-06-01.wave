@@ -1,0 +1,50 @@
+Degree: Cycle
+PRIMARY COUNT (77% confidence)
+| Wave | Date       | Price    | OHLC | Fib    | Type |
+|------|------------|----------|------|--------|------|
+| W0   | 2022-06-20 | $896.11  | L    | --     | hist |
+| W1   | 2022-08-15 | $2022.79 | H    | --     | hist |
+| W2   | 2022-11-28 | $1081.14 | L    | 83.6%  | hist |
+| W3   | 2024-03-11 | $4092.28 | H    | 261.8% | hist |
+| W4   | 2024-08-05 | $2122.55 | L    | 65.4%  | hist |
+| W5   | 2024-12-16 | $4106.96 | H    | 100.2% | hist |
+| WA   | 2025-04-07 | $1386.80 | L    | 133.9% | hist |
+| WB   | 2025-08-11 | $4953.73 | H    | 127.2% | hist |
+| WC   | 2026-02-23 | $1386.80 | L    | 131.1% | hist |
+| WB'  | 2026-03-09 | $2384.47 | H    | 38.2%  | hist |
+| P1   | 2026-06-08 | $3591.17 | proj | 61.8%  | proj |
+| P2   | 2026-07-20 | $2489.00 | proj | 38.2%  | proj |
+
+SUBWAVES (Primary — confirmed waves only)
+| Wave    | Date       | Price    | OHLC | Fib    | Type |
+|---------|------------|----------|------|--------|------|
+| W2.swa  | 2022-10-17 | $1209.28 | L    | 79.9%  | hist |
+| W2.swb  | 2022-11-07 | $1661.33 | H    | 99.4%  | hist |
+| W2.swc  | 2022-11-28 | $1081.14 | L    | 100.0% | hist |
+| W3.sw1  | 2023-04-10 | $2137.44 | H    | --     | hist |
+| W3.sw2  | 2023-06-19 | $1624.14 | L    | 48.6%  | hist |
+| W3.sw3  | 2024-03-11 | $4092.28 | H    | 161.8% | hist |
+| W4.swa  | 2024-05-13 | $2863.55 | L    | 65.9%  | hist |
+| W4.swb  | 2024-05-27 | $3973.56 | H    | 90.3%  | hist |
+| W4.swc  | 2024-08-05 | $2122.55 | L    | 150.7% | hist |
+
+SUBWAVES (Alternate — confirmed waves only)
+(omitted — fewer than 2 qualifying alternate waves with clean subwave structure)
+
+ALTERNATE COUNT (62% confidence)
+| Wave | Date       | Price    | OHLC | Fib    | Type |
+|------|------------|----------|------|--------|------|
+| W0   | 2022-06-20 | $896.11  | L    | --     | hist |
+| WI   | 2022-08-15 | $2022.79 | H    | --     | hist |
+| WII  | 2022-11-28 | $1081.14 | L    | 83.6%  | hist |
+| WIII | 2024-03-11 | $4092.28 | H    | 261.8% | hist |
+| WIV  | 2024-08-05 | $2122.55 | L    | 65.4%  | hist |
+| WV   | 2025-08-11 | $4953.73 | H    | 138.1% | hist |
+| WA   | 2026-02-23 | $1386.80 | L    | 133.1% | hist |
+| WB   | 2026-03-09 | $2384.47 | H    | 38.2%  | hist |
+| P1   | 2026-06-22 | $830.00  | L    | 161.8% | proj |
+| P2   | 2026-09-14 | $1680.00 | H    | 61.8%  | proj |
+
+Primary invalidation: $4953.74  |  Primary target: $3591.17 (Fib 61.8%)
+Alternate invalidation: $4953.74  |  Alternate target: $830.00 (Fib 161.8%)
+Subwave confirmation: W1⚠(±1 gate, 3/5 subwaves — rows missing, recount needed) W2✓(swa/swb/swc confirmed) W3⚠(sw1/sw2/sw3 confirmed, sw4/sw5 merged into extended thrust) W4✓(swa/swb/swc confirmed) W5✗(subwave structure invalidated — Apr-2025 crash depth exceeds any valid sw4 non-overlap threshold) → +7% confidence
