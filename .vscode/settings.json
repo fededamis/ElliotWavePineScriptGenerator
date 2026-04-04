@@ -5,6 +5,8 @@
     "ls *": true,
     "echo $TEMP": true,
     "python3 /tmp/*.py": true,
-    "python3 **/ElliotWavePineScriptGenerator/**/*.py": true
+    "python3 **/ElliotWavePineScriptGenerator/**/*.py": true,
+    "Get-Item": true,
+    "Invoke-WebRequest *": true
   }
 }
