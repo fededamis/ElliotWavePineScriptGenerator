@@ -30,5 +30,8 @@ When editing a rule, update it **only in the authoritative file** listed above. 
     - Have a copilot mode for managing the context differently.
 
     
+- Now I have comprehensive swing data. Let me perform the full Elliott Wave analysis in working memory.
+
+
 - Check improvement ideas.
 - Check: https://www.youtube.com/watch?v=aqtseECSdtY
