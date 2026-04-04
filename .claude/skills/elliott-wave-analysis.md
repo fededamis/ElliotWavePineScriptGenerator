@@ -76,6 +76,7 @@ Apply the PIVOT ACCEPTANCE GATE to all subwave pivots (same rules as primary piv
 For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the selected timeframe:
 - Identify the 5 internal subwave pivots (sw1 through sw5) on the same timeframe
 - Label them as `W1.sw1`, `W1.sw2` … `W1.sw5` (or `W3.sw1` … `W3.sw5`, etc.)
+- **SHORT-WAVE ±1 FALLBACK: If a motive wave spans fewer than 20 bars and no interior swing passes the ±2 neighboring-bar check (check 2 of the PIVOT ACCEPTANCE GATE), relax the neighboring-bar check to ±1 for that wave's subwaves only. If at least 3 of the 5 required pivots pass the ±1 gate, output those rows and mark the wave `⚠(±1 gate, N/5 subwaves)` in the Subwave confirmation line. If even the ±1 gate yields fewer than 3 pivots, mark the wave `✗(too few bars for subwave resolution)` — do NOT mark it `⚠` without outputting any rows.**
 - **Apply the three absolute EW rules at the subwave level — these are not optional:**
   1. sw2 never retraces more than 100% of sw1 (sw2's extreme cannot go beyond the start of sw1, i.e. the parent wave's origin)
   2. sw3 is never the shortest among sw1, sw3, and sw5
