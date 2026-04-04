@@ -64,17 +64,26 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 > - `SUBWAVES (Alternate — confirmed waves only)` table (omit if fewer than 2 alternate waves qualify)
 > - `Alternate invalidation:` and `Alternate target:` values (second half of that line only)
 >
-> The main agent merges the two responses into the full compact pivot table format (Degree → Primary → Subwaves Primary → Subwaves Alternate → Alternate → invalidation/target line → subwave confirmation) before passing it to the Pine Script generation subagent. Do not re-run or re-derive any part of the analysis in the main context.
+> The main agent merges the two responses into the full compact pivot table format (Degree → Primary → Subwaves Primary → Subwaves Alternate → Alternate → invalidation/target line → subwave confirmation).
+>
+> **After merging, the main agent must:**
+> - Write the merged pivot table to `output/[TICKER] [START DATE].wave` using the Write tool
+> - Return only: `Wrote output/[TICKER] [START DATE].wave — OK`
+> - Do NOT pass the full pivot table text back to the main conversation — pass only the file path
+>
+> Do not re-run or re-derive any part of the analysis in the main context.
 
 > **SUBAGENT DELEGATION — PINE SCRIPT GENERATION:**
 > Delegate Pine Script generation to a subagent.
 > The subagent must:
 > 1. Execute the `/pinescript-generation-rules` skill (`.claude/skills/pinescript-generation-rules.md`) and the `/pinescript-visual-style` skill (`.claude/skills/pinescript-visual-style.md`) in full
 > 2. Apply every generation constraint, display input rule, color scheme rule, and label style rule
-> 3. Generate the complete Pine Script v6 code using the pivot table received from the Wave Methodology subagent
-> 4. Return ONLY the final Pine Script source code — no explanation, no commentary
+> 3. Read the wave data from `output/[TICKER] [START DATE].wave` directly from disk — do NOT receive the pivot table as prompt text
+> 4. Generate the complete Pine Script v6 code using the pivot data read from that file
+> 5. Write the generated script directly to `output/[TICKER] [START DATE].pine` using the Write tool
+> 6. Return ONLY a one-line status: `Wrote [N] lines to output/[TICKER] [START DATE].pine — OK`
 >
-> The main agent receives only the script source from the subagent and writes it to disk via the Write tool. Do not re-derive or re-apply any rules in the main context.
+> The main agent receives only that status string — not the script source. Do not re-derive or re-apply any rules in the main context.
 
 ---
 
@@ -82,25 +91,20 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 > Delegate the validation scan to a subagent.
 > The subagent must:
 > 1. Execute the `/pinescript-validation-passes` skill (`.claude/skills/pinescript-validation-passes.md`) in full
-> 2. Read the generated `.pine` file
+> 2. Read `output/[TICKER] [START DATE].pine` directly from disk — do NOT receive the script as prompt text
 > 3. Perform the single integrated scan across all categories (A — Syntax, B — Type Safety, C — Logic, D — Coordinate Scale, E — Array Bounds)
-> 4. Fix all issues silently inside the script
-> 5. Return ONLY the corrected Pine Script source code — no fix list, no commentary, no before/after comparisons
+> 4. Apply all fixes in-place using `replace_string_in_file` directly on the `.pine` file — do NOT return corrected code as text
+> 5. Return ONLY a one-line status: `Validated output/[TICKER] [START DATE].pine — [N] fixes applied` (or `0 fixes` if clean)
 >
-> The main agent receives only the corrected script from the subagent and writes it to disk. Do not re-run or re-check any validation rules in the main context.
+> The main agent receives only that status string — not the corrected script. Do not re-run or re-check any validation rules in the main context.
 
 ---
 
-### OUTPUT: Write Pine Script to File
-After the Integrated Validation Scan is complete and all errors are resolved, write the final Pine Script v6 code to a new file. Do not output the script in the chat window. Do not attach it as a fenced code block or artifact.
-
-File naming rules:
-- File name format: `output/[TICKER] [START DATE].pine`
-- Use the exact TICKER and START DATE values provided by the user at the beginning of the session
-- Example: if TICKER is `BTCUSD` and START DATE is `2023-01-01`, the file name is `output/BTCUSD 2023-01-01.pine`
-- Always write to the `output/` subfolder
-- Once the file is written, output the following on separate lines:
+### OUTPUT: Confirm File Written
+After the Integrated Validation Scan subagent returns its status string, output the following on separate lines:
   `Done -- [TICKER] [START DATE].pine`
   `⏱ End: HH:MM:SS`
   `⏱ Total: X min Y sec`
   (Calculate total by subtracting the Start time from the End time)
+
+Do not output the Pine Script in the chat window. Do not attach it as a fenced code block or artifact. The file was already written to `output/[TICKER] [START DATE].pine` by the generation and validation subagents.

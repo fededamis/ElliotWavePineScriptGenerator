@@ -92,3 +92,26 @@ Ranked by impact:
 3. **Projected path cone** — single dotted line feels overconfident; a range is more honest
 4. **Markdown report output** — easy to implement, very useful for review/sharing
 5. **Multi-ticker batch mode** — high leverage for users who scan many instruments
+
+---
+
+## 6. Token Budget / Context Management
+
+The current pipeline hits the token budget limit because each subagent dumps its full output back into the main conversation context. By the time the validation subagent returns the corrected Pine Script (~500 lines), the context is full and `create_file` never executes.
+
+**6.1. Subagents write their own output files** ✅
+The highest-impact fix. Each subagent should call `create_file` or `replace_string_in_file` directly and only return a short status string to the main agent (e.g. `"Wrote 490 lines to ETHUSD 2022-06-01.pine — OK"`). The main context never needs to hold the full generated code.
+
+**6.2. Collapse subagent calls**
+Currently 4 subagents run sequentially (Call A, Call B, Pine Script gen, Validation). Reduce to 2:
+- **Combined EW analysis subagent**: runs both primary and alternate counts, writes the `.wave` file itself, returns only the pivot summary table.
+- **Combined gen+validation subagent**: generates and validates the Pine Script in one pass, writes the `.pine` file itself, returns only a line count and any warnings.
+
+**6.3. Pass wave data via file reference, not in-prompt**
+The generation subagent currently receives the full wave pivot table injected into its prompt. Instead, instruct it to read the `.wave` cache file from disk. This removes one large block from the prompt payload.
+
+**6.4. Validation subagent reads from disk**
+The validation subagent currently receives the full Pine Script as prompt text. Instead, give it the file path and have it read the file, apply fixes in-place using `replace_string_in_file`, and return only a diff summary (which rules triggered and what was fixed).
+
+**6.5. Draft file pattern**
+Write a `.pine.draft` file after generation, before validation. The validation subagent reads the draft, writes the final `.pine`. If the session times out between the two steps, the draft survives and the next session can skip straight to validation without regenerating.
