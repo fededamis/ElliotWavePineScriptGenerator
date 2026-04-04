@@ -73,22 +73,33 @@ Apply the PIVOT ACCEPTANCE GATE to all subwave pivots (same rules as primary piv
 
 **MANDATORY COVERAGE RULE: Attempt subwave identification for every primary wave (W1, W2, W3, W4, W5). The Subwave note at the bottom of the output must list every primary wave with a result symbol: ✓ (confirmed), ⚠ (partial), or ✗(reason) (skipped/insufficient). No prose justification — symbol and short reason only. `✗` is only valid for waves below the bar minimum — it is NOT valid for long waves where data exists.**
 
-For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the selected timeframe:
-- Identify the 5 internal subwave pivots (sw1 through sw5) on the same timeframe
+**SUBWAVE TIMEFRAME — DEGREE-TIMEFRAME HIERARCHY: All subwave identification must use the subwave chart corresponding to the locked degree, not the primary chart. Determine the subwave chart before fetching any subwave data:**
+| Degree | Primary chart | Subwave chart |
+|---|---|---|
+| Grand Supercycle | Monthly | Weekly |
+| Supercycle | Weekly | Daily |
+| Cycle | Weekly | Daily |
+| Primary | Daily | 4H |
+
+Fetch bars at the subwave chart interval for each wave's interior. The bar minimum thresholds below (motive ≥ 5 bars, corrective ≥ 3 bars) apply to the subwave chart, not the primary chart.
+
+For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5 bars on the subwave chart:
+- Identify the 5 internal subwave pivots (sw1 through sw5) on the subwave chart
 - Label them as `W1.sw1`, `W1.sw2` … `W1.sw5` (or `W3.sw1` … `W3.sw5`, etc.)
-- **SHORT-WAVE ±1 FALLBACK: If a motive wave spans fewer than 20 bars and no interior swing passes the ±2 neighboring-bar check (check 2 of the PIVOT ACCEPTANCE GATE), relax the neighboring-bar check to ±1 for that wave's subwaves only. If at least 3 of the 5 required pivots pass the ±1 gate, output those rows and mark the wave `⚠(±1 gate, N/5 subwaves)` in the Subwave confirmation line. If even the ±1 gate yields fewer than 3 pivots, mark the wave `✗(too few bars for subwave resolution)` — do NOT mark it `⚠` without outputting any rows.**
+- **SHORT-WAVE ±1 FALLBACK: If a motive wave spans fewer than 20 bars on the subwave chart and no interior swing passes the ±2 neighboring-bar check, relax the neighboring-bar check to ±1 for that wave's subwaves only. If at least 3 of the 5 required pivots pass the ±1 gate, output those rows and mark the wave `⚠(±1 gate, N/5 subwaves)` in the Subwave confirmation line. If even the ±1 gate yields fewer than 3 pivots, mark the wave `✗(too few bars for subwave resolution)` — do NOT mark it `⚠` without outputting any rows.**
+- **MERGED TERMINAL: If sw3 and the parent wave's terminal bar share the same date on the subwave chart (no room for independent sw4/sw5 pivots), the merge is structurally confirmed — mark it `⚠(sw1/sw2/sw3 confirmed; sw4/sw5 unresolvable — sw3 and parent terminal share same bar on [subwave chart], extended-third merge confirmed)` and do not attempt further subdivision.**
 - **Apply the three absolute EW rules at the subwave level — these are not optional:**
   1. sw2 never retraces more than 100% of sw1 (sw2's extreme cannot go beyond the start of sw1, i.e. the parent wave's origin)
   2. sw3 is never the shortest among sw1, sw3, and sw5
   3. sw4 never overlaps sw1's price territory
 - **If any of these three rules is violated, the PRIMARY COUNT IS INVALIDATED. The three absolute EW rules apply at every wave degree — a violation at the subwave level means the primary pivot labeling is wrong (the parent wave's start or end was mislabeled). STOP. Do not output the current primary count. Return to Step 5, select a different pivot set, and re-run subwave verification. Repeat until a primary count is found whose subwaves all satisfy the three rules.**
 
-For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that spans at least 3 bars:
-- Identify the 3 internal subwave pivots (swa, swb, swc) on the same timeframe
+For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that spans at least 3 bars on the subwave chart:
+- Identify the 3 internal subwave pivots (swa, swb, swc) on the subwave chart
 - Label them as `W2.swa`, `W2.swb`, `W2.swc` (etc.)
 - Verify zigzag, flat, or triangle structure is internally consistent
 
-If a wave spans fewer bars than required (motive < 5 bars, corrective < 3 bars), mark it as `✗(insuf)` in the Subwave note — do not silently omit it.
+If a wave spans fewer bars than required on the subwave chart (motive < 5 bars, corrective < 3 bars), mark it as `✗(insuf)` in the Subwave note — do not silently omit it.
 
 **Subwave Confidence Contribution:**
 - Each motive wave whose 5 subwaves all pass the acceptance gate and satisfy EW rules: +3% to primary count confidence

@@ -47,4 +47,4 @@ ALTERNATE COUNT (62% confidence)
 
 Primary invalidation: $4953.74  |  Primary target: $3591.17 (Fib 61.8%)
 Alternate invalidation: $4953.74  |  Alternate target: $830.00 (Fib 161.8%)
-Subwave confirmation: W1⚠(±1 gate, 3/5 subwaves — rows missing, recount needed) W2✓(swa/swb/swc confirmed) W3⚠(sw1/sw2/sw3 confirmed, sw4/sw5 merged into extended thrust) W4✓(swa/swb/swc confirmed) W5✗(subwave structure invalidated — Apr-2025 crash depth exceeds any valid sw4 non-overlap threshold) → +7% confidence
+Subwave confirmation: W1⚠(±1 gate, 3/5 subwaves — rows missing, recount needed) W2✓(swa/swb/swc confirmed) W3⚠(sw1/sw2/sw3 confirmed; sw4/sw5 unresolvable — sw3 and W3 share terminal bar, daily recount yields no independent pivots; extended-third merge confirmed) W4✓(swa/swb/swc confirmed) W5✗(subwave structure invalidated — Apr-2025 crash depth exceeds any valid sw4 non-overlap threshold) → +7% confidence
