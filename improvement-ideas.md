@@ -107,10 +107,10 @@ Currently 4 subagents run sequentially (Call A, Call B, Pine Script gen, Validat
 - **Combined EW analysis subagent**: runs both primary and alternate counts, writes the `.wave` file itself, returns only the pivot summary table.
 - **Combined gen+validation subagent**: generates and validates the Pine Script in one pass, writes the `.pine` file itself, returns only a line count and any warnings.
 
-**6.3. Pass wave data via file reference, not in-prompt**
+**6.3. Pass wave data via file reference, not in-prompt** ✅
 The generation subagent currently receives the full wave pivot table injected into its prompt. Instead, instruct it to read the `.wave` cache file from disk. This removes one large block from the prompt payload.
 
-**6.4. Validation subagent reads from disk**
+**6.4. Validation subagent reads from disk** ✅
 The validation subagent currently receives the full Pine Script as prompt text. Instead, give it the file path and have it read the file, apply fixes in-place using `replace_string_in_file`, and return only a diff summary (which rules triggered and what was fixed).
 
 **6.5. Draft file pattern**
