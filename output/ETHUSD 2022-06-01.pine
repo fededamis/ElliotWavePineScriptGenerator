@@ -80,7 +80,7 @@ float pr_wx5_p  = 3950.00
 
 float pr_inval       = 896.11
 float pr_target      = 3950.00
-string pr_target_fib = "100%"
+string pr_target_fib = "216.2%"
 
 // === ALTERNATE COUNT PIVOTS ===
 int   al_w0_ts   = timestamp(2022, 6, 18)
@@ -106,7 +106,7 @@ float al_awc_p   = 1160.00
 
 float al_inval       = 1081.14
 float al_target      = 1160.00
-string al_target_fib = "61.8%"
+string al_target_fib = "56.6%"
 
 // === PRIMARY SUBWAVE TIMESTAMPS & PRICES ===
 int   pr_w1sw1_ts = timestamp(2022, 7, 8)
@@ -119,7 +119,7 @@ int   pr_w1sw4_ts = timestamp(2022, 8, 2)
 float pr_w1sw4_p  = 1567.85
 int   pr_w1sw5_ts = timestamp(2022, 8, 14)
 float pr_w1sw5_p  = 2022.79
-string pr_w1sw5_fib = "100%"
+string pr_w1sw5_fib = "124.0%"
 
 int   pr_w2swa_ts = timestamp(2022, 9, 21)
 float pr_w2swa_p  = 1229.43
@@ -127,7 +127,7 @@ int   pr_w2swb_ts = timestamp(2022, 11, 4)
 float pr_w2swb_p  = 1661.33
 int   pr_w2swc_ts = timestamp(2022, 11, 22)
 float pr_w2swc_p  = 1081.14
-string pr_w2swc_fib = "100%"
+string pr_w2swc_fib = "73.1%"
 
 int   pr_w3sw1_ts = timestamp(2023, 4, 16)
 float pr_w3sw1_p  = 2137.45
@@ -159,7 +159,7 @@ int   pr_w5sw4_ts = timestamp(2024, 11, 20)
 float pr_w5sw4_p  = 3032.60
 int   pr_w5sw5_ts = timestamp(2024, 12, 16)
 float pr_w5sw5_p  = 4106.96
-string pr_w5sw5_fib = "100%"
+string pr_w5sw5_fib = "154.1%"
 
 int   pr_waswa_ts = timestamp(2024, 12, 20)
 float pr_waswa_p  = 3098.20
@@ -167,7 +167,7 @@ int   pr_waswb_ts = timestamp(2025, 1, 6)
 float pr_waswb_p  = 3743.94
 int   pr_waswc_ts = timestamp(2025, 4, 9)
 float pr_waswc_p  = 1386.80
-string pr_waswc_fib = "100%"
+string pr_waswc_fib = "233.7%"
 
 int   pr_wbswa_ts = timestamp(2025, 5, 13)
 float pr_wbswa_p  = 2736.89
@@ -175,7 +175,7 @@ int   pr_wbswb_ts = timestamp(2025, 6, 22)
 float pr_wbswb_p  = 2116.68
 int   pr_wbswc_ts = timestamp(2025, 8, 24)
 float pr_wbswc_p  = 4953.73
-string pr_wbswc_fib = "100%"
+string pr_wbswc_fib = "210.1%"
 
 int   pr_wcswa_ts = timestamp(2025, 8, 26)
 float pr_wcswa_p  = 4316.30
@@ -183,7 +183,7 @@ int   pr_wcswb_ts = timestamp(2025, 9, 13)
 float pr_wcswb_p  = 4763.36
 int   pr_wcswc_ts = timestamp(2026, 2, 6)
 float pr_wcswc_p  = 1748.63
-string pr_wcswc_fib = "100%"
+string pr_wcswc_fib = "472.9%"
 
 // All drawing objects use xloc.bar_time + fixed float prices for scale/zoom stability
 if barstate.islast
@@ -223,28 +223,28 @@ if barstate.islast
     array.push(pr_prices, pr_w2_p)
     array.push(pr_names, "W2")
     array.push(pr_ohlc, "L")
-    array.push(pr_fibs, "61.8%")
+    array.push(pr_fibs, "83.6%")
     array.push(pr_types, "hist")
 
     array.push(pr_ts, pr_w3_ts)
     array.push(pr_prices, pr_w3_p)
     array.push(pr_names, "W3")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "161.8%")
+    array.push(pr_fibs, "267.3%")
     array.push(pr_types, "hist")
 
     array.push(pr_ts, pr_w4_ts)
     array.push(pr_prices, pr_w4_p)
     array.push(pr_names, "W4")
     array.push(pr_ohlc, "L")
-    array.push(pr_fibs, "38.2%")
+    array.push(pr_fibs, "65.4%")
     array.push(pr_types, "hist")
 
     array.push(pr_ts, pr_w5_ts)
     array.push(pr_prices, pr_w5_p)
     array.push(pr_names, "W5")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "176.4%")
+    array.push(pr_fibs, "176.1%")
     array.push(pr_types, "hist")
 
     array.push(pr_ts, pr_wa_ts)
@@ -272,7 +272,7 @@ if barstate.islast
     array.push(pr_prices, pr_wx1_p)
     array.push(pr_names, "WX1")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "36.5%")
+    array.push(pr_fibs, "23.4%")
     array.push(pr_types, "hist")
 
     array.push(pr_ts, pr_wx2_ts)
@@ -300,7 +300,7 @@ if barstate.islast
     array.push(pr_prices, pr_wx5_p)
     array.push(pr_names, "WX5")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "100%")
+    array.push(pr_fibs, "216.2%")
     array.push(pr_types, "proj")
 
     // segment colors: one per segment (14 pivots = 13 segments)
@@ -345,28 +345,28 @@ if barstate.islast
     array.push(al_prices, al_wii_p)
     array.push(al_names, "WII")
     array.push(al_ohlc, "L")
-    array.push(al_fibs, "61.8%")
+    array.push(al_fibs, "83.6%")
     array.push(al_types, "hist")
 
     array.push(al_ts, al_wiii_ts)
     array.push(al_prices, al_wiii_p)
     array.push(al_names, "WIII")
     array.push(al_ohlc, "H")
-    array.push(al_fibs, "161.8%")
+    array.push(al_fibs, "267.3%")
     array.push(al_types, "hist")
 
     array.push(al_ts, al_wiv_ts)
     array.push(al_prices, al_wiv_p)
     array.push(al_names, "WIV")
     array.push(al_ohlc, "L")
-    array.push(al_fibs, "38.2%")
+    array.push(al_fibs, "65.4%")
     array.push(al_types, "hist")
 
     array.push(al_ts, al_wv_ts)
     array.push(al_prices, al_wv_p)
     array.push(al_names, "WV")
     array.push(al_ohlc, "H")
-    array.push(al_fibs, "176.4%")
+    array.push(al_fibs, "251.3%")
     array.push(al_types, "hist")
 
     array.push(al_ts, al_awa_ts)
@@ -394,7 +394,7 @@ if barstate.islast
     array.push(al_prices, al_awc_p)
     array.push(al_names, "AWC")
     array.push(al_ohlc, "L")
-    array.push(al_fibs, "61.8%")
+    array.push(al_fibs, "56.6%")
     array.push(al_types, "proj")
 
     // segment colors: 10 pivots = 9 segments
@@ -574,22 +574,22 @@ if barstate.islast
         array.push(sw1_p,  pr_w1sw2_p)
         array.push(sw1_names, "W1.sw2")
         array.push(sw1_ohlc, "L")
-        array.push(sw1_fibs, "61.8%")
+        array.push(sw1_fibs, "66.4%")
         array.push(sw1_ts, pr_w1sw3_ts)
         array.push(sw1_p,  pr_w1sw3_p)
         array.push(sw1_names, "W1.sw3")
         array.push(sw1_ohlc, "H")
-        array.push(sw1_fibs, "161.8%")
+        array.push(sw1_fibs, "205.9%")
         array.push(sw1_ts, pr_w1sw4_ts)
         array.push(sw1_p,  pr_w1sw4_p)
         array.push(sw1_names, "W1.sw4")
         array.push(sw1_ohlc, "L")
-        array.push(sw1_fibs, "38.2%")
+        array.push(sw1_fibs, "27.4%")
         array.push(sw1_ts, pr_w1sw5_ts)
         array.push(sw1_p,  pr_w1sw5_p)
         array.push(sw1_names, "W1.sw5")
         array.push(sw1_ohlc, "H")
-        array.push(sw1_fibs, "100%")
+        array.push(sw1_fibs, "124.0%")
 
         int s1i = 1
         while s1i < array.size(sw1_ts)
@@ -632,12 +632,12 @@ if barstate.islast
         array.push(sw2_p,  pr_w2swb_p)
         array.push(sw2_names, "W2.swb")
         array.push(sw2_ohlc, "H")
-        array.push(sw2_fibs, "61.8%")
+        array.push(sw2_fibs, "54.4%")
         array.push(sw2_ts, pr_w2swc_ts)
         array.push(sw2_p,  pr_w2swc_p)
         array.push(sw2_names, "W2.swc")
         array.push(sw2_ohlc, "L")
-        array.push(sw2_fibs, "100%")
+        array.push(sw2_fibs, "73.1%")
 
         int s2i = 1
         while s2i < array.size(sw2_ts)
@@ -680,7 +680,7 @@ if barstate.islast
         array.push(sw3_p,  pr_w3sw2_p)
         array.push(sw3_names, "W3.sw2")
         array.push(sw3_ohlc, "L")
-        array.push(sw3_fibs, "55.4%")
+        array.push(sw3_fibs, "55.5%")
         array.push(sw3_ts, pr_w3sw3_ts)
         array.push(sw3_p,  pr_w3sw3_p)
         array.push(sw3_names, "W3.sw3")
@@ -791,17 +791,17 @@ if barstate.islast
         array.push(sw5_p,  pr_w5sw3_p)
         array.push(sw5_names, "W5.sw3")
         array.push(sw5_ohlc, "H")
-        array.push(sw5_fibs, "176.4%")
+        array.push(sw5_fibs, "185.4%")
         array.push(sw5_ts, pr_w5sw4_ts)
         array.push(sw5_p,  pr_w5sw4_p)
         array.push(sw5_names, "W5.sw4")
         array.push(sw5_ohlc, "L")
-        array.push(sw5_fibs, "38.2%")
+        array.push(sw5_fibs, "31.8%")
         array.push(sw5_ts, pr_w5sw5_ts)
         array.push(sw5_p,  pr_w5sw5_p)
         array.push(sw5_names, "W5.sw5")
         array.push(sw5_ohlc, "H")
-        array.push(sw5_fibs, "100%")
+        array.push(sw5_fibs, "154.1%")
 
         int s5i = 1
         while s5i < array.size(sw5_ts)
@@ -849,7 +849,7 @@ if barstate.islast
         array.push(swWA_p,  pr_waswc_p)
         array.push(swWA_names, "WA.swc")
         array.push(swWA_ohlc, "L")
-        array.push(swWA_fibs, "100%")
+        array.push(swWA_fibs, "233.7%")
 
         int sWAi = 1
         while sWAi < array.size(swWA_ts)
@@ -897,7 +897,7 @@ if barstate.islast
         array.push(swWB_p,  pr_wbswc_p)
         array.push(swWB_names, "WB.swc")
         array.push(swWB_ohlc, "H")
-        array.push(swWB_fibs, "100%")
+        array.push(swWB_fibs, "210.1%")
 
         int sWBi = 1
         while sWBi < array.size(swWB_ts)
@@ -945,7 +945,7 @@ if barstate.islast
         array.push(swWC_p,  pr_wcswc_p)
         array.push(swWC_names, "WC.swc")
         array.push(swWC_ohlc, "L")
-        array.push(swWC_fibs, "100%")
+        array.push(swWC_fibs, "472.9%")
 
         int sWCi = 1
         while sWCi < array.size(swWC_ts)

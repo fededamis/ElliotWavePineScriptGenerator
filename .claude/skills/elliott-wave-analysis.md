@@ -60,6 +60,11 @@ Output before Step 2: `Degree: [Name] ([N]-day span, [X]% price range)`
 - Confirm each wave pivot using Fibonacci retracement and extension levels
 - Prefer pivots that align with key Fibonacci levels (23.6%, 38.2%, 50%, 61.8%, 78.6%, 100%, 127.2%, 161.8%)
 - Pivots that cluster near multiple Fibonacci levels are stronger candidates
+- **PRIMARY WAVE FIB COMPUTATION RULE: Every Fib % in the primary and alternate wave tables MUST be computed from actual prices — never selected from a standard list by memory. The formula depends on the wave's role:**
+  - **Anchor row** (W0 in motive; first wave of a corrective sequence e.g. WA): always `--`. No computation.
+  - **Retracement rows** (W2, W4 in motive; corrective waves that retrace the prior leg): `|wave_end − wave_start| ÷ |prior_motive_leg_end − prior_motive_leg_start| × 100`. For W2: prior leg = W1 (W0→W1). For W4: prior leg = W3 (W2→W3).
+  - **Extension rows** (W1 beyond W0 anchor, W3, W5 in motive; WB, WC in corrective): `|wave_end − wave_start| ÷ |W1_range| × 100`, where W1_range = |W1_end − W0|. For corrective extensions (WB, WC): use `|wave_end − wave_start| ÷ |WA_range| × 100`.
+  - Round to one decimal place. A value that coincidentally matches a standard Fib level is valid only if derived by this formula.
 
 **Step 4.5 — Identify Subwaves (one level of depth only)**
 
@@ -109,6 +114,11 @@ For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that span
 - Identify the 3 internal subwave pivots (swa, swb, swc) on the subwave chart
 - Label them as `W2.swa`, `W2.swb`, `W2.swc` (etc.)
 - **SWA-NOT-AT-PARENT-TERMINAL RULE: swa of a corrective wave must NEVER be set to the same price/date as the parent wave's terminal pivot (the correction's end: the wave low for a bearish correction, the wave high for a bullish correction). swa is the FIRST interior leg — the initial move away from the correction's origin toward the terminal. If the deepest swing within the corrective wave coincides with the parent terminal, that swing IS swc — search within the interior of the wave for an earlier local extreme to serve as swa, with a bounce (swb) and final leg (swc) completing the structure at the terminal. Setting swa = parent terminal leaves the ABC structurally degenerate (zero-length swb and swc) and is INVALID.**
+- **SUBWAVE FIB COMPUTATION RULE (applies to every subwave row in every wave, motive and corrective): Every Fib % value in the output table MUST be computed from actual prices — never selected from a standard list (38.2%, 61.8%, 100%, 161.8%, etc.) by memory or pattern-matching. The formula depends on the subwave's role:**
+  - **Anchor row** (sw1 in motive; swa in corrective): always `--`. No computation.
+  - **Retracement rows** (sw2, sw4 in motive; swb in corrective): `|pivot_price − prev_pivot_price| ÷ |anchor_end − anchor_start| × 100`, where the anchor is the immediately preceding leg (sw1 for sw2; sw3 for sw4; swa for swb).
+  - **Extension/continuation rows** (sw3, sw5 in motive; swc in corrective): `|pivot_price − prev_pivot_price| ÷ |anchor_end − anchor_start| × 100`, where the anchor is sw1 (for sw3 and sw5 in motive) or swa (for swc in corrective). swc_start is the swb terminus.
+  - After computing, round to one decimal place (e.g. `233.7%`, `45.9%`). A result that coincidentally matches a standard Fib level is valid only if it was derived by this formula. Never output a round standard value without showing it was computed. Values above 100% are normal and expected for extension legs.**
 - Identify which corrective pattern applies and verify its internal consistency rules (all are absolute — any violation is INVALID; select different swa/swb/swc pivots):
   - **Zigzag (5-3-5):** swB retraces between 38.2%–78.6% of swA; swC MUST end at or beyond swA (swc low ≤ swa low for a bearish correction, swc high ≥ swa high for a bullish correction); swC is typically equal to swA or 1.618× swA; a swC that fails to reach the swA terminus is a truncated C and is INVALID.
   - **Flat (3-3-5):** swB retraces 85%–105% of swA (swB terminus approaches or slightly exceeds the correction's origin); swC ends near or slightly beyond swA (swc low ≤ swa low ± 5% of swA move for a bearish flat); a swB that retraces less than 85% of swA is not a flat — reclassify as zigzag or triangle.
