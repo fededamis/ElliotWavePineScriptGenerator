@@ -24,6 +24,8 @@
     "/^cd \"c:\\\\Users\\\\Administrator\\\\Desktop\\\\Copilot Workspace\\\\ElliotWavePineScriptGenerator\"; powershell -ExecutionPolicy Bypass -File tmp\\\\analyze\\.ps1 2>&1$/": {
       "approve": true,
       "matchCommandLine": true
-    }
+    },
+    "Get-Member": true,
+    "Get-Item": true
   }
 }
