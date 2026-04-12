@@ -8,6 +8,8 @@
     "python3 **/ElliotWavePineScriptGenerator/**/*.py": true,
     "Get-Item *": true,
     "Invoke-WebRequest *finance.yahoo.com*": true,
+    "powershell -NoProfile -File *tmp*.ps1": true,
+    "powershell -NoProfile -File *\\tmp\\*.ps1": true,
     "Get-Content *": true,
     "ConvertFrom-Json*": true,
     "ConvertTo-Json*": true,
@@ -15,18 +17,17 @@
     "Write-Host *": true,
     "ForEach-Object *": true,
     "EOF": true,
-    "powershell -NoProfile -File *tmp*.ps1": true,
-    "powershell -NoProfile -File *\\tmp\\*.ps1": true,
     "cd *ElliotWavePineScriptGenerator* ; powershell -NoProfile -Command *": true,
     "cd *ElliotWavePineScriptGenerator* ; powershell -NoProfile -File *": true,
-    "* powershell -ExecutionPolicy Bypass -File *tmp\\*.ps1*": true,
     "ConvertFrom-Json": true,
     "ConvertTo-Json": true,
+    "* powershell -ExecutionPolicy Bypass -File *tmp\\*.ps1*": true,
     "Get-Member": true,
     "Get-Item": true,
     "ForEach-Object": true,
     "927..931": true,
     "Add-Type": true,
-    "New-Object": true
+    "New-Object": true,
+    "Select": true
   }
 }
