@@ -26,7 +26,9 @@ SUBWAVES (Primary — confirmed waves only)
 | W2.swc   | 2022-11-22 | $1081.14 | L    | 100%   | hist |
 | W3.sw1   | 2023-04-16 | $2137.45 | H    | --     | hist |
 | W3.sw2   | 2023-08-17 | $1551.71 | L    | 61.8%  | hist |
-| W3.sw3   | 2024-03-12 | $4092.28 | H    | 161.8% | hist |
+| W3.sw3   | 2024-01-08 | $2710.42 | H    | 109.7% | hist |
+| W3.sw4   | 2024-01-22 | $2167.28 | L    | 46.9%  | hist |
+| W3.sw5   | 2024-03-11 | $4092.28 | H    | 182.2% | hist |
 | W4.swa   | 2024-08-05 | $2122.55 | L    | --     | hist |
 | W4.swb   | 2024-09-27 | $2728.07 | H    | 61.8%  | hist |
 | W4.swc   | 2024-10-10 | $2329.78 | L    | 61.8%  | hist |
@@ -48,4 +50,4 @@ ALTERNATE COUNT (55% confidence)
 
 Primary invalidation: $896.11  |  Primary target: $1650.00 (Fib 100%)
 Alternate invalidation: $1081.14  |  Alternate target: $5800.00 (Fib 100%)
-Subwave confirmation: W1✓ W2✓ W3⚠(sw3=W3 top; sw4/sw5 removed — crossed into W4 territory) W4✓ W5⚠(sw2 reordered) → +8% confidence
+Subwave confirmation: W1✓ W2✓ W3✓ W4✓ W5⚠(sw2 reordered) → +11% confidence
