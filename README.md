@@ -21,3 +21,4 @@ When editing a rule, update it **only in the authoritative file** listed above. 
 
 ## Pending Tasks
 - Check improvement ideas.
+- Fix subwave count on Alternate W5 wave.
