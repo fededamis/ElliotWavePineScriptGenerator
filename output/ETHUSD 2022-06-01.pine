@@ -24,7 +24,7 @@ color AL_INVAL_COL  = input.color(color.rgb(204, 68, 68),  "Alt Invalidation",  
 color AL_TARGET_COL = input.color(color.rgb(68, 136, 68),  "Alt Target",            group="Colors")
 color PR_CHANNEL_COL = input.color(color.aqua,              "Primary Channel",       group="Colors")
 color AL_CHANNEL_COL = input.color(color.rgb(85, 153, 170), "Alt Channel",           group="Colors")
-int   swLabelTransp  = input.int(55, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
+int   swLabelTransp  = input.int(0, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
 
 string STYLE_SOLID  = line.style_solid
 string STYLE_DASHED = line.style_dashed

@@ -23,7 +23,7 @@ color AL_MOTIVE_UP = color.rgb(85, 153, 170)
 color AL_CORRECTIVE = color.rgb(170, 119, 51)
 color AL_INVAL_COL = color.rgb(204, 68, 68)
 color AL_TARGET_COL = color.rgb(68, 136, 68)
-int swLabelTransp   = input.int(55, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
+int swLabelTransp   = input.int(0, "Subwave Label Transparency", minval=0, maxval=100, group="Colors")
 
 var array<line> allLines = array.new<line>()
 var array<label> allLabels = array.new<label>()
