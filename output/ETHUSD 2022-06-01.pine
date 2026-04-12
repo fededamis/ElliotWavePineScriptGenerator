@@ -51,10 +51,10 @@ makePivotText(string waveName, float price, string fib, bool isAlt, bool isProj)
 // W2  2022-11-22 $1081.14 L  61.8%  hist
 // W3  2024-03-12 $4092.28 H  161.8% hist
 // W4  2024-08-05 $2122.55 L  38.2%  hist
-// W5  2025-08-24 $4953.73 H  100%   hist
-// WA  2025-11-21 $2626.87 L  38.2%  hist
-// WB  2026-01-14 $3397.90 H  61.8%  hist
-// WC  2026-06-15 $1650.00 L  100%   proj
+// W5  2024-12-16 $4106.96 H  176.4% hist
+// WA  2025-03-11 $1760.94 L  118.2% hist
+// WB  2025-04-28 $3210.78 H  61.8%  proj
+// WC  2025-09-15 $1760.94 L  100%   proj
 
 int   pr_w0_ts = timestamp(2022, 6, 18)
 float pr_w0_p  = 896.11
@@ -66,17 +66,17 @@ int   pr_w3_ts = timestamp(2024, 3, 12)
 float pr_w3_p  = 4092.28
 int   pr_w4_ts = timestamp(2024, 8, 5)
 float pr_w4_p  = 2122.55
-int   pr_w5_ts = timestamp(2025, 8, 24)
-float pr_w5_p  = 4953.73
-int   pr_wa_ts = timestamp(2025, 11, 21)
-float pr_wa_p  = 2626.87
-int   pr_wb_ts = timestamp(2026, 1, 14)
-float pr_wb_p  = 3397.90
-int   pr_wc_ts = timestamp(2026, 6, 15)
-float pr_wc_p  = 1650.00
+int   pr_w5_ts = timestamp(2024, 12, 16)
+float pr_w5_p  = 4106.96
+int   pr_wa_ts = timestamp(2025, 3, 11)
+float pr_wa_p  = 1760.94
+int   pr_wb_ts = timestamp(2025, 4, 28)
+float pr_wb_p  = 3210.78
+int   pr_wc_ts = timestamp(2025, 9, 15)
+float pr_wc_p  = 1760.94
 
-float pr_inval       = 2122.55
-float pr_target      = 1650.00
+float pr_inval       = 896.11
+float pr_target      = 1760.94
 string pr_target_fib = "100.0%"
 
 // ─── ALTERNATE COUNT PIVOTS ──────────────────────────────────────────────────
@@ -84,8 +84,8 @@ string pr_target_fib = "100.0%"
 // W0   2022-06-18 $896.11  L  hist
 // WI   2022-08-14 $2022.79 H  hist
 // WII  2022-11-22 $1081.14 L  61.8%  hist
-// WIII 2025-08-24 $4953.73 H  261.8% hist
-// WIV  2026-02-06 $1748.63 L  50.0%  hist
+// WIII 2025-08-24 $4953.73 H  261.8% proj
+// WIV  2026-02-06 $1748.63 L  50.0%  proj
 // WV   2026-09-01 $5800.00 H  100%   proj
 
 int   al_w0_ts = timestamp(2022, 6, 18)
@@ -147,16 +147,16 @@ int   pr_w4swc_ts = timestamp(2024, 8, 5)
 float pr_w4swc_p  = 2122.55
 
 // W5 subwaves
-int   pr_w5sw1_ts = timestamp(2024, 11, 12)
-float pr_w5sw1_p  = 3444.15
-int   pr_w5sw2_ts = timestamp(2025, 1, 13)
-float pr_w5sw2_p  = 2920.59
-int   pr_w5sw3_ts = timestamp(2025, 7, 28)
-float pr_w5sw3_p  = 3940.65
-int   pr_w5sw4_ts = timestamp(2025, 8, 3)
-float pr_w5sw4_p  = 3357.94
-int   pr_w5sw5_ts = timestamp(2025, 8, 24)
-float pr_w5sw5_p  = 4953.73
+int   pr_w5sw1_ts = timestamp(2024, 8, 24)
+float pr_w5sw1_p  = 2820.02
+int   pr_w5sw2_ts = timestamp(2024, 9, 6)
+float pr_w5sw2_p  = 2150.86
+int   pr_w5sw3_ts = timestamp(2024, 11, 12)
+float pr_w5sw3_p  = 3444.15
+int   pr_w5sw4_ts = timestamp(2024, 12, 3)
+float pr_w5sw4_p  = 3504.23
+int   pr_w5sw5_ts = timestamp(2024, 12, 16)
+float pr_w5sw5_p  = 4106.96
 
 // ─── ALTERNATE SUBWAVES ──────────────────────────────────────────────────────
 // Alt W3 subwaves (Primary degree — maps to W1+W2+W3 sub-structure)
@@ -178,7 +178,7 @@ if barstate.islast
         label.delete(array.pop(allLabels))
 
     int todayTime = time
-    float priceHigh = 5800.00
+    float priceHigh = 4953.73
     float priceLow  = 896.11
     float priceRange = priceHigh - priceLow
 
@@ -224,20 +224,20 @@ if barstate.islast
     array.push(pr_prices, pr_w5_p)
     array.push(pr_names, "W5")
     array.push(pr_ohlc, "H")
-    array.push(pr_fibs, "100.0%")
+    array.push(pr_fibs, "176.4%")
     array.push(pr_types, "hist")
     array.push(pr_ts, pr_wa_ts)
     array.push(pr_prices, pr_wa_p)
     array.push(pr_names, "WA")
     array.push(pr_ohlc, "L")
-    array.push(pr_fibs, "38.2%")
+    array.push(pr_fibs, "118.2%")
     array.push(pr_types, "hist")
     array.push(pr_ts, pr_wb_ts)
     array.push(pr_prices, pr_wb_p)
     array.push(pr_names, "WB")
     array.push(pr_ohlc, "H")
     array.push(pr_fibs, "61.8%")
-    array.push(pr_types, "hist")
+    array.push(pr_types, "proj")
     array.push(pr_ts, pr_wc_ts)
     array.push(pr_prices, pr_wc_p)
     array.push(pr_names, "WC")
@@ -286,13 +286,13 @@ if barstate.islast
     array.push(al_names, "WIII")
     array.push(al_ohlc, "H")
     array.push(al_fibs, "261.8%")
-    array.push(al_types, "hist")
+    array.push(al_types, "proj")
     array.push(al_ts, al_w4_ts)
     array.push(al_prices, al_w4_p)
     array.push(al_names, "WIV")
     array.push(al_ohlc, "L")
     array.push(al_fibs, "50.0%") 
-    array.push(al_types, "hist")
+    array.push(al_types, "proj")
     array.push(al_ts, al_w5_ts)
     array.push(al_prices, al_w5_p)
     array.push(al_names, "WV")
@@ -387,7 +387,7 @@ if barstate.islast
                 float lyoff = array.get(pr_yoffs, li)
                 string ltxt = makePivotText(lname, lprice, lfib, false, isProj2)
                 float labelY = lprice + lyoff
-                string lswTooltip = lname == "W3" ? "W3.sw5\nFib:182.2%" : lname == "W4" ? "W4.swc\nFib:148.1%" : lname == "W5" ? "W5.sw5\nFib:100.0%" : na
+                string lswTooltip = lname == "W3" ? "W3.sw5\nFib:182.2%" : lname == "W4" ? "W4.swc\nFib:148.1%" : lname == "W5" ? "W5.sw5\nFib:100.0%" : lname == "WA" ? "WA (hist)\nFib:118.2%" : na
                 color lblCol = PR_MOTIVE_UP
                 if li > 0
                     lblCol := array.get(pr_segColors, li - 1)
@@ -685,17 +685,17 @@ if barstate.islast
         array.push(sw5_p, pr_w5sw2_p)
         array.push(sw5_names, "W5.sw2")
         array.push(sw5_ohlc, "L")
-        array.push(sw5_fibs, "38.2%")
+        array.push(sw5_fibs, "100.0%")
         array.push(sw5_ts, pr_w5sw3_ts)
         array.push(sw5_p, pr_w5sw3_p)
         array.push(sw5_names, "W5.sw3")
         array.push(sw5_ohlc, "H")
-        array.push(sw5_fibs, "161.8%")
+        array.push(sw5_fibs, "176.4%")
         array.push(sw5_ts, pr_w5sw4_ts)
         array.push(sw5_p, pr_w5sw4_p)
         array.push(sw5_names, "W5.sw4")
         array.push(sw5_ohlc, "L")
-        array.push(sw5_fibs, "50.0%")
+        array.push(sw5_fibs, "38.2%")
         array.push(sw5_ts, pr_w5sw5_ts)
         array.push(sw5_p, pr_w5sw5_p)
         array.push(sw5_names, "W5.sw5")

@@ -87,6 +87,15 @@ For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5
 - **5-SUBWAVE MANDATE: Every motive wave (W1, W3, W5) that spans ≥ 5 bars on the subwave chart MUST resolve to all 5 subwaves (sw1–sw5). Partial resolution (e.g. only sw1–sw3 found) is NOT acceptable — if fewer than 5 subwaves can be identified within the current primary pivot boundaries, the primary count is wrong. STOP. Return to Step 5, try a different endpoint for that parent wave (a later high or lower low), and re-run subwave verification. Only accept the primary count when all 5 subwaves of every qualifying motive wave are confirmed. The `⚠(sw4/sw5 insufficient bars — absorbed into parent)` warning is FORBIDDEN as a final result for any wave spanning ≥ 5 bars.**
 - **SHORT-WAVE ±1 FALLBACK: If a motive wave spans fewer than 20 bars on the subwave chart and no interior swing passes the ±2 neighboring-bar check, relax the neighboring-bar check to ±1 for that wave's subwaves only. If at least 3 of the 5 required pivots pass the ±1 gate, output those rows and mark the wave `⚠(±1 gate, N/5 subwaves)` in the Subwave confirmation line. If even the ±1 gate yields fewer than 3 pivots after relaxation, STOP — do not accept this primary count; return to Step 5 and try a different endpoint for the parent wave. The `⚠` partial-subwave warning is only permitted as a last resort when all alternative endpoints have been exhausted.**
 
+- **MOTIVE SUBWAVE ACCEPTANCE CHECKLIST — compute and verify every item before accepting the pivot set. Any failing item is a hard STOP; return to Step 5 and try a different endpoint for the parent wave:**
+  1. **Cache boundary**: every sw1–sw5 date ≤ the cache's last bar date. Any pivot dated after the cache last bar is UNVERIFIED — reject the pivot set; re-fetch fresh data or move the parent wave terminal to within the cache window.
+  2. **sw2 retrace %**: `(sw1_high − sw2_low) / (sw1_high − W_origin) × 100`. Must be ≤ 100%. If > 100%, sw2 pushed beyond the parent wave's origin — reject.
+  3. **Impulse magnitudes**: compute `sw1_range = |sw1 − W_origin|`, `sw3_range = |sw3 − sw2|`, `sw5_range = |sw5 − sw4|`. sw3 must be strictly greater than BOTH sw1_range and sw5_range. If sw3 is the smallest of the three, reject.
+  4. **sw4 / sw1 no-overlap**: for a bullish parent, `sw4_low > sw1_high`. For a bearish parent, `sw4_high < sw1_low`. If there is overlap, reject (unless a diagonal structure is explicitly declared).
+  5. **Proportion floor**: each swN duration as % of parent wave total duration must be > 4%. Compute each; if any is ≤ 4%, reject.
+  6. **Proportion ceiling**: each swN duration must be < 86% of parent wave total duration. If any is ≥ 86%, reject.
+  7. **Sibling ratio**: `max(sw1…sw5 durations) / min(sw1…sw5 durations)` must be < 10. If ≥ 10, reject.
+
 - **Apply the three absolute EW rules at the subwave level — these are not optional:**
   1. sw2 never retraces more than 100% of sw1 (sw2's extreme cannot go beyond the start of sw1, i.e. the parent wave's origin)
   2. sw3 is never the shortest among sw1, sw3, and sw5

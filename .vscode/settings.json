@@ -27,6 +27,7 @@
     },
     "Get-Member": true,
     "Get-Item": true,
-    "ForEach-Object": true
+    "ForEach-Object": true,
+    "927..931": true
   }
 }
