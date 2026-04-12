@@ -968,6 +968,277 @@ if barstate.islast
                         array.push(allLabels, label.new(array.get(swWC_ts, sli), slp + sw_yoff, array.get(swWC_names, sli), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=swDnCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=sltooltip))
                 sli += 1
 
+    // === ALTERNATE SUBWAVES ===
+    if showSubwaves and drawAlternate
+        color alswUpCol = color.new(AL_MOTIVE_UP,  swLabelTransp)
+        color alswDnCol = color.new(AL_CORRECTIVE, swLabelTransp)
+
+        // WI subwaves
+        array<int>    alswI_ts    = array.new<int>()
+        array<float>  alswI_p     = array.new<float>()
+        array<string> alswI_names = array.new<string>()
+        array<string> alswI_ohlc  = array.new<string>()
+        array<string> alswI_fibs  = array.new<string>()
+        array.push(alswI_ts, pr_w1sw1_ts)
+        array.push(alswI_p,  pr_w1sw1_p)
+        array.push(alswI_names, "WI.sw1")
+        array.push(alswI_ohlc, "H")
+        array.push(alswI_fibs, "--")
+        array.push(alswI_ts, pr_w1sw2_ts)
+        array.push(alswI_p,  pr_w1sw2_p)
+        array.push(alswI_names, "WI.sw2")
+        array.push(alswI_ohlc, "L")
+        array.push(alswI_fibs, "66.4%")
+        array.push(alswI_ts, pr_w1sw3_ts)
+        array.push(alswI_p,  pr_w1sw3_p)
+        array.push(alswI_names, "WI.sw3")
+        array.push(alswI_ohlc, "H")
+        array.push(alswI_fibs, "205.9%")
+        array.push(alswI_ts, pr_w1sw4_ts)
+        array.push(alswI_p,  pr_w1sw4_p)
+        array.push(alswI_names, "WI.sw4")
+        array.push(alswI_ohlc, "L")
+        array.push(alswI_fibs, "27.4%")
+        array.push(alswI_ts, pr_w1sw5_ts)
+        array.push(alswI_p,  pr_w1sw5_p)
+        array.push(alswI_names, "WI.sw5")
+        array.push(alswI_ohlc, "H")
+        array.push(alswI_fibs, "124.0%")
+        int aIsI = 1
+        while aIsI < array.size(alswI_ts)
+            array.push(allLines, line.new(array.get(alswI_ts, aIsI - 1), array.get(alswI_p, aIsI - 1), array.get(alswI_ts, aIsI), array.get(alswI_p, aIsI), xloc=xloc.bar_time, color=alswUpCol, style=STYLE_DASHED, width=1))
+            aIsI += 1
+        if showLabels
+            int asliI = 0
+            while asliI < array.size(alswI_ts)
+                bool is_coinc = asliI == array.size(alswI_ts) - 1
+                if not is_coinc
+                    string aslohlc = array.get(alswI_ohlc, asliI)
+                    float  aslp    = array.get(alswI_p, asliI)
+                    string aslf    = array.get(alswI_fibs, asliI)
+                    string asltt   = "$" + str.tostring(aslp, "#.##") + (aslf != "--" ? "\nFib:" + aslf : "")
+                    float  asw_yo  = aslohlc == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if aslohlc == "H"
+                        array.push(allLabels, label.new(array.get(alswI_ts, asliI), aslp + asw_yo, array.get(alswI_names, asliI), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswUpCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltt))
+                    else
+                        array.push(allLabels, label.new(array.get(alswI_ts, asliI), aslp + asw_yo, array.get(alswI_names, asliI), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswUpCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=asltt))
+                asliI += 1
+
+        // WII subwaves
+        array<int>    alswII_ts    = array.new<int>()
+        array<float>  alswII_p     = array.new<float>()
+        array<string> alswII_names = array.new<string>()
+        array<string> alswII_ohlc  = array.new<string>()
+        array<string> alswII_fibs  = array.new<string>()
+        array.push(alswII_ts, pr_w2swa_ts)
+        array.push(alswII_p,  pr_w2swa_p)
+        array.push(alswII_names, "WII.swa")
+        array.push(alswII_ohlc, "L")
+        array.push(alswII_fibs, "--")
+        array.push(alswII_ts, pr_w2swb_ts)
+        array.push(alswII_p,  pr_w2swb_p)
+        array.push(alswII_names, "WII.swb")
+        array.push(alswII_ohlc, "H")
+        array.push(alswII_fibs, "54.4%")
+        array.push(alswII_ts, pr_w2swc_ts)
+        array.push(alswII_p,  pr_w2swc_p)
+        array.push(alswII_names, "WII.swc")
+        array.push(alswII_ohlc, "L")
+        array.push(alswII_fibs, "73.1%")
+        int aIsII = 1
+        while aIsII < array.size(alswII_ts)
+            array.push(allLines, line.new(array.get(alswII_ts, aIsII - 1), array.get(alswII_p, aIsII - 1), array.get(alswII_ts, aIsII), array.get(alswII_p, aIsII), xloc=xloc.bar_time, color=alswDnCol, style=STYLE_DASHED, width=1))
+            aIsII += 1
+        if showLabels
+            int asliII = 0
+            while asliII < array.size(alswII_ts)
+                bool is_coincII = asliII == array.size(alswII_ts) - 1
+                if not is_coincII
+                    string aslohlcII = array.get(alswII_ohlc, asliII)
+                    float  aslpII    = array.get(alswII_p, asliII)
+                    string aslfII    = array.get(alswII_fibs, asliII)
+                    string aslttII   = "$" + str.tostring(aslpII, "#.##") + (aslfII != "--" ? "\nFib:" + aslfII : "")
+                    float  asw_yoII  = aslohlcII == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if aslohlcII == "H"
+                        array.push(allLabels, label.new(array.get(alswII_ts, asliII), aslpII + asw_yoII, array.get(alswII_names, asliII), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswDnCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttII))
+                    else
+                        array.push(allLabels, label.new(array.get(alswII_ts, asliII), aslpII + asw_yoII, array.get(alswII_names, asliII), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswDnCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttII))
+                asliII += 1
+
+        // WIII subwaves
+        array<int>    alswIII_ts    = array.new<int>()
+        array<float>  alswIII_p     = array.new<float>()
+        array<string> alswIII_names = array.new<string>()
+        array<string> alswIII_ohlc  = array.new<string>()
+        array<string> alswIII_fibs  = array.new<string>()
+        array.push(alswIII_ts, pr_w3sw1_ts)
+        array.push(alswIII_p,  pr_w3sw1_p)
+        array.push(alswIII_names, "WIII.sw1")
+        array.push(alswIII_ohlc, "H")
+        array.push(alswIII_fibs, "--")
+        array.push(alswIII_ts, pr_w3sw2_ts)
+        array.push(alswIII_p,  pr_w3sw2_p)
+        array.push(alswIII_names, "WIII.sw2")
+        array.push(alswIII_ohlc, "L")
+        array.push(alswIII_fibs, "55.5%")
+        array.push(alswIII_ts, pr_w3sw3_ts)
+        array.push(alswIII_p,  pr_w3sw3_p)
+        array.push(alswIII_names, "WIII.sw3")
+        array.push(alswIII_ohlc, "H")
+        array.push(alswIII_fibs, "109.7%")
+        array.push(alswIII_ts, pr_w3sw4_ts)
+        array.push(alswIII_p,  pr_w3sw4_p)
+        array.push(alswIII_names, "WIII.sw4")
+        array.push(alswIII_ohlc, "L")
+        array.push(alswIII_fibs, "46.9%")
+        array.push(alswIII_ts, pr_w3sw5_ts)
+        array.push(alswIII_p,  pr_w3sw5_p)
+        array.push(alswIII_names, "WIII.sw5")
+        array.push(alswIII_ohlc, "H")
+        array.push(alswIII_fibs, "182.2%")
+        int aIsIII = 1
+        while aIsIII < array.size(alswIII_ts)
+            array.push(allLines, line.new(array.get(alswIII_ts, aIsIII - 1), array.get(alswIII_p, aIsIII - 1), array.get(alswIII_ts, aIsIII), array.get(alswIII_p, aIsIII), xloc=xloc.bar_time, color=alswUpCol, style=STYLE_DASHED, width=1))
+            aIsIII += 1
+        if showLabels
+            int asliIII = 0
+            while asliIII < array.size(alswIII_ts)
+                bool is_coincIII = asliIII == array.size(alswIII_ts) - 1
+                if not is_coincIII
+                    string aslohlcIII = array.get(alswIII_ohlc, asliIII)
+                    float  aslpIII    = array.get(alswIII_p, asliIII)
+                    string aslfIII    = array.get(alswIII_fibs, asliIII)
+                    string aslttIII   = "$" + str.tostring(aslpIII, "#.##") + (aslfIII != "--" ? "\nFib:" + aslfIII : "")
+                    float  asw_yoIII  = aslohlcIII == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if aslohlcIII == "H"
+                        array.push(allLabels, label.new(array.get(alswIII_ts, asliIII), aslpIII + asw_yoIII, array.get(alswIII_names, asliIII), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswUpCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttIII))
+                    else
+                        array.push(allLabels, label.new(array.get(alswIII_ts, asliIII), aslpIII + asw_yoIII, array.get(alswIII_names, asliIII), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswUpCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttIII))
+                asliIII += 1
+
+        // WIV subwaves
+        array<int>    alswIV_ts    = array.new<int>()
+        array<float>  alswIV_p     = array.new<float>()
+        array<string> alswIV_names = array.new<string>()
+        array<string> alswIV_ohlc  = array.new<string>()
+        array<string> alswIV_fibs  = array.new<string>()
+        array.push(alswIV_ts, pr_w4swa_ts)
+        array.push(alswIV_p,  pr_w4swa_p)
+        array.push(alswIV_names, "WIV.swa")
+        array.push(alswIV_ohlc, "L")
+        array.push(alswIV_fibs, "--")
+        array.push(alswIV_ts, pr_w4swb_ts)
+        array.push(alswIV_p,  pr_w4swb_p)
+        array.push(alswIV_names, "WIV.swb")
+        array.push(alswIV_ohlc, "H")
+        array.push(alswIV_fibs, "87.9%")
+        array.push(alswIV_ts, pr_w4swc_ts)
+        array.push(alswIV_p,  pr_w4swc_p)
+        array.push(alswIV_names, "WIV.swc")
+        array.push(alswIV_ohlc, "L")
+        array.push(alswIV_fibs, "148.1%")
+        int aIsIV = 1
+        while aIsIV < array.size(alswIV_ts)
+            array.push(allLines, line.new(array.get(alswIV_ts, aIsIV - 1), array.get(alswIV_p, aIsIV - 1), array.get(alswIV_ts, aIsIV), array.get(alswIV_p, aIsIV), xloc=xloc.bar_time, color=alswDnCol, style=STYLE_DASHED, width=1))
+            aIsIV += 1
+        if showLabels
+            int asliIV = 0
+            while asliIV < array.size(alswIV_ts)
+                bool is_coincIV = asliIV == array.size(alswIV_ts) - 1
+                if not is_coincIV
+                    string aslohlcIV = array.get(alswIV_ohlc, asliIV)
+                    float  aslpIV    = array.get(alswIV_p, asliIV)
+                    string aslfIV    = array.get(alswIV_fibs, asliIV)
+                    string aslttIV   = "$" + str.tostring(aslpIV, "#.##") + (aslfIV != "--" ? "\nFib:" + aslfIV : "")
+                    float  asw_yoIV  = aslohlcIV == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if aslohlcIV == "H"
+                        array.push(allLabels, label.new(array.get(alswIV_ts, asliIV), aslpIV + asw_yoIV, array.get(alswIV_names, asliIV), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswDnCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttIV))
+                    else
+                        array.push(allLabels, label.new(array.get(alswIV_ts, asliIV), aslpIV + asw_yoIV, array.get(alswIV_names, asliIV), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswDnCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttIV))
+                asliIV += 1
+
+        // AWA subwaves
+        array<int>    alswAWA_ts    = array.new<int>()
+        array<float>  alswAWA_p     = array.new<float>()
+        array<string> alswAWA_names = array.new<string>()
+        array<string> alswAWA_ohlc  = array.new<string>()
+        array<string> alswAWA_fibs  = array.new<string>()
+        array.push(alswAWA_ts, pr_waswa_ts)
+        array.push(alswAWA_p,  pr_waswa_p)
+        array.push(alswAWA_names, "AWA.swa")
+        array.push(alswAWA_ohlc, "L")
+        array.push(alswAWA_fibs, "--")
+        array.push(alswAWA_ts, pr_waswb_ts)
+        array.push(alswAWA_p,  pr_waswb_p)
+        array.push(alswAWA_names, "AWA.swb")
+        array.push(alswAWA_ohlc, "H")
+        array.push(alswAWA_fibs, "64.0%")
+        array.push(alswAWA_ts, pr_waswc_ts)
+        array.push(alswAWA_p,  pr_waswc_p)
+        array.push(alswAWA_names, "AWA.swc")
+        array.push(alswAWA_ohlc, "L")
+        array.push(alswAWA_fibs, "233.7%")
+        int aIsAWA = 1
+        while aIsAWA < array.size(alswAWA_ts)
+            array.push(allLines, line.new(array.get(alswAWA_ts, aIsAWA - 1), array.get(alswAWA_p, aIsAWA - 1), array.get(alswAWA_ts, aIsAWA), array.get(alswAWA_p, aIsAWA), xloc=xloc.bar_time, color=alswDnCol, style=STYLE_DASHED, width=1))
+            aIsAWA += 1
+        if showLabels
+            int asliAWA = 0
+            while asliAWA < array.size(alswAWA_ts)
+                bool is_coincAWA = asliAWA == array.size(alswAWA_ts) - 1
+                if not is_coincAWA
+                    string aslohlcAWA = array.get(alswAWA_ohlc, asliAWA)
+                    float  aslpAWA    = array.get(alswAWA_p, asliAWA)
+                    string aslfAWA    = array.get(alswAWA_fibs, asliAWA)
+                    string aslttAWA   = "$" + str.tostring(aslpAWA, "#.##") + (aslfAWA != "--" ? "\nFib:" + aslfAWA : "")
+                    float  asw_yoAWA  = aslohlcAWA == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if aslohlcAWA == "H"
+                        array.push(allLabels, label.new(array.get(alswAWA_ts, asliAWA), aslpAWA + asw_yoAWA, array.get(alswAWA_names, asliAWA), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswDnCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttAWA))
+                    else
+                        array.push(allLabels, label.new(array.get(alswAWA_ts, asliAWA), aslpAWA + asw_yoAWA, array.get(alswAWA_names, asliAWA), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswDnCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttAWA))
+                asliAWA += 1
+
+        // AWB subwaves
+        array<int>    alswAWB_ts    = array.new<int>()
+        array<float>  alswAWB_p     = array.new<float>()
+        array<string> alswAWB_names = array.new<string>()
+        array<string> alswAWB_ohlc  = array.new<string>()
+        array<string> alswAWB_fibs  = array.new<string>()
+        array.push(alswAWB_ts, pr_wbswa_ts)
+        array.push(alswAWB_p,  pr_wbswa_p)
+        array.push(alswAWB_names, "AWB.swa")
+        array.push(alswAWB_ohlc, "H")
+        array.push(alswAWB_fibs, "--")
+        array.push(alswAWB_ts, pr_wbswb_ts)
+        array.push(alswAWB_p,  pr_wbswb_p)
+        array.push(alswAWB_names, "AWB.swb")
+        array.push(alswAWB_ohlc, "L")
+        array.push(alswAWB_fibs, "45.9%")
+        array.push(alswAWB_ts, pr_wbswc_ts)
+        array.push(alswAWB_p,  pr_wbswc_p)
+        array.push(alswAWB_names, "AWB.swc")
+        array.push(alswAWB_ohlc, "H")
+        array.push(alswAWB_fibs, "210.1%")
+        int aIsAWB = 1
+        while aIsAWB < array.size(alswAWB_ts)
+            array.push(allLines, line.new(array.get(alswAWB_ts, aIsAWB - 1), array.get(alswAWB_p, aIsAWB - 1), array.get(alswAWB_ts, aIsAWB), array.get(alswAWB_p, aIsAWB), xloc=xloc.bar_time, color=alswUpCol, style=STYLE_DASHED, width=1))
+            aIsAWB += 1
+        if showLabels
+            int asliAWB = 0
+            while asliAWB < array.size(alswAWB_ts)
+                bool is_coincAWB = asliAWB == array.size(alswAWB_ts) - 1
+                if not is_coincAWB
+                    string aslohlcAWB = array.get(alswAWB_ohlc, asliAWB)
+                    float  aslpAWB    = array.get(alswAWB_p, asliAWB)
+                    string aslfAWB    = array.get(alswAWB_fibs, asliAWB)
+                    string aslttAWB   = "$" + str.tostring(aslpAWB, "#.##") + (aslfAWB != "--" ? "\nFib:" + aslfAWB : "")
+                    float  asw_yoAWB  = aslohlcAWB == "H" ? priceRange * 0.04 : -(priceRange * 0.04)
+                    if aslohlcAWB == "H"
+                        array.push(allLabels, label.new(array.get(alswAWB_ts, asliAWB), aslpAWB + asw_yoAWB, array.get(alswAWB_names, asliAWB), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_down, color=alswUpCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttAWB))
+                    else
+                        array.push(allLabels, label.new(array.get(alswAWB_ts, asliAWB), aslpAWB + asw_yoAWB, array.get(alswAWB_names, asliAWB), xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_up, color=alswUpCol, textcolor=color.white, size=size.tiny, textalign=text.align_center, tooltip=aslttAWB))
+                asliAWB += 1
+
     // === CHANNEL ===
     if showChannel and drawPrimary
         float ch_slope      = (pr_w3_p - pr_w1_p) / float(pr_w3_ts - pr_w1_ts)
@@ -1036,3 +1307,5 @@ if barstate.islast
             array.push(allLabels, label.new(leg_x, leg_base - legendStep, "Alternate Count (47%)", xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=AL_MOTIVE_UP, textcolor=color.white, size=size.small, textalign=text.align_center))
         if showSubwaves and drawPrimary
             array.push(allLabels, label.new(leg_x, leg_base - legendStep * 2.0, "Subwaves (Primary)", xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=color.new(PR_MOTIVE_UP, swLabelTransp), textcolor=color.white, size=size.small, textalign=text.align_center))
+        if showSubwaves and drawAlternate
+            array.push(allLabels, label.new(leg_x, leg_base - legendStep * 3.0, "Subwaves (Alternate)", xloc=xloc.bar_time, yloc=yloc.price, style=label.style_label_left, color=color.new(AL_MOTIVE_UP, swLabelTransp), textcolor=color.white, size=size.small, textalign=text.align_center))

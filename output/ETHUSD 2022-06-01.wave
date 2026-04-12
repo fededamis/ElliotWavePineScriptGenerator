@@ -52,6 +52,32 @@ SUBWAVES (Primary — confirmed waves only)
 | WC.swb   | 2025-10-21 | $4109.53 | H    | 43.5%  | hist |
 | WC.swc   | 2026-02-06 | $1748.63 | L    | 158.1% | hist |
 
+SUBWAVES (Alternate — confirmed waves only)
+| Wave     | Date       | Price    | OHLC | Fib    | Type |
+|----------|------------|----------|------|--------|------|
+| WI.sw1   | 2022-07-08 | $1262.89 | H    | --     | hist |
+| WI.sw2   | 2022-07-13 | $1019.22 | L    | 66.4%  | hist |
+| WI.sw3   | 2022-07-28 | $1774.58 | H    | 205.9% | hist |
+| WI.sw4   | 2022-08-02 | $1567.85 | L    | 27.4%  | hist |
+| WI.sw5   | 2022-08-14 | $2022.79 | H    | 124.0% | hist |
+| WII.swa  | 2022-09-21 | $1229.43 | L    | --     | hist |
+| WII.swb  | 2022-11-04 | $1661.33 | H    | 54.4%  | hist |
+| WII.swc  | 2022-11-22 | $1081.14 | L    | 73.1%  | hist |
+| WIII.sw1 | 2023-04-16 | $2137.45 | H    | --     | hist |
+| WIII.sw2 | 2023-08-17 | $1551.71 | L    | 55.5%  | hist |
+| WIII.sw3 | 2024-01-12 | $2710.42 | H    | 109.7% | hist |
+| WIII.sw4 | 2024-01-23 | $2167.28 | L    | 46.9%  | hist |
+| WIII.sw5 | 2024-03-12 | $4092.28 | H    | 182.2% | hist |
+| WIV.swa  | 2024-04-13 | $2862.39 | L    | --     | hist |
+| WIV.swb  | 2024-05-23 | $3943.55 | H    | 87.9%  | hist |
+| WIV.swc  | 2024-08-05 | $2122.55 | L    | 148.1% | hist |
+| AWA.swa  | 2024-12-20 | $3098.20 | L    | --     | hist |
+| AWA.swb  | 2025-01-06 | $3743.94 | H    | 64.0%  | hist |
+| AWA.swc  | 2025-04-09 | $1386.80 | L    | 233.7% | hist |
+| AWB.swa  | 2025-05-13 | $2736.89 | H    | --     | hist |
+| AWB.swb  | 2025-06-22 | $2116.68 | L    | 45.9%  | hist |
+| AWB.swc  | 2025-08-24 | $4953.73 | H    | 210.1% | hist |
+
 ALTERNATE COUNT (47% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
 |------|------------|----------|------|--------|------|
@@ -68,4 +94,4 @@ ALTERNATE COUNT (47% confidence)
 
 Primary invalidation: $896.11 (W0 origin) | Primary target: $3950.00 (WX5 Fib extension)
 Alternate invalidation: $1081.14 (WII) | Alternate target: $1160.00 (AWC Fib 61.8%)
-Subwave confirmation: W1✓ W2✓ W3✓ W4✓ W5✓ WA✓ WB✓ WC✓
+Subwave confirmation: W1✓ W2✓ W3✓ W4✓ W5✓ WA✓ WB✓ WC✓ | Alt: WI✓ WII✓ WIII✓ WIV✓ WV✗(sw4/sw1 overlap — diagonal not confirmed) AWA✓ AWB✓

@@ -143,7 +143,7 @@ If a wave spans fewer bars than required on the subwave chart (motive < 5 bars, 
 - Any subwave EW rule violation: primary count is INVALIDATED (see rule above) — confidence adjustments do not apply; a valid count must be found instead
 - If fewer than 2 waves can be subwave-confirmed (too few bars or data unavailable): note "subwave confirmation: insufficient data" — do not penalize confidence
 
-**Alternate count subwaves:** Only if the alternate count has at least 2 historical waves spanning sufficient bars (motive ≥ 5 bars, corrective ≥ 3 bars), produce a `SUBWAVES (Alternate — confirmed waves only)` section using the same naming conventions (e.g. `WI.sw1`…`WI.sw5`, `WA.swa`…`WA.swc`). If fewer than 2 alternate waves qualify, omit the section entirely. The same one-level depth limit applies.
+**Alternate count subwaves:** Apply the same MANDATORY COVERAGE RULE as the primary count. Attempt subwave identification for every alternate wave (motive ≥ 5 bars, corrective ≥ 3 bars on the subwave chart). Produce a `SUBWAVES (Alternate — confirmed waves only)` section using the same naming conventions (e.g. `WI.sw1`…`WI.sw5`, `WA.swa`…`WA.swc`). The same one-level depth limit applies. Mark each wave ✓, ⚠, or ✗(reason) — `✗(insuf)` is only valid for waves below the bar minimum; it is NOT valid for waves where data exists. Omit the section only when every single alternate wave qualifies as `✗(insuf)` — even one qualifying wave requires the section to be emitted.
 
 **Step 5 — Select the PRIMARY Count**
 - Choose the wave count that satisfies all three Elliott Wave rules
