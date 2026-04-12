@@ -91,6 +91,7 @@ For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5
   1. sw2 never retraces more than 100% of sw1 (sw2's extreme cannot go beyond the start of sw1, i.e. the parent wave's origin)
   2. sw3 is never the shortest among sw1, sw3, and sw5
   3. sw4 never overlaps sw1's price territory
+- **SUBWAVE BOUNDARY RULE: Every subwave pivot (sw1–sw5) must fall strictly within the time and price span of its parent wave. A subwave whose date or price lies beyond the parent wave's endpoint belongs to the next parent wave — remove it. If removal leaves fewer than the required pivots (5 for motive, 3 for corrective), the parent wave boundaries are wrong. STOP. Return to Step 5, re-count the parent waves with a corrected endpoint, and re-run subwave verification. Do not retain partial subwave sets or emit a `⚠` warning as a substitute for re-counting.**
 - **If any of these three rules is violated, the PRIMARY COUNT IS INVALIDATED. The three absolute EW rules apply at every wave degree — a violation at the subwave level means the primary pivot labeling is wrong (the parent wave's start or end was mislabeled). STOP. Do not output the current primary count. Return to Step 5, select a different pivot set, and re-run subwave verification. Repeat until a primary count is found whose subwaves all satisfy the three rules.**
 
 For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that spans at least 3 bars on the subwave chart:

@@ -133,10 +133,6 @@ int   pr_w3sw2_ts = timestamp(2023, 8, 17)
 float pr_w3sw2_p  = 1551.71
 int   pr_w3sw3_ts = timestamp(2024, 3, 12)
 float pr_w3sw3_p  = 4092.28
-int   pr_w3sw4_ts = timestamp(2024, 4, 13)
-float pr_w3sw4_p  = 2862.39
-int   pr_w3sw5_ts = timestamp(2024, 5, 27)
-float pr_w3sw5_p  = 3973.56
 
 // W4 subwaves (ABC)
 int   pr_w4swa_ts = timestamp(2024, 8, 5)
@@ -387,7 +383,7 @@ if barstate.islast
                 float lyoff = array.get(pr_yoffs, li)
                 string ltxt = makePivotText(lname, lprice, lfib, false, isProj2)
                 float labelY = lprice + lyoff
-                string lswTooltip = lname == "W3" ? "W3.sw5\nFib:78.6%" : lname == "W4" ? "W4.swc\nFib:61.8%" : lname == "W5" ? "W5.sw5\nFib:100.0%" : na
+                string lswTooltip = lname == "W3" ? "W3.sw3\nFib:161.8%" : lname == "W4" ? "W4.swc\nFib:61.8%" : lname == "W5" ? "W5.sw5\nFib:100.0%" : na
                 color lblCol = PR_MOTIVE_UP
                 if li > 0
                     lblCol := array.get(pr_segColors, li - 1)
@@ -587,16 +583,6 @@ if barstate.islast
         array.push(sw3_names, "W3.sw3")
         array.push(sw3_ohlc, "H")
         array.push(sw3_fibs, "161.8%")
-        array.push(sw3_ts, pr_w3sw4_ts)
-        array.push(sw3_p, pr_w3sw4_p)
-        array.push(sw3_names, "W3.sw4")
-        array.push(sw3_ohlc, "L")
-        array.push(sw3_fibs, "38.2%")
-        array.push(sw3_ts, pr_w3sw5_ts)
-        array.push(sw3_p, pr_w3sw5_p)
-        array.push(sw3_names, "W3.sw5")
-        array.push(sw3_ohlc, "H")
-        array.push(sw3_fibs, "78.6%")
 
         int s3i = 1
         while s3i < array.size(sw3_ts)
