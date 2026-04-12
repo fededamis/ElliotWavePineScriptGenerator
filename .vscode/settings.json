@@ -26,6 +26,7 @@
       "matchCommandLine": true
     },
     "Get-Member": true,
-    "Get-Item": true
+    "Get-Item": true,
+    "ForEach-Object": true
   }
 }

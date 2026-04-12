@@ -98,7 +98,13 @@ For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5
 For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that spans at least 3 bars on the subwave chart:
 - Identify the 3 internal subwave pivots (swa, swb, swc) on the subwave chart
 - Label them as `W2.swa`, `W2.swb`, `W2.swc` (etc.)
-- Verify zigzag, flat, or triangle structure is internally consistent
+- Identify which corrective pattern applies and verify its internal consistency rules (all are absolute — any violation is INVALID; select different swa/swb/swc pivots):
+  - **Zigzag (5-3-5):** swB retraces between 38.2%–78.6% of swA; swC MUST end at or beyond swA (swc low ≤ swa low for a bearish correction, swc high ≥ swa high for a bullish correction); swC is typically equal to swA or 1.618× swA; a swC that fails to reach the swA terminus is a truncated C and is INVALID.
+  - **Flat (3-3-5):** swB retraces 85%–105% of swA (swB terminus approaches or slightly exceeds the correction's origin); swC ends near or slightly beyond swA (swc low ≤ swa low ± 5% of swA move for a bearish flat); a swB that retraces less than 85% of swA is not a flat — reclassify as zigzag or triangle.
+  - **Running Flat:** Same as flat except swB exceeds the correction's origin (retraces > 100% of swA) and swC fails to reach swA — this is the only valid structure where swC does not reach swA; must be explicitly labeled as running flat in the Subwave confirmation line.
+  - **Expanded Flat:** swB exceeds the correction's origin (> 100% of swA); swC ends beyond swA (swc extreme exceeds swa extreme); swC is typically 1.236×–1.618× swA.
+  - **Triangle (3-3-3-3-3, five sub-legs a–b–c–d–e):** Each successive leg is shorter than the preceding leg (converging); sub-legs alternate direction; the triangle must fit within converging trendlines; label sub-legs as swa/swb/swc/swd/swe; triangles are only valid for W4 or WB (never W2).
+  - **If the pattern type cannot be determined** (swB retracement does not fit any category above): the corrective structure is ambiguous — use the pivot set that most closely satisfies the flat rules and note `⚠(ambiguous flat/zigzag)` in the Subwave confirmation line.
 
 If a wave spans fewer bars than required on the subwave chart (motive < 5 bars, corrective < 3 bars), mark it as `✗(insuf)` in the Subwave note — do not silently omit it.
 
