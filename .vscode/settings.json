@@ -28,6 +28,8 @@
     "Get-Member": true,
     "Get-Item": true,
     "ForEach-Object": true,
-    "927..931": true
+    "927..931": true,
+    "Add-Type": true,
+    "New-Object": true
   }
 }

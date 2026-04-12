@@ -65,6 +65,13 @@ Output before Step 2: `Degree: [Name] ([N]-day span, [X]% price range)`
   - **Retracement rows** (W2, W4 in motive; corrective waves that retrace the prior leg): `|wave_end − wave_start| ÷ |prior_motive_leg_end − prior_motive_leg_start| × 100`. For W2: prior leg = W1 (W0→W1). For W4: prior leg = W3 (W2→W3).
   - **Extension rows** (W1 beyond W0 anchor, W3, W5 in motive; WB, WC in corrective): `|wave_end − wave_start| ÷ |W1_range| × 100`, where W1_range = |W1_end − W0|. For corrective extensions (WB, WC): use `|wave_end − wave_start| ÷ |WA_range| × 100`.
   - Round to one decimal place. A value that coincidentally matches a standard Fib level is valid only if derived by this formula.
+  - Apply the **EXTENSION CEILING GUARD** (see below) to every extension row.
+
+**EXTENSION CEILING GUARD (applies to every extension row at every degree — primary waves and subwaves):**
+Extensions above 261.8% are uncommon; above 423.6% they are extremely rare and almost always indicate a misidentified anchor pivot. Apply this procedure to any extension row (W3, W5, WB, WC at the primary level; sw3, sw5, swc at the subwave level) whose computed value exceeds 261.8%:
+1. **Re-examine the anchor.** For primary waves, verify the W1 range (W0→W1) or WA range was not a micro-swing. For subwaves, walk back through the parent wave's interior and find a more significant anchor pivot (deeper sw1 / swa).
+2. **Recompute.** If the result falls at a recognized Fibonacci extension (261.8%, 361.8%, or 423.6%), it is structurally permissible — accept the pivot but mark it `⚠(ext >261.8%)` in the Subwave confirmation line and ensure the alternate count reflects a more conservative anchor interpretation. Extensions in this range are uncommon; the `⚠` signals reduced confidence, not a hard error.
+3. **If still above 423.6% after step 1–2:** the anchor is misidentified and the current pivot set is invalid. For primary waves, select a different W0/W1 or WA endpoint and recount. For subwaves, mark the wave `✗(no valid anchor)` in the Subwave confirmation line and omit its rows from the output.
 
 **Step 4.5 — Identify Subwaves (one level of depth only)**
 
@@ -118,7 +125,8 @@ For **each corrective wave** (W2, W4, WA, WB, WC) in the primary count that span
   - **Anchor row** (sw1 in motive; swa in corrective): always `--`. No computation.
   - **Retracement rows** (sw2, sw4 in motive; swb in corrective): `|pivot_price − prev_pivot_price| ÷ |anchor_end − anchor_start| × 100`, where the anchor is the immediately preceding leg (sw1 for sw2; sw3 for sw4; swa for swb).
   - **Extension/continuation rows** (sw3, sw5 in motive; swc in corrective): `|pivot_price − prev_pivot_price| ÷ |anchor_end − anchor_start| × 100`, where the anchor is sw1 (for sw3 and sw5 in motive) or swa (for swc in corrective). swc_start is the swb terminus.
-  - After computing, round to one decimal place (e.g. `233.7%`, `45.9%`). A result that coincidentally matches a standard Fib level is valid only if it was derived by this formula. Never output a round standard value without showing it was computed. Values above 100% are normal and expected for extension legs.**
+  - After computing, round to one decimal place (e.g. `233.7%`, `45.9%`). A result that coincidentally matches a standard Fib level is valid only if it was derived by this formula. Never output a round standard value without showing it was computed. Values above 100% are normal and expected for extension legs.
+  - Apply the **EXTENSION CEILING GUARD** (defined in Step 4) to every extension row.
 - Identify which corrective pattern applies and verify its internal consistency rules (all are absolute — any violation is INVALID; select different swa/swb/swc pivots):
   - **Zigzag (5-3-5):** swB retraces between 38.2%–78.6% of swA; swC MUST end at or beyond swA (swc low ≤ swa low for a bearish correction, swc high ≥ swa high for a bullish correction); swC is typically equal to swA or 1.618× swA; a swC that fails to reach the swA terminus is a truncated C and is INVALID.
   - **Flat (3-3-5):** swB retraces 85%–105% of swA (swB terminus approaches or slightly exceeds the correction's origin); swC ends near or slightly beyond swA (swc low ≤ swa low ± 5% of swA move for a bearish flat); a swB that retraces less than 85% of swA is not a flat — reclassify as zigzag or triangle.

@@ -48,9 +48,9 @@ SUBWAVES (Primary — confirmed waves only)
 | WB.swa   | 2025-05-13 | $2736.89 | H    | --     | hist |
 | WB.swb   | 2025-06-22 | $2116.68 | L    | 45.9%  | hist |
 | WB.swc   | 2025-08-24 | $4953.73 | H    | 210.1% | hist |
-| WC.swa   | 2025-08-26 | $4316.30 | L    | --     | hist |
-| WC.swb   | 2025-09-13 | $4763.36 | H    | 70.1%  | hist |
-| WC.swc   | 2026-02-06 | $1748.63 | L    | 472.9% | hist |
+| WC.swa   | 2025-10-10 | $3460.22 | L    | --     | hist |
+| WC.swb   | 2025-10-21 | $4109.53 | H    | 43.5%  | hist |
+| WC.swc   | 2026-02-06 | $1748.63 | L    | 158.1% | hist |
 
 ALTERNATE COUNT (47% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
