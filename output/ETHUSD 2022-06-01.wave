@@ -1,6 +1,6 @@
-Degree: Cycle (1403-day span, 452.8% price range)
+Degree: Cycle (1411-day span, 452.8% price range)
 
-PRIMARY COUNT (72% confidence)
+PRIMARY COUNT (74% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
 |------|------------|----------|------|--------|------|
 | W0   | 2022-06-18 | $896.11  | L    | --     | hist |
@@ -9,9 +9,14 @@ PRIMARY COUNT (72% confidence)
 | W3   | 2024-03-12 | $4092.28 | H    | 161.8% | hist |
 | W4   | 2024-08-05 | $2122.55 | L    | 38.2%  | hist |
 | W5   | 2024-12-16 | $4106.96 | H    | 176.4% | hist |
-| WA   | 2025-03-11 | $1760.94 | L    | 118.2% | hist |
-| WB   | 2025-04-28 | $3210.78 | H    | 61.8%  | proj |
-| WC   | 2025-09-15 | $1760.94 | L    | 100%   | proj |
+| WA   | 2025-04-09 | $1386.80 | L    | --     | hist |
+| WB   | 2025-08-24 | $4953.73 | H    | 131.1% | hist |
+| WC   | 2026-02-06 | $1748.63 | L    | --     | hist |
+| WX1  | 2026-03-16 | $2384.47 | H    | 36.5%  | hist |
+| WX2  | 2026-03-29 | $1939.53 | L    | 69.9%  | hist |
+| WX3  | 2026-07-07 | $2968.00 | H    | 161.8% | proj |
+| WX4  | 2026-09-14 | $2575.00 | L    | 38.2%  | proj |
+| WX5  | 2026-12-21 | $3950.00 | H    | 100%   | proj |
 
 SUBWAVES (Primary — confirmed waves only)
 | Wave     | Date       | Price    | OHLC | Fib    | Type |
@@ -26,28 +31,41 @@ SUBWAVES (Primary — confirmed waves only)
 | W2.swc   | 2022-11-22 | $1081.14 | L    | 100%   | hist |
 | W3.sw1   | 2023-04-16 | $2137.45 | H    | --     | hist |
 | W3.sw2   | 2023-08-17 | $1551.71 | L    | 61.8%  | hist |
-| W3.sw3   | 2024-01-08 | $2710.42 | H    | 109.7% | hist |
-| W3.sw4   | 2024-01-22 | $2167.28 | L    | 46.9%  | hist |
-| W3.sw5   | 2024-03-11 | $4092.28 | H    | 182.2% | hist |
+| W3.sw3   | 2024-01-12 | $2710.42 | H    | 109.7% | hist |
+| W3.sw4   | 2024-01-23 | $2167.28 | L    | 46.9%  | hist |
+| W3.sw5   | 2024-03-12 | $4092.28 | H    | 182.2% | hist |
 | W4.swa   | 2024-04-13 | $2862.39 | L    | --     | hist |
 | W4.swb   | 2024-05-23 | $3943.55 | H    | 87.9%  | hist |
 | W4.swc   | 2024-08-05 | $2122.55 | L    | 148.1% | hist |
 | W5.sw1   | 2024-08-24 | $2820.02 | H    | --     | hist |
-| W5.sw2   | 2024-09-06 | $2150.86 | L    | 100%   | hist |
+| W5.sw2   | 2024-09-06 | $2150.86 | L    | 95.9%  | hist |
 | W5.sw3   | 2024-11-12 | $3444.15 | H    | 176.4% | hist |
-| W5.sw4   | 2024-11-25 | $2950.11 | L    | 38.2%  | hist |
+| W5.sw4   | 2024-11-20 | $3032.60 | L    | 38.2%  | hist |
 | W5.sw5   | 2024-12-16 | $4106.96 | H    | 100%   | hist |
+| WA.swa   | 2024-12-20 | $3098.20 | L    | --     | hist |
+| WA.swb   | 2025-01-06 | $3743.94 | H    | 64.0%  | hist |
+| WA.swc   | 2025-04-09 | $1386.80 | L    | 100%   | hist |
+| WB.swa   | 2025-05-13 | $2736.89 | H    | --     | hist |
+| WB.swb   | 2025-06-22 | $2116.68 | L    | 45.9%  | hist |
+| WB.swc   | 2025-08-24 | $4953.73 | H    | 100%   | hist |
+| WC.swa   | 2025-08-26 | $4316.30 | L    | --     | hist |
+| WC.swb   | 2025-09-13 | $4763.36 | H    | 70.1%  | hist |
+| WC.swc   | 2026-02-06 | $1748.63 | L    | 100%   | hist |
 
-ALTERNATE COUNT (55% confidence)
+ALTERNATE COUNT (47% confidence)
 | Wave | Date       | Price    | OHLC | Fib    | Type |
 |------|------------|----------|------|--------|------|
 | W0   | 2022-06-18 | $896.11  | L    | --     | hist |
 | WI   | 2022-08-14 | $2022.79 | H    | --     | hist |
 | WII  | 2022-11-22 | $1081.14 | L    | 61.8%  | hist |
-| WIII | 2025-08-24 | $4953.73 | H    | 261.8% | proj |
-| WIV  | 2026-02-06 | $1748.63 | L    | 50.0%  | proj |
-| WV   | 2026-09-01 | $5800.00 | proj | 100%   | proj |
+| WIII | 2024-03-12 | $4092.28 | H    | 161.8% | hist |
+| WIV  | 2024-08-05 | $2122.55 | L    | 38.2%  | hist |
+| WV   | 2025-08-24 | $4953.73 | H    | 176.4% | hist |
+| AWA  | 2026-02-06 | $1748.63 | L    | --     | hist |
+| AWB  | 2026-03-16 | $2384.47 | H    | 19.8%  | hist |
+| AWB2 | 2026-06-15 | $2974.00 | H    | 38.2%  | proj |
+| AWC  | 2026-12-01 | $1160.00 | L    | 61.8%  | proj |
 
-Primary invalidation: $896.11  |  Primary target: $1760.94 (Fib 100%)
-Alternate invalidation: $1081.14  |  Alternate target: $5800.00 (Fib 100%)
-Subwave confirmation: W1✓ W2✓ W3✓ W4✓ W5✓
+Primary invalidation: $896.11 (W0 origin) | Primary target: $3950.00 (WX5 Fib extension)
+Alternate invalidation: $1081.14 (WII) | Alternate target: $1160.00 (AWC Fib 61.8%)
+Subwave confirmation: W1✓ W2✓ W3✓ W4✓ W5✓ WA✓ WB✓ WC✓
