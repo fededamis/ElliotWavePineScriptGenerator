@@ -490,7 +490,7 @@ if barstate.islast
                 string ltxt   = makePivotText(lname, lprice, lfib, false, isProj2)
                 float  labelY = lprice + lyoff
                 // inject coincident subwave fibs as tooltips
-                string lswTooltip = lname == "W1" ? "W1.sw5\nFib:100%" : lname == "W2" ? "W2.swc\nFib:100%" : lname == "W3" ? "W3.sw5\nFib:182.2%" : lname == "W4" ? "W4.swc\nFib:148.1%" : lname == "W5" ? "W5.sw5\nFib:100%" : lname == "WA" ? "WA.swc\nFib:100%" : lname == "WB" ? "WB.swc\nFib:100%" : lname == "WC" ? "WC.swc\nFib:100%" : na
+                string lswTooltip = lname == "W1" ? "W1.sw5\nFib:124.0%" : lname == "W2" ? "W2.swc\nFib:73.1%" : lname == "W3" ? "W3.sw5\nFib:182.2%" : lname == "W4" ? "W4.swc\nFib:148.1%" : lname == "W5" ? "W5.sw5\nFib:154.1%" : lname == "WA" ? "WA.swc\nFib:233.7%" : lname == "WB" ? "WB.swc\nFib:210.1%" : lname == "WC" ? "WC.swc\nFib:472.9%" : na
                 color lblCol = PR_MOTIVE_UP
                 if li > 0
                     lblCol := array.get(pr_segColors, li - 1)
