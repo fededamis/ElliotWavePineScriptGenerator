@@ -92,6 +92,7 @@ For **each motive wave** (W1, W3, W5) in the primary count that spans at least 5
   2. **sw2 retrace %**: `(sw1_high − sw2_low) / (sw1_high − W_origin) × 100`. Must be ≤ 100%. If > 100%, sw2 pushed beyond the parent wave's origin — reject.
   3. **Impulse magnitudes**: compute `sw1_range = |sw1 − W_origin|`, `sw3_range = |sw3 − sw2|`, `sw5_range = |sw5 − sw4|`. sw3 must be strictly greater than BOTH sw1_range and sw5_range. If sw3 is the smallest of the three, reject.
   4. **sw4 / sw1 no-overlap**: for a bullish parent, `sw4_low > sw1_high`. For a bearish parent, `sw4_high < sw1_low`. If there is overlap, reject (unless a diagonal structure is explicitly declared).
+  4b. **sw4 corrective direction**: for a bullish parent, `sw4_low < sw3_high` (sw4 must retrace below sw3's peak — a "Low" priced above the preceding "High" is not a corrective trough). For a bearish parent, `sw4_high > sw3_low`. If this fails, the sw4 pivot is misidentified — reject.
   5. **Proportion floor**: each swN duration as % of parent wave total duration must be > 4%. Compute each; if any is ≤ 4%, reject.
   6. **Proportion ceiling**: each swN duration must be < 86% of parent wave total duration. If any is ≥ 86%, reject.
   7. **Sibling ratio**: `max(sw1…sw5 durations) / min(sw1…sw5 durations)` must be < 10. If ≥ 10, reject.

@@ -153,8 +153,8 @@ int   pr_w5sw2_ts = timestamp(2024, 9, 6)
 float pr_w5sw2_p  = 2150.86
 int   pr_w5sw3_ts = timestamp(2024, 11, 12)
 float pr_w5sw3_p  = 3444.15
-int   pr_w5sw4_ts = timestamp(2024, 12, 3)
-float pr_w5sw4_p  = 3504.23
+int   pr_w5sw4_ts = timestamp(2024, 11, 25)
+float pr_w5sw4_p  = 2950.11
 int   pr_w5sw5_ts = timestamp(2024, 12, 16)
 float pr_w5sw5_p  = 4106.96
 

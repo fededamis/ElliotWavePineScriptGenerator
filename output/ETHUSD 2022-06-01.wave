@@ -35,7 +35,7 @@ SUBWAVES (Primary — confirmed waves only)
 | W5.sw1   | 2024-08-24 | $2820.02 | H    | --     | hist |
 | W5.sw2   | 2024-09-06 | $2150.86 | L    | 100%   | hist |
 | W5.sw3   | 2024-11-12 | $3444.15 | H    | 176.4% | hist |
-| W5.sw4   | 2024-12-03 | $3504.23 | L    | 38.2%  | hist |
+| W5.sw4   | 2024-11-25 | $2950.11 | L    | 38.2%  | hist |
 | W5.sw5   | 2024-12-16 | $4106.96 | H    | 100%   | hist |
 
 ALTERNATE COUNT (55% confidence)
@@ -50,4 +50,4 @@ ALTERNATE COUNT (55% confidence)
 
 Primary invalidation: $896.11  |  Primary target: $1760.94 (Fib 100%)
 Alternate invalidation: $1081.14  |  Alternate target: $5800.00 (Fib 100%)
-Subwave confirmation: W1✓ W2✓ W3✓ W4✓ W5⚠(sw4 proportion borderline 3.96%; sw4 low above sw3 high — near-vertical W5 at Cycle degree; best available structure) → +9% confidence
+Subwave confirmation: W1✓ W2✓ W3✓ W4✓ W5✓
