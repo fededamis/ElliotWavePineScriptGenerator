@@ -93,9 +93,7 @@ Once both are provided, analyze [TICKER] starting from [START DATE] up to and in
 
 ### STEP A — ELLIOTT WAVE ANALYSIS
 
-
-
-
+> **Cache hit:** If the `.wave` file was read successfully in the WAVE DATA CACHE CHECK above, skip this step. Go directly to Step B.
 
 Execute the elliott-wave-analysis skill (`.claude/skills/elliott-wave-analysis.md`) in full — all 8 steps including subwave identification, primary count, alternate count, and projections.
 
