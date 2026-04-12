@@ -28,6 +28,11 @@ do not generate code that violates any of these, so they require no fix cycle du
 - **Use str.tostring(value, "#.##") for float formatting, not str.format() which doesn't support standard format specifiers in Pine v6**
 - **CRITICAL: Pine Script v6 does NOT support semicolons (`;`) as statement separators. Every statement must be on its own line. Never write `a() ; b() ; c()` on one line — write each call on a separate line.**
 
+### PIVOT DATA SOURCING — HARD RULE
+**All pivot dates, prices, Fibonacci labels, and OHLC values in the generated script MUST be copied verbatim from the `.wave` file. Do NOT derive, recall, approximate, or invent any pivot value from memory or training data. If a value is absent from the `.wave` file, the `.wave` file is incomplete — stop and report the gap; do not substitute a guessed value. This applies to both primary and alternate pivots and to all subwave rows in the `SUBWAVES` table.**
+
+**SUBWAVE BOUNDARY RULE (generation-time check): Before emitting any subwave timestamp variable, verify that its date falls strictly between the parent wave's start date and end date (both inclusive). A subwave with a date outside its parent's time span is a data error — do not emit it; report the violation and stop.**
+
 ### PROJECTED PIVOT SUBWAVE COUNTS
 When the .wave file contains projected pivots with subwave counts (e.g., "WA (3 sw)"), the Pine Script generation must:
 1. Parse the subwave count from the wave name — extract the number in parentheses (e.g., "3" from "WA (3 sw)")

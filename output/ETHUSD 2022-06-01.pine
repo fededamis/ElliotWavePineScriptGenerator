@@ -139,12 +139,12 @@ int   pr_w3sw5_ts = timestamp(2024, 3, 11)
 float pr_w3sw5_p  = 4092.28
 
 // W4 subwaves (ABC)
-int   pr_w4swa_ts = timestamp(2024, 5, 1)
-float pr_w4swa_p  = 2850.00
-int   pr_w4swb_ts = timestamp(2024, 6, 7)
-float pr_w4swb_p  = 3441.99
-int   pr_w4swc_ts = timestamp(2024, 8, 5)
-float pr_w4swc_p  = 2122.55
+int   pr_w4swa_ts = timestamp(2024, 8, 5)
+float pr_w4swa_p  = 2122.55
+int   pr_w4swb_ts = timestamp(2024, 9, 27)
+float pr_w4swb_p  = 2728.07
+int   pr_w4swc_ts = timestamp(2024, 10, 10)
+float pr_w4swc_p  = 2329.78
 
 // W5 subwaves
 int   pr_w5sw1_ts = timestamp(2024, 11, 12)
@@ -638,12 +638,12 @@ if barstate.islast
         array.push(sw4_p, pr_w4swb_p)
         array.push(sw4_names, "W4.swb")
         array.push(sw4_ohlc, "H")
-        array.push(sw4_fibs, "47.7%")
+        array.push(sw4_fibs, "61.8%")
         array.push(sw4_ts, pr_w4swc_ts)
         array.push(sw4_p, pr_w4swc_p)
         array.push(sw4_names, "W4.swc")
         array.push(sw4_ohlc, "L")
-        array.push(sw4_fibs, "106.2%")
+        array.push(sw4_fibs, "61.8%")
 
         int s4i = 1
         while s4i < array.size(sw4_ts)

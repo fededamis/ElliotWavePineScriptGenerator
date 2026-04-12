@@ -92,6 +92,7 @@ For any issue found, fix it silently using `replace_string_in_file` and continue
 - Array index access is always within bounds (no off-by-one errors)
 - All pivot timestamps are valid and in chronological order
 - Historical pivots end on or before today's date; every projected pivot date is strictly after today's date -- if any projected timestamp is <= today, shift it forward until it is after today
+- **SUBWAVE BOUNDARY CHECK: For every subwave group (sw1_ts, sw2_ts, sw3_ts, sw4_ts, sw5_ts arrays and their alternate equivalents), verify that every interior subwave timestamp (all entries except the anchor sw0 and the terminal coincident entry) falls strictly between the parent wave's start timestamp and end timestamp. A subwave timestamp that predates the parent wave's start or postdates the parent wave's end is a data error that cannot be silently fixed — the correct date/price requires real market data. STOP the validation pass, do NOT attempt to substitute a value, and report: `SUBWAVE BOUNDARY VIOLATION: [wave].swN timestamp [date] is outside parent [wave] span [start]→[end] — fix required in .wave file before regenerating.`**
 - Invalidation and target levels are on the correct side of current price
 - "Alternate Only" mode renders alternate lines as solid and full opacity — not dashed or transparent
 - Projected lines are dotted, distinct from solid historical (primary) and dashed historical (alternate)
