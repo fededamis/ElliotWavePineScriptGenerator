@@ -155,3 +155,33 @@ The validation subagent currently receives the full Pine Script as prompt text. 
 
 **6.5. Draft file pattern**
 Write a `.pine.draft` file after generation, before validation. The validation subagent reads the draft, writes the final `.pine`. If the session times out between the two steps, the draft survives and the next session can skip straight to validation without regenerating.
+
+---
+
+## 7. Visual Readability & UI Improvements (Pivot Rendering)
+
+Based on review of the generated `.pine` output (label collisions, legend placement, visual hierarchy). These target the `if barstate.islast` drawing block specifically.
+
+**7.1. Label Collision Detection (Labels, Not Just Pivots)**
+The current `pr_yoffs`/`al_yoffs` anti-overlap pass only compares raw pivot price/time proximity (`math.abs(p1 - p2) < priceRange * 0.05` and an 8-week time window). It doesn't account for the legend, target, and invalidation labels landing in the same screen region — exactly what causes the W1/W2/W4/Primary Target/Primary Count/legend pile-up bottom-right in dense charts. Add a second pass that also checks label bounding boxes (approximated by x-time window + fixed label height) against the target/invalidation/legend label positions, and pushes them further apart — including horizontal spread via `label.style_label_left`/`style_label_right`, not just vertical `up`/`down`.
+
+**7.2. Compact Labels by Default, Detail in Tooltip**
+`makePivotText()` currently renders 3 lines inline (`Name`, `$Price`, `Fib:%`) for every primary/alternate pivot. Move price and fib into the `tooltip` (already done for subwave labels) and show only the wave name inline for primary/alternate pivots too. Add a `showFullLabelDetail` bool input so users can opt back into the verbose 3-line style.
+
+**7.3. Visual Hierarchy: Historical vs Current vs Projected**
+All pivots currently render at the same `size.small`/`size.tiny` regardless of significance. Use `size.tiny` + higher color transparency for confirmed historical pivots (W0/WA/WB/WC), `size.normal` for the most recent confirmed pivot (the actionable "current" one), and a distinct bold/bright style for projected pivots (`proj` type) so they read as forecasts rather than confirmed structure.
+
+**7.4. Legend as `table.new()` Instead of Floating Labels**
+The `showLegend` block creates `label.new()` objects anchored to `todayTime + 7 days` or `pr_w0_ts - 30 days` at price-based y-coordinates. These can drift into price action or overlap other labels depending on zoom/pan. Replace with `table.new(position.bottom_right, ...)` (or user-selected corner) pinned to the screen, immune to chart panning/zooming.
+
+**7.5. Invalidation/Target Zones as Shaded Boxes**
+`pr_inval`/`pr_target` currently draw as thin dashed/dotted horizontal lines (`line.new(...)`), easy to miss on a busy chart. Replace with `box.new()` semi-transparent shaded zones spanning from the wave's start time to `todayTime` (or the projected pivot), making invalidation/target ranges immediately visible without tracing thin lines.
+
+**7.6. Leader/Connector Lines for Offset Labels**
+When `pr_yoffs`/`al_yoffs` displaces a label vertically to avoid collision, the label can end up visually disconnected from its actual pivot price. Draw a thin 1px connector `line.new()` from the true pivot price to the displaced label anchor so the association stays clear.
+
+**7.7. Zoom-Aware Detail Toggling**
+Use `last_bar_index - first_bar_index` (visible bar count) to auto-suppress subwave labels and shrink primary label size when the user is zoomed out over the full multi-year count, and restore full detail when zoomed into a single wave. Reduces clutter without requiring the user to manually toggle `showSubwaves`.
+
+**7.8. Consistent Semantic Color Contrast**
+`AL_TARGET_COL` (`rgb(68, 136, 68)`, dark green) paired with white text is lower contrast than `PR_TARGET_COL` (lime) paired with black text. Audit all label `color`/`textcolor` pairs for WCAG-ish contrast (especially on TradingView's light theme, which is common) and standardize: light background colors get black text, dark/saturated colors get white text.
